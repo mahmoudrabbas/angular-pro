@@ -1,0 +1,142 @@
+<!-- Signup Start -->
+<div class="container-fluid py-5">
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-6 col-md-8">
+        <div class="bg-light rounded p-5 shadow-sm wow fadeInUp" data-wow-delay="0.1s">
+          <div class="text-center mb-4">
+            <h1 class="display-5 text-primary">Create an Account</h1>
+            <p class="mb-0">Join us and start shopping!</p>
+          </div>
+
+          <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+            <!-- Name -->
+            <div class="mb-4">
+              <label for="name" class="form-label">Full Name</label>
+              <input
+                type="text"
+                class="form-control rounded-pill"
+                id="name"
+                formControlName="name"
+                [class.is-invalid]="f['name'].invalid && f['name'].touched"
+                placeholder="Enter your full name"
+              />
+              <div *ngIf="f['name'].invalid && f['name'].touched" class="text-danger mt-1 small">
+                <div *ngIf="f['name'].errors?.['required']">Name is required.</div>
+                <div *ngIf="f['name'].errors?.['minlength']">
+                  Name must be at least 3 characters.
+                </div>
+              </div>
+            </div>
+
+            <!-- Email -->
+            <div class="mb-4">
+              <label for="email" class="form-label">Email Address</label>
+              <input
+                type="email"
+                class="form-control rounded-pill"
+                id="email"
+                formControlName="email"
+                [class.is-invalid]="f['email'].invalid && f['email'].touched"
+                placeholder="Enter your email"
+              />
+              <div *ngIf="f['email'].invalid && f['email'].touched" class="text-danger mt-1 small">
+                <div *ngIf="f['email'].errors?.['required']">Email is required.</div>
+                <div *ngIf="f['email'].errors?.['email']">Enter a valid email address.</div>
+              </div>
+            </div>
+
+            <!-- Password -->
+            <div class="mb-4">
+              <label for="password" class="form-label">Password</label>
+              <input
+                type="password"
+                class="form-control rounded-pill"
+                id="password"
+                formControlName="password"
+                [class.is-invalid]="f['password'].invalid && f['password'].touched"
+                placeholder="Create a password"
+              />
+              <div
+                *ngIf="f['password'].invalid && f['password'].touched"
+                class="text-danger mt-1 small"
+              >
+                <div *ngIf="f['password'].errors?.['required']">Password is required.</div>
+                <div *ngIf="f['password'].errors?.['minlength']">
+                  Password must be at least 6 characters.
+                </div>
+              </div>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="mb-4">
+              <label for="confirmPassword" class="form-label">Confirm Password</label>
+              <input
+                type="password"
+                class="form-control rounded-pill"
+                id="confirmPassword"
+                formControlName="confirmPassword"
+                [class.is-invalid]="
+                  (f['confirmPassword'].invalid && f['confirmPassword'].touched) ||
+                  signupForm.hasError('passwordMismatch')
+                "
+                placeholder="Re-enter your password"
+              />
+              <div
+                *ngIf="f['confirmPassword'].invalid && f['confirmPassword'].touched"
+                class="text-danger mt-1 small"
+              >
+                <div *ngIf="f['confirmPassword'].errors?.['required']">
+                  Please confirm your password.
+                </div>
+              </div>
+              <div
+                *ngIf="signupForm.hasError('passwordMismatch') && f['confirmPassword'].touched"
+                class="text-danger mt-1 small"
+              >
+                Passwords do not match.
+              </div>
+            </div>
+
+            <!-- Terms and Conditions -->
+            <div class="mb-4 form-check">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                id="agreeTerms"
+                formControlName="agreeTerms"
+                [class.is-invalid]="f['agreeTerms'].invalid && f['agreeTerms'].touched"
+              />
+              <label class="form-check-label" for="agreeTerms">
+                I agree to the <a href="#" class="text-primary">Terms & Conditions</a> and
+                <a href="#" class="text-primary">Privacy Policy</a>
+              </label>
+              <div
+                *ngIf="f['agreeTerms'].invalid && f['agreeTerms'].touched"
+                class="text-danger mt-1 small"
+              >
+                You must agree to the terms.
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button
+              type="submit"
+              class="btn btn-primary rounded-pill w-100 py-3"
+              [disabled]="signupForm.invalid"
+            >
+              Sign Up
+            </button>
+
+            <!-- Login Link -->
+            <p class="text-center mt-4 mb-0">
+              Already have an account?
+              <a routerLink="/login" class="text-primary">Login here</a>
+            </p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Signup End -->

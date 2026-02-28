@@ -4,6 +4,7 @@ import { CarouselComponent } from './components/carousel/carousel';
 import { ServicesComponent } from './components/services/services.component';
 import { ProductListComponent } from './components/product-list/product-list.component';
 import { FooterComponent } from './components/footer/footer';
+import { RouterOutlet } from '@angular/router';
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -13,6 +14,7 @@ import { FooterComponent } from './components/footer/footer';
     ProductListComponent,
     ServicesComponent,
     FooterComponent,
+    RouterOutlet,
   ],
   templateUrl: './app.html',
   styleUrl: './app.css',
