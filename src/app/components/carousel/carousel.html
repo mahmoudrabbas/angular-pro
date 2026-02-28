@@ -1,0 +1,129 @@
+<!-- Carousel Start -->
+<div class="container-fluid carousel bg-light px-0">
+  <div class="row g-0 justify-content-end">
+    <!-- Main Carousel -->
+    <div class="col-12 col-lg-7 col-xl-9">
+      <div
+        id="headerCarousel"
+        class="carousel slide bg-light py-5"
+        data-bs-ride="carousel"
+        data-bs-interval="3000"
+      >
+        <!-- Indicators -->
+        <div class="carousel-indicators">
+          <button
+            *ngFor="let item of carouselItems; let i = index"
+            type="button"
+            data-bs-target="#headerCarousel"
+            [attr.data-bs-slide-to]="i"
+            [class.active]="i === 0"
+            [attr.aria-current]="i === 0 ? 'true' : null"
+            [attr.aria-label]="'Slide ' + (i + 1)"
+          ></button>
+        </div>
+
+        <!-- Slides -->
+        <div class="carousel-inner">
+          <div
+            *ngFor="let item of carouselItems; let i = index"
+            class="carousel-item"
+            [class.active]="i === 0"
+          >
+            <div class="row g-0 header-carousel-item align-items-center">
+              <div class="col-xl-6 carousel-img wow fadeInLeft" data-wow-delay="0.1s">
+                <img
+                  [src]="item.image"
+                  class="img-fluid w-100"
+                  [alt]="item.title"
+                  style="min-height: 300px; object-fit: contain"
+                  loading="eager"
+                />
+              </div>
+              <div class="col-xl-6 carousel-content p-4">
+                <h4
+                  class="text-uppercase fw-bold mb-4 wow fadeInRight"
+                  data-wow-delay="0.1s"
+                  style="letter-spacing: 3px"
+                >
+                  {{ item.discount }}
+                </h4>
+                <h1 class="display-3 text-capitalize mb-4 wow fadeInRight" data-wow-delay="0.3s">
+                  {{ item.title }}
+                </h1>
+                <p class="text-dark wow fadeInRight" data-wow-delay="0.5s">
+                  {{ item.description }}
+                </p>
+
+                <a
+                  class="btn btn-primary rounded-pill py-3 px-5 wow fadeInRight"
+                  data-wow-delay="0.7s"
+                  [routerLink]="item.buttonLink"
+                >
+                  {{ item.buttonText }}
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Controls -->
+        <button
+          class="carousel-control-prev"
+          type="button"
+          data-bs-target="#headerCarousel"
+          data-bs-slide="prev"
+        >
+          <i class="bi bi-arrow-left fs-1 text-primary"></i>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button
+          class="carousel-control-next"
+          type="button"
+          data-bs-target="#headerCarousel"
+          data-bs-slide="next"
+        >
+          <i class="bi bi-arrow-right fs-1 text-primary"></i>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Side Banner -->
+    <div class="col-12 col-lg-5 col-xl-3 wow fadeInRight" data-wow-delay="0.1s">
+      <div class="carousel-header-banner h-100 position-relative">
+        <img
+          [src]="bannerOffer.image"
+          class="img-fluid w-100 h-100"
+          style="object-fit: cover; min-height: 400px"
+          [alt]="bannerOffer.productName"
+          loading="eager"
+        />
+        <div
+          class="carousel-banner-offer position-absolute top-0 start-0 d-flex align-items-center p-3"
+        >
+          <p class="bg-primary text-white rounded fs-5 py-2 px-4 mb-0 me-3">
+            {{ bannerOffer.saveText }}
+          </p>
+          <p class="text-primary fs-5 fw-bold mb-0">{{ bannerOffer.offerText }}</p>
+        </div>
+        <div class="carousel-banner position-absolute bottom-0 start-0 end-0 text-center p-4">
+          <div class="carousel-banner-content mb-3">
+            <a href="javascript:void(0)" class="d-block mb-2 text-white-50">
+              {{ bannerOffer.category }}
+            </a>
+            <a href="javascript:void(0)" class="d-block text-white fs-3 text-decoration-none">
+              {{ bannerOffer.productName }}
+            </a>
+            <del class="me-2 text-white-50 fs-5">{{ bannerOffer.oldPrice }}</del>
+            <span class="text-primary fs-5">{{ bannerOffer.newPrice }}</span>
+          </div>
+
+          href="javascript:void(0)" class="btn btn-primary rounded-pill py-2 px-4"
+          (click)="addToCart()"
+          <a> <i class="fas fa-shopping-cart me-2"></i> Add To Cart </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Carousel End -->

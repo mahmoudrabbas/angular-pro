@@ -1,0 +1,90 @@
+<!-- <div class="product-card">
+  <div class="product-image">
+    <img [src]="imageUrl" [alt]="name" class="card-img" />
+    <div class="overlay">
+      <button (click)="viewDetails()" class="btn btn-primary">View Details</button>
+      <button (click)="addToCart()" class="btn btn-success">Add to Cart</button>
+    </div>
+  </div>
+  <div class="product-info">
+    <p class="product-category">{{ category }}</p>
+    <h3 class="product-name">{{ name }}</h3>
+    <div class="rating">
+      <span class="stars">★★★★★</span>
+      <span class="rating-text">({{ rating }})</span>
+    </div>
+    <p class="product-price">{{ price | currency }}</p>
+  </div>
+</div> -->
+
+<div class="product-item rounded wow fadeInUp" [attr.data-wow-delay]="wowDelay">
+  <div class="product-item-inner border rounded">
+    <div class="product-item-inner-item">
+      <img
+        [src]="product.image"
+        class="img-fluid w-100 rounded-top"
+        [alt]="product.name"
+        loading="lazy"
+      />
+      <div *ngIf="product.badge" [class]="product.badge === 'New' ? 'product-new' : 'product-sale'">
+        {{ product.badge }}
+      </div>
+      <div class="product-details">
+        <a href="javascript:void(0)" (click)="quickView.emit(product)">
+          <i class="fa fa-eye fa-1x"></i>
+        </a>
+      </div>
+    </div>
+    <div class="text-center rounded-bottom p-4">
+      <a href="javascript:void(0)" class="d-block mb-2">{{ product.category }}</a>
+      <a href="javascript:void(0)" class="d-block h4">{{ product.name }}</a>
+      <del class="me-2 fs-5">{{ product.oldPrice }}</del>
+      <span class="text-primary fs-5">{{ product.newPrice }}</span>
+    </div>
+  </div>
+
+  <div class="product-item-add border border-top-0 rounded-bottom text-center p-4 pt-0">
+    <!-- Add to Cart Button - FIXED -->
+    <a
+      href="javascript:void(0)"
+      class="btn btn-primary border-secondary rounded-pill py-2 px-4 mb-4"
+      (click)="addToCart.emit(product)"
+    >
+      <i class="fas fa-shopping-cart me-2"></i> Add To Cart
+    </a>
+
+    <div class="d-flex justify-content-between align-items-center">
+      <!-- Star Rating -->
+      <div class="d-flex">
+        <ng-container *ngFor="let filled of stars; let i = index">
+          <i class="fas fa-star" [class.text-primary]="filled"></i>
+        </ng-container>
+      </div>
+
+      <!-- Actions - FIXED -->
+      <div class="d-flex">
+        <!-- Compare Button -->
+        <a
+          href="javascript:void(0)"
+          class="text-primary d-flex align-items-center justify-content-center me-3"
+          (click)="compare.emit(product)"
+        >
+          <span class="rounded-circle btn-sm-square border">
+            <i class="fas fa-random"></i>
+          </span>
+        </a>
+
+        <!-- Wishlist Button -->
+        <a
+          href="javascript:void(0)"
+          class="text-primary d-flex align-items-center justify-content-center"
+          (click)="addToWishlist.emit(product)"
+        >
+          <span class="rounded-circle btn-sm-square border">
+            <i class="fas fa-heart"></i>
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
