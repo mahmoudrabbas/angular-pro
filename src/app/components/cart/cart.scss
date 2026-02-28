@@ -1,0 +1,23 @@
+:host {
+  display: block;
+  background-color: #f8f9fa;
+  min-height: calc(100vh - 200px);
+}
+
+.breadcrumb {
+  background: transparent;
+  padding: 0;
+}
+
+.quantity .btn {
+  border-radius: 0;
+}
+
+.bg-light {
+  background-color: #ffffff !important;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+a {
+  cursor: pointer;
+}
