@@ -9,8 +9,10 @@ import { Signup } from './components/signup/signup';
 import { UserProfile } from './components/user-profile/user-profile';
 
 export const routes: Routes = [
-  { path: '', component: Home },
-  { path: 'products', component: ProductListComponent },
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: 'home', component: Home },
+
+  { path: 'product', component: ProductListComponent },
   { path: 'product/:id', component: ProductDetail },
   { path: 'cart', component: Cart }, // Shopping cart
   { path: 'checkout', component: Checkout }, // Checkout page

@@ -16,35 +16,39 @@
     <p class="product-price">{{ price | currency }}</p>
   </div>
 </div> -->
-
 <div class="product-item rounded wow fadeInUp" [attr.data-wow-delay]="wowDelay">
   <div class="product-item-inner border rounded">
     <div class="product-item-inner-item">
-      <img
-        [src]="product.image"
-        class="img-fluid w-100 rounded-top"
-        [alt]="product.name"
-        loading="lazy"
-      />
+      <!-- Make image clickable to product details -->
+      <a [routerLink]="['/product', product.id]">
+        <img
+          [src]="product.image"
+          class="img-fluid w-100 rounded-top"
+          [alt]="product.name"
+          loading="lazy"
+        />
+      </a>
       <div *ngIf="product.badge" [class]="product.badge === 'New' ? 'product-new' : 'product-sale'">
         {{ product.badge }}
       </div>
       <div class="product-details">
-        <a href="javascript:void(0)" (click)="quickView.emit(product)">
+        <!-- Change eye icon to navigate to details instead of quickView emit -->
+        <a [routerLink]="['/product', product.id]">
           <i class="fa fa-eye fa-1x"></i>
         </a>
       </div>
     </div>
     <div class="text-center rounded-bottom p-4">
-      <a href="javascript:void(0)" class="d-block mb-2">{{ product.category }}</a>
-      <a href="javascript:void(0)" class="d-block h4">{{ product.name }}</a>
+      <!-- Make category and name clickable -->
+      <a [routerLink]="['/product', product.id]" class="d-block mb-2">{{ product.category }}</a>
+      <a [routerLink]="['/product', product.id]" class="d-block h4">{{ product.name }}</a>
       <del class="me-2 fs-5">{{ product.oldPrice }}</del>
       <span class="text-primary fs-5">{{ product.newPrice }}</span>
     </div>
   </div>
 
   <div class="product-item-add border border-top-0 rounded-bottom text-center p-4 pt-0">
-    <!-- Add to Cart Button - FIXED -->
+    <!-- Add to Cart Button - unchanged -->
     <a
       href="javascript:void(0)"
       class="btn btn-primary border-secondary rounded-pill py-2 px-4 mb-4"
@@ -61,9 +65,8 @@
         </ng-container>
       </div>
 
-      <!-- Actions - FIXED -->
+      <!-- Actions - unchanged (compare and wishlist) -->
       <div class="d-flex">
-        <!-- Compare Button -->
         <a
           href="javascript:void(0)"
           class="text-primary d-flex align-items-center justify-content-center me-3"
@@ -73,8 +76,6 @@
             <i class="fas fa-random"></i>
           </span>
         </a>
-
-        <!-- Wishlist Button -->
         <a
           href="javascript:void(0)"
           class="text-primary d-flex align-items-center justify-content-center"
