@@ -1,0 +1,21 @@
+<!-- Services Start -->
+<div class="container-fluid px-0">
+  <div class="row g-0">
+    <div
+      *ngFor="let service of services; trackBy: trackByTitle"
+      class="col-6 col-md-4 col-lg-2 border-start border-end wow fadeInUp"
+      [attr.data-wow-delay]="service.delay"
+    >
+      <div class="p-4">
+        <div class="d-inline-flex align-items-center">
+          <i [class]="service.icon + ' fa-2x text-primary'"></i>
+          <div class="ms-4">
+            <h6 class="text-uppercase mb-2">{{ service.title }}</h6>
+            <p class="mb-0">{{ service.description }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Services End -->

@@ -1,23 +1,23 @@
-<div class="container mt-4">
+<!-- <div class="container mt-4">
   <div class="row mb-4">
     <div class="col">
       <h1 class="display-5 fw-bold">Our Products</h1>
       <p class="lead">Discover the latest tech products</p>
     </div>
-  </div>
+  </div> -->
 
-  <!-- Loading State -->
-  @if (loading) {
+<!-- Loading State -->
+<!-- @if (loading) {
     <div class="text-center py-5">
       <div class="spinner-border text-primary" role="status">
         <span class="visually-hidden">Loading...</span>
       </div>
       <p class="mt-2">Loading products...</p>
     </div>
-  }
+  } -->
 
-  <!-- Error State -->
-  @if (error) {
+<!-- Error State -->
+<!-- @if (error) {
     <div class="alert alert-danger" role="alert">
       {{ error }}
       <button class="btn btn-outline-danger btn-sm ms-3" (click)="loadProducts()">
@@ -25,9 +25,9 @@
       </button>
     </div>
   }
-
-  <!-- Products Grid -->
-  @if (!loading && !error && products.length > 0) {
+ -->
+<!-- Products Grid -->
+<!-- @if (!loading && !error && products.length > 0) {
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
       @for (product of products; track product._id) {
         <div class="col">
@@ -58,13 +58,62 @@
         </div>
       }
     </div>
-  }
+  } -->
 
-  <!-- Empty State -->
-  @if (!loading && !error && products.length === 0) {
+<!-- Empty State -->
+<!-- @if (!loading && !error && products.length === 0) {
     <div class="text-center py-5">
       <h3>No Products Found</h3>
       <p class="text-muted">Check back later for new products.</p>
     </div>
   }
+</div> -->
+
+<!-- Our Products Start -->
+<div class="container-fluid product py-5">
+  <div class="container py-5">
+    <div class="tab-class">
+      <div class="row g-4">
+        <!-- Title -->
+        <div class="col-lg-4 text-start wow fadeInLeft" data-wow-delay="0.1s">
+          <h1>Our Products</h1>
+        </div>
+
+        <!-- Tab Nav -->
+        <div class="col-lg-8 text-end wow fadeInRight" data-wow-delay="0.1s">
+          <ul class="nav nav-pills d-inline-flex text-center mb-5">
+            <li *ngFor="let tab of tabs" class="nav-item mb-4">
+              <a
+                class="d-flex mx-2 py-2 bg-light rounded-pill"
+                [class.active]="activeTab === tab.id"
+                href="javascript:void(0)"
+                (click)="loadTab(tab.id)"
+              >
+                <span class="text-dark" style="width: 130px">{{ tab.label }}</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Tab Content -->
+      <div class="tab-content">
+        <div class="tab-pane fade show active p-0">
+          <div class="row g-4">
+            <div *ngFor="let product of products; let i = index" class="col-md-6 col-lg-4 col-xl-3">
+              <app-product-card
+                [product]="product"
+                [wowDelay]="getDelay(i)"
+                (addToCart)="onAddToCart($event)"
+                (addToWishlist)="onAddToWishlist($event)"
+                (compare)="onCompare($event)"
+                (quickView)="onQuickView($event)"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+<!-- Our Products End -->

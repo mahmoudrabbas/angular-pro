@@ -1,0 +1,47 @@
+.carousel-control-prev,
+.carousel-control-next {
+  width: 48px;
+  height: 48px;
+  background: white;
+  border-radius: 50%;
+  top: 50%;
+  transform: translateY(-50%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  opacity: 1;
+
+  &:hover {
+    background: var(--bs-primary);
+    i {
+      color: white !important;
+    }
+  }
+}
+
+.carousel-control-prev {
+  left: 16px;
+}
+
+.carousel-control-next {
+  right: 16px;
+}
+
+.carousel-indicators button {
+  background-color: var(--bs-primary);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.carousel-header-banner {
+  position: relative;
+  overflow: hidden;
+
+  .carousel-banner-offer {
+    z-index: 2;
+  }
+
+  .carousel-banner {
+    z-index: 2;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+  }
+}

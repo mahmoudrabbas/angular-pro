@@ -1,0 +1,273 @@
+<!-- Topbar Start -->
+<div class="container-fluid px-5 d-none border-bottom d-lg-block">
+  <div class="row gx-0 align-items-center">
+    <div class="col-lg-4 text-center text-lg-start mb-lg-0">
+      <div class="d-inline-flex align-items-center" style="height: 45px">
+        <a href="javascript:void(0)" class="text-muted me-2"> Help</a><small> / </small>
+        <a href="javascript:void(0)" class="text-muted mx-2"> Support</a><small> / </small>
+        <a href="javascript:void(0)" class="text-muted ms-2"> Contact</a>
+      </div>
+    </div>
+    <div class="col-lg-4 text-center d-flex align-items-center justify-content-center">
+      <small class="text-dark">Call Us:</small>
+      <a href="javascript:void(0)" class="text-muted">(+012) 1234 567890</a>
+    </div>
+
+    <div class="col-lg-4 text-center text-lg-end">
+      <div class="d-inline-flex align-items-center" style="height: 45px">
+        <!-- Currency Dropdown -->
+        <div class="dropdown" (mouseleave)="isCurrencyDropdownOpen = false">
+          <a
+            href="javascript:void(0)"
+            class="dropdown-toggle text-muted me-2"
+            (click)="toggleDropdown('currency')"
+          >
+            <small> {{ selectedCurrency }}</small>
+          </a>
+          <div class="dropdown-menu rounded" [class.show]="isCurrencyDropdownOpen">
+            <a
+              *ngFor="let currency of currencies"
+              href="javascript:void(0)"
+              class="dropdown-item"
+              (click)="selectedCurrency = currency; isCurrencyDropdownOpen = false"
+            >
+              {{ currency }}
+            </a>
+          </div>
+        </div>
+
+        <!-- Language Dropdown -->
+        <div class="dropdown" (mouseleave)="isLanguageDropdownOpen = false">
+          <a
+            href="javascript:void(0)"
+            class="dropdown-toggle text-muted mx-2"
+            (click)="toggleDropdown('language')"
+          >
+            <small> {{ selectedLanguage }}</small>
+          </a>
+          <div class="dropdown-menu rounded" [class.show]="isLanguageDropdownOpen">
+            <a
+              *ngFor="let language of languages"
+              href="javascript:void(0)"
+              class="dropdown-item"
+              (click)="selectedLanguage = language; isLanguageDropdownOpen = false"
+            >
+              {{ language }}
+            </a>
+          </div>
+        </div>
+
+        <!-- Dashboard Dropdown -->
+        <div class="dropdown" (mouseleave)="isDashboardDropdownOpen = false">
+          <a
+            href="javascript:void(0)"
+            class="dropdown-toggle text-muted ms-2"
+            (click)="toggleDropdown('dashboard')"
+          >
+            <small><i class="fa fa-home me-2"></i> My Dashboard</small>
+          </a>
+          <div class="dropdown-menu rounded" [class.show]="isDashboardDropdownOpen">
+            <a routerLink="/login" class="dropdown-item"> Login</a>
+            <a routerLink="/wishlist" class="dropdown-item"> Wishlist</a>
+            <a routerLink="/cart" class="dropdown-item"> My Card</a>
+            <a routerLink="/notifications" class="dropdown-item"> Notifications</a>
+            <a routerLink="/account-settings" class="dropdown-item"> Account Settings</a>
+            <a routerLink="/my-account" class="dropdown-item"> My Account</a>
+            <a href="javascript:void(0)" class="dropdown-item"> Log Out</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Topbar End -->
+
+<!-- Main Header Start -->
+<div class="container-fluid px-5 py-4 d-none d-lg-block">
+  <div class="row gx-0 align-items-center text-center">
+    <!-- Logo -->
+    <div class="col-md-4 col-lg-3 text-center text-lg-start">
+      <div class="d-inline-flex align-items-center">
+        <a routerLink="/" class="navbar-brand p-0">
+          <h1 class="display-5 text-primary m-0">
+            <i class="fas fa-shopping-bag text-secondary me-2"></i>Electro
+          </h1>
+        </a>
+      </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="col-md-4 col-lg-6 text-center">
+      <div class="position-relative ps-4">
+        <div class="d-flex border rounded-pill">
+          <input
+            class="form-control border-0 rounded-pill w-100 py-3"
+            type="text"
+            [(ngModel)]="searchQuery"
+            placeholder="Search Looking For?"
+          />
+
+          <select
+            class="form-select text-dark border-0 border-start rounded-0 p-3"
+            style="width: 200px"
+            [(ngModel)]="selectedCategory"
+          >
+            <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
+          </select>
+
+          <button
+            type="button"
+            class="btn btn-primary rounded-pill py-3 px-5"
+            style="border: 0"
+            (click)="onSearch()"
+          >
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Icons -->
+    <div class="col-md-4 col-lg-3 text-center text-lg-end">
+      <div class="d-inline-flex align-items-center">
+        <a
+          href="javascript:void(0)"
+          class="text-muted d-flex align-items-center justify-content-center me-3"
+        >
+          <span class="rounded-circle btn-md-square border"><i class="fas fa-random"></i></span>
+        </a>
+        <a
+          href="javascript:void(0)"
+          class="text-muted d-flex align-items-center justify-content-center me-3"
+        >
+          <span class="rounded-circle btn-md-square border"><i class="fas fa-heart"></i></span>
+        </a>
+        <a
+          href="javascript:void(0)"
+          class="text-muted d-flex align-items-center justify-content-center"
+        >
+          <span class="rounded-circle btn-md-square border"
+            ><i class="fas fa-shopping-cart"></i
+          ></span>
+          <span class="text-dark ms-2">$0.00</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Main Header End -->
+
+<!-- Navbar & Hero Start -->
+<div class="container-fluid nav-bar p-0">
+  <div class="row gx-0 bg-primary px-5 align-items-center">
+    <!-- All Categories Sidebar (Desktop) -->
+    <div class="col-lg-3 d-none d-lg-block">
+      <nav class="navbar navbar-light position-relative" style="width: 250px">
+        <button
+          class="navbar-toggler border-0 fs-4 w-100 px-0 text-start"
+          type="button"
+          (click)="toggleAllCategories()"
+        >
+          <h4 class="m-0"><i class="fa fa-bars me-2"></i>All Categories</h4>
+        </button>
+        <div class="collapse navbar-collapse rounded-bottom" [class.show]="isAllCategoriesOpen">
+          <div class="navbar-nav ms-auto py-0">
+            <ul class="list-unstyled categories-bars">
+              @for (category of sidebarCategories; track category.name) {
+                <li>
+                  <div class="categories-bars-item">
+                    <a href="javascript:void(0)">{{ category.name }}</a>
+                    <span>({{ category.count }})</span>
+                  </div>
+                </li>
+              }
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </div>
+
+    <!-- Main Navigation -->
+    <div class="col-12 col-lg-9">
+      <nav class="navbar navbar-expand-lg navbar-light bg-primary">
+        <!-- Mobile Logo -->
+        <a routerLink="/" class="navbar-brand d-block d-lg-none">
+          <h1 class="display-5 text-secondary m-0">
+            <i class="fas fa-shopping-bag text-white me-2"></i>Electro
+          </h1>
+        </a>
+
+        <!-- Mobile Toggle Button -->
+        <button class="navbar-toggler ms-auto" type="button" (click)="toggleMobileMenu()">
+          <span class="fa fa-bars fa-1x"></span>
+        </button>
+
+        <!-- Navbar Links -->
+        <div class="collapse navbar-collapse" [class.show]="isMobileMenuOpen">
+          <div class="navbar-nav ms-auto py-0">
+            <a
+              routerLink="/"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }"
+              class="nav-item nav-link"
+              >Home</a
+            >
+            <a routerLink="/shop" routerLinkActive="active" class="nav-item nav-link">Shop</a>
+            <a routerLink="/single" routerLinkActive="active" class="nav-item nav-link"
+              >Single Page</a
+            >
+
+            <!-- Pages Dropdown -->
+            <div class="nav-item dropdown">
+              <a
+                href="javascript:void(0)"
+                class="nav-link dropdown-toggle"
+                (click)="isPagesDropdownOpen = !isPagesDropdownOpen"
+                >Pages</a
+              >
+              <div class="dropdown-menu m-0" [class.show]="isPagesDropdownOpen">
+                <a routerLink="/bestseller" class="dropdown-item">Bestseller</a>
+                <a routerLink="/cart" class="dropdown-item">Cart Page</a>
+                <a routerLink="/checkout" class="dropdown-item">Checkout</a>
+                <a routerLink="/404" class="dropdown-item">404 Page</a>
+              </div>
+            </div>
+
+            <a routerLink="/contact" routerLinkActive="active" class="nav-item nav-link me-2"
+              >Contact</a
+            >
+
+            <!-- Mobile Categories Dropdown -->
+            <div class="nav-item dropdown d-block d-lg-none mb-3">
+              <a
+                href="javascript:void(0)"
+                class="nav-link dropdown-toggle"
+                (click)="isMobileCategoriesOpen = !isMobileCategoriesOpen"
+                >All Category</a
+              >
+              <div class="dropdown-menu m-0" [class.show]="isMobileCategoriesOpen">
+                <ul class="list-unstyled categories-bars">
+                  <li *ngFor="let category of sidebarCategories">
+                    <div class="categories-bars-item">
+                      <a href="javascript:void(0)">{{ category.name }}</a>
+                      <span>({{ category.count }})</span>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Phone Number Button -->
+          <a
+            href="tel:+01234567890"
+            class="btn btn-secondary rounded-pill py-2 px-4 px-lg-3 mb-3 mb-md-3 mb-lg-0"
+          >
+            <i class="fa fa-mobile-alt me-2"></i> +0123 456 7890
+          </a>
+        </div>
+      </nav>
+    </div>
+  </div>
+</div>
+<!-- Navbar & Hero End -->

@@ -1,0 +1,131 @@
+<!-- Login Start -->
+<div class="container-fluid py-5">
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-6 col-md-8">
+        <div class="bg-light rounded p-5 shadow-sm wow fadeInUp" data-wow-delay="0.1s">
+          <div class="text-center mb-4">
+            <h1 class="display-5 text-primary">Login</h1>
+            <p class="mb-0">Welcome back! Please login to your account</p>
+          </div>
+
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <!-- Email -->
+            <div class="mb-4">
+              <label for="email" class="form-label">Email Address</label>
+              <input
+                type="email"
+                class="form-control rounded-pill"
+                id="email"
+                formControlName="email"
+                [class.is-invalid]="f['email'].invalid && f['email'].touched"
+                placeholder="Enter your email"
+              />
+              @if (f['email'].invalid && f['email'].touched) {
+                <div class="text-danger mt-1 small">
+                  @if (f['email'].errors?.['required']) {
+                    <div>Email is required.</div>
+                  }
+                  @if (f['email'].errors?.['email']) {
+                    <div>Enter a valid email address.</div>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Password -->
+            <div class="mb-4">
+              <label for="password" class="form-label">Password</label>
+              <div class="input-group">
+                <input
+                  [type]="hidePassword ? 'password' : 'text'"
+                  class="form-control rounded-pill"
+                  id="password"
+                  formControlName="password"
+                  [class.is-invalid]="f['password'].invalid && f['password'].touched"
+                  placeholder="Enter your password"
+                />
+                <button 
+                  class="btn btn-outline-secondary rounded-pill" 
+                  type="button"
+                  (click)="togglePasswordVisibility()"
+                  style="border-top-left-radius: 0 !important; border-bottom-left-radius: 0 !important;"
+                >
+                  <i class="bi" [class.bi-eye]="!hidePassword" [class.bi-eye-slash]="hidePassword"></i>
+                </button>
+              </div>
+              @if (f['password'].invalid && f['password'].touched) {
+                <div class="text-danger mt-1 small">
+                  @if (f['password'].errors?.['required']) {
+                    <div>Password is required.</div>
+                  }
+                  @if (f['password'].errors?.['minlength']) {
+                    <div>Password must be at least 6 characters.</div>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Remember Me & Forgot Password -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <div class="form-check">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  id="rememberMe"
+                  formControlName="rememberMe"
+                />
+                <label class="form-check-label" for="rememberMe">
+                  Remember me
+                </label>
+              </div>
+              <a 
+                href="javascript:void(0)" 
+                class="text-primary text-decoration-none"
+                (click)="onForgotPassword()"
+              >
+                Forgot Password?
+              </a>
+            </div>
+
+            <!-- Submit Button -->
+            <button
+              type="submit"
+              class="btn btn-primary rounded-pill w-100 py-3"
+              [disabled]="loginForm.invalid"
+            >
+              Sign In
+            </button>
+
+            <!-- Sign Up Link -->
+            <p class="text-center mt-4 mb-0">
+              Don't have an account?
+              <a routerLink="/signup" class="text-primary fw-bold">Sign Up</a>
+            </p>
+          </form>
+
+          <!-- Social Login (Optional) -->
+          <div class="mt-4">
+            <div class="position-relative text-center mb-3">
+              <hr class="my-3">
+              <span class="position-absolute top-50 start-50 translate-middle bg-light px-3 text-muted small">
+                Or continue with
+              </span>
+            </div>
+            <div class="d-grid gap-2">
+              <button class="btn btn-outline-dark rounded-pill py-2" type="button">
+                <i class="bi bi-google me-2"></i>
+                Sign in with Google
+              </button>
+              <button class="btn btn-outline-primary rounded-pill py-2" type="button">
+                <i class="bi bi-facebook me-2"></i>
+                Sign in with Facebook
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Login End -->

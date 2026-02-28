@@ -1,0 +1,74 @@
+
+<div class="product-item rounded wow fadeInUp" [attr.data-wow-delay]="wowDelay">
+  <div class="product-item-inner border rounded">
+    <div class="product-item-inner-item">
+      <!-- Make image clickable to product details -->
+      <a [routerLink]="['/product', product.id]">
+        <img
+          [src]="product.image"
+          class="img-fluid w-100 rounded-top"
+          [alt]="product.name"
+          loading="lazy"
+        />
+      </a>
+      <div *ngIf="product.badge" [class]="product.badge === 'New' ? 'product-new' : 'product-sale'">
+        {{ product.badge }}
+      </div>
+      <div class="product-details">
+        <!-- Change eye icon to navigate to details instead of quickView emit -->
+        <a [routerLink]="['/product', product.id]">
+          <i class="fa fa-eye fa-1x"></i>
+        </a>
+      </div>
+    </div>
+    <div class="text-center rounded-bottom p-4">
+      <!-- Make category and name clickable -->
+      <a [routerLink]="['/product', product.id]" class="d-block mb-2">{{ product.category }}</a>
+      <a [routerLink]="['/product', product.id]" class="d-block h4">{{ product.name }}</a>
+      <del class="me-2 fs-5">{{ product.oldPrice }}</del>
+      <span class="text-primary fs-5">{{ product.newPrice }}</span>
+    </div>
+  </div>
+
+  <div class="product-item-add border border-top-0 rounded-bottom text-center p-4 pt-0">
+    <!-- Add to Cart Button - unchanged -->
+    <a
+      href="javascript:void(0)"
+      class="btn btn-primary border-secondary rounded-pill py-2 px-4 mb-4"
+      (click)="addToCart.emit(product)"
+    >
+      <i class="fas fa-shopping-cart me-2"></i> Add To Cart
+    </a>
+
+    <div class="d-flex justify-content-between align-items-center">
+      <!-- Star Rating -->
+      <div class="d-flex">
+        <ng-container *ngFor="let filled of stars; let i = index">
+          <i class="fas fa-star" [class.text-primary]="filled"></i>
+        </ng-container>
+      </div>
+
+      <!-- Actions - unchanged (compare and wishlist) -->
+      <div class="d-flex">
+        <a
+          href="javascript:void(0)"
+          class="text-primary d-flex align-items-center justify-content-center me-3"
+          (click)="compare.emit(product)"
+        >
+          <span class="rounded-circle btn-sm-square border">
+            <i class="fas fa-random"></i>
+          </span>
+        </a>
+        <a
+          href="javascript:void(0)"
+          class="text-primary d-flex align-items-center justify-content-center"
+          (click)="addToWishlist.emit(product)"
+        >
+          <span class="rounded-circle btn-sm-square border">
+            <i class="fas fa-heart"></i>
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

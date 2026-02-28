@@ -1,12 +1,24 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { NavbarComponent } from './components/navbar/navbar';
+import { CarouselComponent } from './components/carousel/carousel';
+import { ServicesComponent } from './components/services/services.component';
+import { ProductListComponent } from './components/product-list/product-list.component';
+import { FooterComponent } from './components/footer/footer';
+import { RouterOutlet } from '@angular/router';
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive,CommonModule ],
+  standalone: true,
+  imports: [
+    NavbarComponent,
+    CarouselComponent,
+    ProductListComponent,
+    ServicesComponent,
+    FooterComponent,
+    RouterOutlet,
+  ],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
 })
 export class App {
-  protected readonly title = signal('angular-pro');
+  protected readonly title = signal('E-commerece-project');
 }

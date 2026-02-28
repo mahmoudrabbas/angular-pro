@@ -1,28 +1,5 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <div class="container">
-    <a class="navbar-brand" routerLink="/">Ecommerce</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/products" routerLinkActive="active">Products</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" routerLink="/cart" routerLinkActive="active">
-            <i class="bi bi-cart"></i> Cart
-          </a>
-        </li>
-      </ul>
-    </div>
-  </div>
-</nav>
-
-<router-outlet></router-outlet>
-
-<footer class="bg-dark text-white mt-5 py-4">
-  <div class="container text-center">
-    <p class="mb-0">&copy; 2024 TechStore. All rights reserved.</p>
-  </div>
-</footer>
+<app-navbar></app-navbar>
+<main>
+  <router-outlet></router-outlet>
+</main>
+<app-footer></app-footer>
