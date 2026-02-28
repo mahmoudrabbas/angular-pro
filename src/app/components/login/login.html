@@ -1,1 +1,86 @@
-<p>login works!</p>
+<!-- Login Start -->
+<div class="container-fluid py-5">
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-5 col-md-7">
+        <div class="bg-light rounded p-5 shadow-sm wow fadeInUp" data-wow-delay="0.1s">
+          <div class="text-center mb-4">
+            <h1 class="display-5 text-primary">Welcome Back</h1>
+            <p class="mb-0">Please login to your account</p>
+          </div>
+
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+            <!-- Email -->
+            <div class="mb-4">
+              <label for="email" class="form-label">Email Address</label>
+              <input
+                type="email"
+                class="form-control rounded-pill"
+                id="email"
+                formControlName="email"
+                [class.is-invalid]="f['email'].invalid && f['email'].touched"
+                placeholder="Enter your email"
+              />
+              <div *ngIf="f['email'].invalid && f['email'].touched" class="text-danger mt-1 small">
+                <div *ngIf="f['email'].errors?.['required']">Email is required.</div>
+                <div *ngIf="f['email'].errors?.['email']">Enter a valid email address.</div>
+              </div>
+            </div>
+
+            <!-- Password -->
+            <div class="mb-4">
+              <label for="password" class="form-label">Password</label>
+              <input
+                type="password"
+                class="form-control rounded-pill"
+                id="password"
+                formControlName="password"
+                [class.is-invalid]="f['password'].invalid && f['password'].touched"
+                placeholder="Enter your password"
+              />
+              <div
+                *ngIf="f['password'].invalid && f['password'].touched"
+                class="text-danger mt-1 small"
+              >
+                <div *ngIf="f['password'].errors?.['required']">Password is required.</div>
+                <div *ngIf="f['password'].errors?.['minlength']">
+                  Password must be at least 6 characters.
+                </div>
+              </div>
+            </div>
+
+            <!-- Remember me & Forgot password -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <div class="form-check">
+                <input
+                  type="checkbox"
+                  class="form-check-input"
+                  id="rememberMe"
+                  formControlName="rememberMe"
+                />
+                <label class="form-check-label" for="rememberMe">Remember me</label>
+              </div>
+              <a href="#" class="text-primary">Forgot password?</a>
+            </div>
+
+            <!-- Submit Button -->
+            <button
+              type="submit"
+              class="btn btn-primary rounded-pill w-100 py-3"
+              [disabled]="loginForm.invalid"
+            >
+              Login
+            </button>
+
+            <!-- Signup Link -->
+            <p class="text-center mt-4 mb-0">
+              Don't have an account?
+              <a routerLink="/signup" class="text-primary">Sign up here</a>
+            </p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Login End -->
