@@ -45,7 +45,29 @@
                 <div *ngIf="f['email'].errors?.['email']">Enter a valid email address.</div>
               </div>
             </div>
+            <!-- Phone -->
+            <div class="mb-4">
+              <label for="phone" class="form-label">Phone (Optional)</label>
+              <input
+                type="text"
+                class="form-control rounded-pill"
+                id="phone"
+                formControlName="phone"
+                placeholder="Enter your phone number"
+              />
+            </div>
 
+            <!-- Address -->
+            <div class="mb-4">
+              <label for="address" class="form-label">Address (Optional)</label>
+              <input
+                type="text"
+                class="form-control rounded-pill"
+                id="address"
+                formControlName="address"
+                placeholder="Enter your address"
+              />
+            </div>
             <!-- Password -->
             <div class="mb-4">
               <label for="password" class="form-label">Password</label>
