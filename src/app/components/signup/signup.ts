@@ -10,6 +10,7 @@ import {
 } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { ChangeDetectorRef } from '@angular/core';
 
 function passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
   const password = control.get('password');
@@ -36,6 +37,7 @@ export class Signup {
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
+    private cd: ChangeDetectorRef,
   ) {
     this.signupForm = this.fb.group(
       {
@@ -74,7 +76,17 @@ export class Signup {
       },
       error: (err) => {
         this.loading = false;
-        this.errorMessage = err?.error?.message ?? 'Something went wrong. Please try again.';
+        const serverMsg = err?.error?.message;
+
+        // Check for the specific backend error message
+        if (serverMsg === 'Email already exists') {
+          this.errorMessage =
+            'An account with this email address already exists. Please log in or use a different email to register.';
+        } else {
+          // Fallback for other errors (validation, server down, etc.)
+          this.errorMessage = serverMsg || 'An unexpected error occurred. Please try again later.';
+        }
+        this.cd.detectChanges();
       },
     });
   }

@@ -1,45 +1,107 @@
-:host {
-  display: block;
-  background-color: #f8f9fa;
-  min-height: calc(100vh - 200px);
+/* login.scss */
+
+// ── Shake animation ──────────────────────────────────────────────────────────
+// Applied to the card via [class.shake]="shakeForm" in the template.
+// The animation plays once each time the class is added.
+@keyframes shake {
+  0% {
+    transform: translateX(0);
+  }
+  15% {
+    transform: translateX(-8px);
+  }
+  30% {
+    transform: translateX(7px);
+  }
+  45% {
+    transform: translateX(-6px);
+  }
+  60% {
+    transform: translateX(5px);
+  }
+  75% {
+    transform: translateX(-3px);
+  }
+  90% {
+    transform: translateX(2px);
+  }
+  100% {
+    transform: translateX(0);
+  }
 }
 
-.form-control {
-  border: 1px solid #ced4da;
-  padding: 0.75rem 1.5rem;
-  &:focus {
-    border-color: var(--bs-primary);
-    box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25);
-  }
-  &.is-invalid {
-    border-color: #dc3545;
-    &:focus {
-      box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+.shake {
+  animation: shake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+// ── Error alert ──────────────────────────────────────────────────────────────
+.error-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+
+  background-color: #fff5f5;
+  border: 1.5px solid #feb2b2;
+  border-left: 4px solid #e53e3e;
+  border-radius: 10px;
+  padding: 14px 14px 14px 16px;
+  margin-bottom: 24px;
+
+  // Slide-in from above
+  animation: slideDown 0.25s ease both;
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
-}
 
-.form-check-input:checked {
-  background-color: var(--bs-primary);
-  border-color: var(--bs-primary);
-}
-
-.btn-primary {
-  transition: all 0.3s;
-  &:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(var(--bs-primary-rgb), 0.3);
+  &__icon {
+    flex-shrink: 0;
+    margin-top: 1px;
+    color: #e53e3e;
   }
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-}
 
-.text-primary {
-  cursor: pointer;
-  text-decoration: none;
-  &:hover {
-    text-decoration: underline;
+  &__body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    text-align: left;
+  }
+
+  &__title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #c53030;
+    line-height: 1.3;
+  }
+
+  &__message {
+    font-size: 13.5px;
+    color: #742a2a;
+    line-height: 1.45;
+  }
+
+  &__close {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px;
+    color: #c53030;
+    opacity: 0.65;
+    line-height: 1;
+    transition: opacity 0.15s;
+    margin-top: 2px;
+
+    &:hover {
+      opacity: 1;
+    }
   }
 }

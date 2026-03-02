@@ -9,6 +9,8 @@ import { Signup } from './components/signup/signup';
 import { UserProfile } from './components/user-profile/user-profile';
 import { CheckEmail } from './components/check-email/check-email';
 import { EmailVerified } from './components/email-verified/email-verified';
+import { ForgotPassword } from './components/forgot-password/forgot-password';
+import { ResetPassword } from './components/reset-password/reset-password';
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'home', component: Home },
@@ -29,6 +31,8 @@ export const routes: Routes = [
     path: 'auth/verify-email/:token',
     component: EmailVerified,
   },
+  { path: 'forgot-password', component: ForgotPassword },
+  { path: 'reset-password/:id/:token', component: ResetPassword },
   { path: 'profile', component: UserProfile }, // User profile
   { path: '**', redirectTo: '/404' },
   { path: '**', redirectTo: '/products' },

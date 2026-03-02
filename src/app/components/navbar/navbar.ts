@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-navbar',
@@ -15,10 +16,10 @@ export class NavbarComponent implements OnInit {
   isCurrencyDropdownOpen = false;
   isLanguageDropdownOpen = false;
   isDashboardDropdownOpen = false;
-  isAllCategoriesOpen = false; // For the categories sidebar
-  isPagesDropdownOpen = false; // For pages submenu
-  isMobileCategoriesOpen = false; // For mobile categories dropdown
-  isMobileMenuOpen = false; // For mobile navbar collapse
+  isAllCategoriesOpen = false;
+  isPagesDropdownOpen = false;
+  isMobileCategoriesOpen = false;
+  isMobileMenuOpen = false;
 
   searchQuery = '';
   selectedCategory = 'All Category';
@@ -29,7 +30,6 @@ export class NavbarComponent implements OnInit {
   currencies = ['USD', 'Euro', 'Dolar'];
   languages = ['English', 'Turkish', 'Spanish', 'Italiano'];
 
-  // Categories for the sidebar
   sidebarCategories = [
     { name: 'Accessories', count: 3 },
     { name: 'Electronics & Computer', count: 5 },
@@ -37,6 +37,9 @@ export class NavbarComponent implements OnInit {
     { name: 'Mobiles & Tablets', count: 8 },
     { name: 'SmartPhone & Smart TV', count: 5 },
   ];
+
+  // Inject the AuthService here
+  constructor(public authService: AuthService) {}
 
   ngOnInit() {
     setTimeout(() => {
@@ -60,5 +63,11 @@ export class NavbarComponent implements OnInit {
 
   onSearch() {
     console.log('Searching:', this.searchQuery, 'in:', this.selectedCategory);
+  }
+
+  // Add the logout method
+  logout() {
+    this.authService.signout();
+    this.isDashboardDropdownOpen = false; // Close the dropdown menu after clicking
   }
 }
