@@ -67,13 +67,24 @@
             <small><i class="fa fa-home me-2"></i> My Dashboard</small>
           </a>
           <div class="dropdown-menu rounded" [class.show]="isDashboardDropdownOpen">
-            <a routerLink="/login" class="dropdown-item"> Login</a>
-            <a routerLink="/wishlist" class="dropdown-item"> Wishlist</a>
-            <a routerLink="/cart" class="dropdown-item"> My Card</a>
-            <a routerLink="/notifications" class="dropdown-item"> Notifications</a>
-            <a routerLink="/account-settings" class="dropdown-item"> Account Settings</a>
-            <a routerLink="/my-account" class="dropdown-item"> My Account</a>
-            <a href="javascript:void(0)" class="dropdown-item"> Log Out</a>
+            <ng-container *ngIf="authService.currentUser() as user; else guestMenu">
+              <a routerLink="/my-account" class="dropdown-item text-primary fw-bold">
+                <i class="fas fa-user me-1"></i> Hi, {{ user.name }}
+              </a>
+              <hr class="dropdown-divider" />
+              <a routerLink="/wishlist" class="dropdown-item"> Wishlist</a>
+              <a routerLink="/cart" class="dropdown-item"> My Cart</a>
+              <a routerLink="/notifications" class="dropdown-item"> Notifications</a>
+              <a routerLink="/account-settings" class="dropdown-item"> Account Settings</a>
+              <a href="javascript:void(0)" class="dropdown-item text-danger" (click)="logout()">
+                <i class="fas fa-sign-out-alt me-1"></i> Log Out
+              </a>
+            </ng-container>
+
+            <ng-template #guestMenu>
+              <a routerLink="/signin" class="dropdown-item"> Login</a>
+              <a routerLink="/signup" class="dropdown-item"> Create Account</a>
+            </ng-template>
           </div>
         </div>
       </div>
@@ -270,4 +281,3 @@
     </div>
   </div>
 </div>
-<!-- Navbar & Hero End -->
