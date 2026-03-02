@@ -1,0 +1,50 @@
+<!-- src/app/pages/check-email/check-email.html -->
+<div class="check-email-wrapper">
+  <div class="card">
+    <div class="icon-circle">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <rect x="2" y="4" width="20" height="16" rx="2" />
+        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+      </svg>
+    </div>
+
+    <h1>Check your email</h1>
+
+    <p class="subtitle">
+      We've sent a confirmation link to
+      <ng-container *ngIf="email">
+        <strong>{{ email }}</strong>
+      </ng-container>
+      <ng-container *ngIf="!email">your email address</ng-container>. Click the link to activate
+      your account.
+    </p>
+
+    <div class="info-box">
+      <svg
+        class="info-icon"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <circle cx="12" cy="12" r="10" />
+        <line x1="12" y1="8" x2="12" y2="12" />
+        <line x1="12" y1="16" x2="12.01" y2="16" />
+      </svg>
+      <span>Didn't receive it? Check your spam folder.</span>
+    </div>
+
+    <a routerLink="/signin" class="btn-back">Back to Sign In</a>
+  </div>
+</div>

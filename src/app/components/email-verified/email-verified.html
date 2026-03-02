@@ -1,0 +1,54 @@
+<!-- src/app/pages/email-verified/email-verified.html -->
+<div class="verified-wrapper">
+  <div class="card">
+    <!-- Loading -->
+    <ng-container *ngIf="state === 'loading'">
+      <div class="spinner"></div>
+      <h1>Verifying your email…</h1>
+      <p class="subtitle">Please wait a moment.</p>
+    </ng-container>
+
+    <!-- Success -->
+    <ng-container *ngIf="state === 'success'">
+      <div class="icon-circle success">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M20 6 9 17l-5-5" />
+        </svg>
+      </div>
+      <h1>Email Confirmed!</h1>
+      <p class="subtitle">
+        Your account is now active. You'll be redirected to the sign‑in page in a moment.
+      </p>
+      <a routerLink="/signin" class="btn btn-primary">Sign In Now</a>
+    </ng-container>
+
+    <!-- Error -->
+    <ng-container *ngIf="state === 'error'">
+      <div class="icon-circle error">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </div>
+      <h1>Verification Failed</h1>
+      <p class="subtitle">{{ errorMessage }}</p>
+      <a routerLink="/signup" class="btn btn-secondary">Try Signing Up Again</a>
+    </ng-container>
+  </div>
+</div>
