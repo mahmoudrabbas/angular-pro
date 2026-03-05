@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule, Router } from '@angular/router';
 import { ProductService } from '../../services/product.service';
 import { Product } from '../../models/product.model';
+import { CartService } from '../../services/cart.service';
 
 @Component({
   selector: 'app-product-detail',
@@ -14,12 +15,12 @@ import { Product } from '../../models/product.model';
 export class ProductDetail implements OnInit {
   product:
     | (Product & {
-        images: string[];
-        description: string;
-        sku: string;
-        inventory: number;
-        price?: number; // optional if needed
-      })
+      images: string[];
+      description: string;
+      sku: string;
+      inventory: number;
+      price?: number; // optional if needed
+    })
     | null = null;
   loading = true;
   error: string | null = null;
@@ -30,7 +31,8 @@ export class ProductDetail implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private productService: ProductService,
-  ) {}
+    private cartService: CartService,
+  ) { }
 
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
@@ -80,11 +82,20 @@ export class ProductDetail implements OnInit {
   }
 
   addToCart(): void {
-    console.log('Adding to cart:', { product: this.product, quantity: this.quantity });
+    if (this.product) {
+      this.cartService.addToCart(this.product.id.toString(), this.quantity).subscribe({
+        next: () => console.log('Added to cart'),
+        error: (err: any) => console.error('Failed to add to cart', err),
+      });
+    }
   }
 
   buyNow(): void {
-    console.log('Buy now:', { product: this.product, quantity: this.quantity });
-    this.router.navigate(['/checkout']);
+    if (this.product) {
+      this.cartService.addToCart(this.product.id.toString(), this.quantity).subscribe({
+        next: () => this.router.navigate(['/checkout']),
+        error: (err: any) => console.error('Failed to add to cart', err),
+      });
+    }
   }
 }

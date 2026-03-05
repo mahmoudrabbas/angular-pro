@@ -29,7 +29,7 @@ export class CarouselComponent implements OnInit, AfterViewInit, OnDestroy {
     @Inject(PLATFORM_ID) private platformId: Object,
     private scriptInit: ScriptInitService,
     private productService: ProductService,
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadCarouselFromProducts();
@@ -43,7 +43,7 @@ export class CarouselComponent implements OnInit, AfterViewInit, OnDestroy {
     }, 500);
   }
 
-  ngOnDestroy(): void {}
+  ngOnDestroy(): void { }
 
   private loadCarouselFromProducts(): void {
     // Get products from your ProductService

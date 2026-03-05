@@ -83,12 +83,8 @@
         <div class="col-lg-8 text-end wow fadeInRight" data-wow-delay="0.1s">
           <ul class="nav nav-pills d-inline-flex text-center mb-5">
             <li *ngFor="let tab of tabs" class="nav-item mb-4">
-              <a
-                class="d-flex mx-2 py-2 bg-light rounded-pill"
-                [class.active]="activeTab === tab.id"
-                href="javascript:void(0)"
-                (click)="loadTab(tab.id)"
-              >
+              <a class="d-flex mx-2 py-2 bg-light rounded-pill" [class.active]="activeTab === tab.id"
+                href="javascript:void(0)" (click)="loadTab(tab.id)">
                 <span class="text-dark" style="width: 130px">{{ tab.label }}</span>
               </a>
             </li>

@@ -1,15 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-
-interface CartItem {
-  id: number;
-  image: string;
-  name: string;
-  price: number;
-  oldPrice?: number;
-  quantity: number;
-}
+import { CartService } from '../../services/cart.service';
+import { CartItem } from '../../models/cart.model';
 
 @Component({
   selector: 'app-cart',
@@ -18,52 +11,19 @@ interface CartItem {
   templateUrl: './cart.html',
   styleUrls: ['./cart.scss'],
 })
-export class Cart {
-  cartItems: CartItem[] = [
-    {
-      id: 1,
-      image: 'assets/img/product-3.png',
-      name: 'Apple iPad Mini G2356',
-      price: 1050.0,
-      oldPrice: 1250.0,
-      quantity: 1,
-    },
-    {
-      id: 2,
-      image: 'assets/img/product-4.png',
-      name: 'Samsung Galaxy S24 Ultra',
-      price: 1299.99,
-      quantity: 2,
-    },
-    {
-      id: 3,
-      image: 'assets/img/product-5.png',
-      name: 'Sony WH-1000XM5 Headphones',
-      price: 399.99,
-      oldPrice: 499.99,
-      quantity: 1,
-    },
-  ];
+export class Cart implements OnInit {
+  constructor(public cartService: CartService) { }
 
-  increaseQuantity(item: CartItem): void {
-    item.quantity++;
+  ngOnInit(): void {
+    this.cartService.loadCart();
   }
 
-  decreaseQuantity(item: CartItem): void {
-    if (item.quantity > 1) {
-      item.quantity--;
-    }
-  }
-
-  removeItem(item: CartItem): void {
-    const index = this.cartItems.indexOf(item);
-    if (index > -1) {
-      this.cartItems.splice(index, 1);
-    }
+  get cartItems(): CartItem[] {
+    return this.cartService.cart()?.items ?? [];
   }
 
   get subtotal(): number {
-    return this.cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    return this.cartService.cartTotal();
   }
 
   get shipping(): number {
@@ -72,5 +32,41 @@ export class Cart {
 
   get total(): number {
     return this.subtotal + this.shipping;
+  }
+
+  get loading(): boolean {
+    return this.cartService.loading();
+  }
+
+  get error(): string | null {
+    return this.cartService.error();
+  }
+
+  increaseQuantity(item: CartItem): void {
+    this.cartService
+      .updateQuantity(item.product._id, item.quantity + 1)
+      .subscribe();
+  }
+
+  decreaseQuantity(item: CartItem): void {
+    if (item.quantity > 1) {
+      this.cartService
+        .updateQuantity(item.product._id, item.quantity - 1)
+        .subscribe();
+    }
+  }
+
+  removeItem(item: CartItem): void {
+    this.cartService.removeItem(item.product._id).subscribe();
+  }
+
+  clearCart(): void {
+    this.cartService.clearCart().subscribe();
+  }
+
+  getProductImage(item: CartItem): string {
+    return item.product?.images?.length
+      ? item.product.images[0]
+      : 'assets/img/product-3.png';
   }
 }

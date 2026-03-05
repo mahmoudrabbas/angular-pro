@@ -14,6 +14,10 @@ import { ResetPassword } from './components/reset-password/reset-password';
 import { AdminDashboard } from './components/admin-dashboard/admin-dashboard';
 import { Users } from './components/users/users';
 import { AdminLayout } from './components/admin-layout/admin-layout';
+import { PaymentSuccess } from './components/payment-success/payment-success';
+import { PaymentCancel } from './components/payment-cancel/payment-cancel';
+import { PaymentFailed } from './components/payment-failed/payment-failed';
+
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'home', component: Home },
@@ -22,6 +26,9 @@ export const routes: Routes = [
   { path: 'product/:id', component: ProductDetail },
   { path: 'cart', component: Cart }, // Shopping cart
   { path: 'checkout', component: Checkout }, // Checkout page
+  { path: 'payment/success', component: PaymentSuccess }, // Payment success
+  { path: 'payment/cancel', component: PaymentCancel },   // Payment cancelled
+  { path: 'payment/failed', component: PaymentFailed },   // Payment failed
   { path: 'signin', component: Login }, // Login page
   { path: 'signup', component: Signup }, // Signup page
   {
@@ -47,6 +54,5 @@ export const routes: Routes = [
   { path: 'forgot-password', component: ForgotPassword },
   { path: 'reset-password/:id/:token', component: ResetPassword },
   { path: 'profile', component: UserProfile }, // User profile
-  { path: '**', redirectTo: '/404' },
-  { path: '**', redirectTo: '/products' },
+  { path: '**', redirectTo: '/home' },
 ];
