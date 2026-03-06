@@ -190,16 +190,18 @@
                 [class.is-invalid]="editForm.get('name')?.invalid && editForm.get('name')?.touched"
               />
             </div>
+            <!-- Email is read-only — changing email requires a separate
+                 re-verification flow and must NOT be sent to updateUser -->
             <div class="col-12">
               <label class="form-label small fw-bold text-muted text-uppercase">Email</label>
-              <input
-                formControlName="email"
-                type="email"
-                class="form-control"
-                [class.is-invalid]="
-                  editForm.get('email')?.invalid && editForm.get('email')?.touched
-                "
-              />
+              <div class="form-control bg-light text-muted d-flex align-items-center gap-2">
+                <i class="fas fa-lock fa-xs opacity-50"></i>
+                {{ selectedUser?.email }}
+                <span class="ms-auto badge bg-secondary-subtle text-secondary fw-normal small"
+                  >Read-only</span
+                >
+              </div>
+              <div class="form-text">Email changes require a separate verification flow.</div>
             </div>
             <div class="col-md-6">
               <label class="form-label small fw-bold text-muted text-uppercase">Phone</label>
@@ -225,6 +227,48 @@
             </button>
           </div>
         </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Delete confirmation modal ─────────────────────────────────────────── -->
+<div
+  class="modal fade show d-block"
+  tabindex="-1"
+  *ngIf="showDeleteModal"
+  style="background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px)"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header border-bottom-0 pt-4 px-4">
+        <h5 class="modal-title fw-bold text-danger">
+          <i class="fas fa-triangle-exclamation me-2"></i> Delete User
+        </h5>
+        <button type="button" class="btn-close" (click)="closeDeleteModal()"></button>
+      </div>
+      <div class="modal-body px-4 pb-2">
+        <div class="alert alert-danger py-2 small" *ngIf="modalError">{{ modalError }}</div>
+        <p class="text-muted mb-1">
+          Are you sure you want to delete
+          <span class="fw-bold text-dark">{{ selectedUser?.name }}</span
+          >?
+        </p>
+        <p class="text-muted small">This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer border-0 px-4 pb-4 gap-2">
+        <button type="button" class="btn btn-light border px-4" (click)="closeDeleteModal()">
+          Cancel
+        </button>
+        <button
+          type="button"
+          class="btn btn-danger px-4 fw-bold"
+          (click)="confirmDelete()"
+          [disabled]="modalLoading"
+        >
+          <span *ngIf="!modalLoading"><i class="fas fa-trash me-1"></i> Delete</span>
+          <span *ngIf="modalLoading" class="spinner-border spinner-border-sm"></span>
+        </button>
       </div>
     </div>
   </div>
