@@ -24,7 +24,6 @@
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "css",
-
             "styles": [
               "node_modules/bootstrap-icons/font/bootstrap-icons.css",
               "src/assets/css/bootstrap.min.css",
