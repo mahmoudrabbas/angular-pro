@@ -45,28 +45,49 @@ export class ProductDetail implements OnInit {
 
   loadProduct(id: string): void {
     this.loading = true;
-    this.productService.getById(id).subscribe(product => {
-      if (product) {
-        this.product = {
-          ...product,
-          images: [product.image],
-          description: this.getDescriptionForProduct(product),
-          sku: `SKU-${product.id}`,
-          inventory: 10,
-        };
-        this.selectedImage = this.product.images[0];
-        this.error = null;
-      } else {
-        this.error = 'Product not found.';
-      }
-      this.loading = false;
-    });
-  }
+    this.productService.getProductDetailById(id).subscribe({
+      next: (apiProduct: any) => {
+        if (apiProduct) {
+          // Extract image URLs from API response
+          let images: string[] = [];
+          if (apiProduct.images && apiProduct.images.length > 0) {
+            images = apiProduct.images.map((img: any) => img.url || img).filter(Boolean);
+          }
+          if (images.length === 0) {
+            images = ['assets/img/product-1.png'];
+          }
 
-  // Helper to provide a description based on product
-  private getDescriptionForProduct(product: Product): string {
-    // You can customize based on product category or id
-    return `This is a high-quality ${product.name} from our ${product.category} collection. Perfect for your daily needs.`;
+          const price = apiProduct.price || 0;
+          const compareAtPrice = apiProduct.compareAtPrice || price;
+
+          this.product = {
+            id: apiProduct._id || apiProduct.id,
+            image: images[0],
+            category: apiProduct.shortDescription || apiProduct.category?.name || 'Electronics',
+            name: apiProduct.name || 'Unknown Product',
+            oldPrice: `$${compareAtPrice.toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
+            newPrice: `$${price.toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
+            rating: apiProduct.ratings?.average ? Math.round(apiProduct.ratings.average) : 4,
+            badge: apiProduct.isFeatured ? 'New' : null,
+            tab: ['all'],
+            images: images,
+            description: apiProduct.description || `High-quality ${apiProduct.name}`,
+            sku: apiProduct.sku || `SKU-${apiProduct._id || apiProduct.id}`,
+            inventory: apiProduct.inventory?.quantity ?? 10,
+          };
+          this.selectedImage = images[0];
+          this.error = null;
+        } else {
+          this.error = 'Product not found.';
+        }
+        this.loading = false;
+      },
+      error: (err: any) => {
+        console.error('Failed to load product:', err);
+        this.error = 'Failed to load product. Please try again later.';
+        this.loading = false;
+      }
+    });
   }
 
   increaseQuantity(): void {

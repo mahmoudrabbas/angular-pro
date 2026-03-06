@@ -65,8 +65,11 @@ export class Cart implements OnInit {
   }
 
   getProductImage(item: CartItem): string {
-    return item.product?.images?.length
-      ? item.product.images[0]
-      : 'assets/img/product-3.png';
+    if (item.product?.images?.length) {
+      const img = item.product.images[0];
+      // Handle both {url: "..."} objects and plain string URLs
+      return typeof img === 'string' ? img : (img as any).url || 'assets/img/product-3.png';
+    }
+    return 'assets/img/product-3.png';
   }
 }

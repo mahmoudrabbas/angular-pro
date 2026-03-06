@@ -38,8 +38,8 @@
 //   }
 // }
 
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ProductCardComponent } from '../product-card/product-card';
 import { Product } from '../../models/product.model';
 import { ProductService } from '../../services/product.service';
@@ -76,7 +76,8 @@ export class ProductListComponent implements OnInit {
 
   constructor(
     private productService: ProductService,
-    private cartService: CartService
+    private cartService: CartService,
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
   ngOnInit(): void {
@@ -90,6 +91,15 @@ export class ProductListComponent implements OnInit {
     this.products$.subscribe({
       next: (products) => {
         this.products = products;
+        // Re-initialize WOW.js after Angular renders the product cards
+        if (isPlatformBrowser(this.platformId)) {
+          setTimeout(() => {
+            const WOW = (window as any).WOW;
+            if (WOW) {
+              new WOW({ live: true }).init();
+            }
+          }, 100);
+        }
       },
       error: (err) => {
         console.error('Failed to load products', err);
