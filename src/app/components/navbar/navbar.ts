@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
+import { CartService } from '../../services/cart.service';
 
 @Component({
   selector: 'app-navbar',
@@ -39,12 +40,17 @@ export class NavbarComponent implements OnInit {
   ];
 
   // Inject the AuthService here
-  constructor(public authService: AuthService) {}
+  constructor(
+    public authService: AuthService,
+    public cartService: CartService,
+  ) { }
 
   ngOnInit() {
     setTimeout(() => {
       this.isLoading = false;
     }, 500);
+    // Load cart on init for badge count
+    this.cartService.loadCart();
   }
 
   toggleDropdown(dropdown: string) {

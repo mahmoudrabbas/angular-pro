@@ -62,7 +62,7 @@ export class Users implements OnInit, OnDestroy {
   private initEditForm(): void {
     this.editForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
-      email: ['', [Validators.required, Validators.email]],
+      // email intentionally excluded — changing email requires re-verification
       phone: [''],
       address: [''],
     });
@@ -133,7 +133,7 @@ export class Users implements OnInit, OnDestroy {
     this.selectedUser = user;
     this.editForm.patchValue({
       name: user.name,
-      email: user.email,
+      // email not patched — it is displayed as read-only in the template
       phone: user.phone || '',
       address: user.address || '',
     });
