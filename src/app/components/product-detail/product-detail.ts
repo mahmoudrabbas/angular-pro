@@ -43,24 +43,22 @@ export class ProductDetail implements OnInit {
 
   loadProduct(id: string): void {
     this.loading = true;
-    const productId = parseInt(id, 10);
-    const product = this.productService.getById(productId);
-
-    if (product) {
-      this.product = {
-        ...product,
-        images: [product.image],
-        description: this.getDescriptionForProduct(product),
-        sku: `SKU-${product.id}`,
-        inventory: 10,
-      };
-      this.selectedImage = this.product.images[0];
-      this.error = null;
-    } else {
-      this.error = 'Product not found.';
-    }
-
-    this.loading = false;
+    this.productService.getById(id).subscribe(product => {
+      if (product) {
+        this.product = {
+          ...product,
+          images: [product.image],
+          description: this.getDescriptionForProduct(product),
+          sku: `SKU-${product.id}`,
+          inventory: 10,
+        };
+        this.selectedImage = this.product.images[0];
+        this.error = null;
+      } else {
+        this.error = 'Product not found.';
+      }
+      this.loading = false;
+    });
   }
 
   // Helper to provide a description based on product

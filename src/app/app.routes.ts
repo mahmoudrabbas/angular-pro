@@ -14,12 +14,17 @@ import { ResetPassword } from './components/reset-password/reset-password';
 import { AdminDashboard } from './components/admin-dashboard/admin-dashboard';
 import { Users } from './components/users/users';
 import { AdminLayout } from './components/admin-layout/admin-layout';
+import { CategoryListComponent } from './components/categories/category-list/category-list';
+import { CategoryFormComponent } from './components/categories/category-form/category-form';
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'home', component: Home },
 
   { path: 'product', component: ProductListComponent },
   { path: 'product/:id', component: ProductDetail },
+  { path: 'categories', component: CategoryListComponent },
+  { path: 'category/add', component: CategoryFormComponent },
+  { path: 'category/edit/:id', component: CategoryFormComponent },
   { path: 'cart', component: Cart }, // Shopping cart
   { path: 'checkout', component: Checkout }, // Checkout page
   { path: 'signin', component: Login }, // Login page

@@ -1,0 +1,108 @@
+<div class="container-fluid py-5">
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="card shadow">
+          <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">
+              @if (isEditing) {
+                Edit Category
+              } @else {
+                Add New Category
+              }
+            </h4>
+          </div>
+          <div class="card-body">
+            <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="name" class="form-label">Category Name *</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="name"
+                    formControlName="name"
+                    [class.is-invalid]="name.invalid && name.touched"
+                  >
+                  @if (name.invalid && name.touched) {
+                    <div class="invalid-feedback">
+                      @if (name.errors?.['required']) {
+                        Category name is required.
+                      }
+                      @if (name.errors?.['minlength']) {
+                        Category name must be at least 3 characters long.
+                      }
+                    </div>
+                  }
+                </div>
+                
+                <div class="col-md-6 mb-3">
+                  <label for="slug" class="form-label">Slug *</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    id="slug"
+                    formControlName="slug"
+                    [class.is-invalid]="slug.invalid && slug.touched"
+                    (input)="generateSlug()"
+                  >
+                  @if (slug.invalid && slug.touched) {
+                    <div class="invalid-feedback">
+                      @if (slug.errors?.['required']) {
+                        Slug is required.
+                      }
+                      @if (slug.errors?.['pattern']) {
+                        Slug can only contain lowercase letters, numbers, and hyphens.
+                      }
+                    </div>
+                  }
+                </div>
+              </div>
+              
+              <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea 
+                  class="form-control" 
+                  id="description"
+                  formControlName="description"
+                  rows="4"
+                ></textarea>
+              </div>
+              
+              <div class="mb-3">
+                <label for="image" class="form-label">Category Image</label>
+                <input 
+                  type="url" 
+                  class="form-control" 
+                  id="image"
+                  formControlName="image"
+                  placeholder="Enter image URL"
+                >
+              </div>
+              
+              <div class="d-flex justify-content-between">
+                <button type="button" class="btn btn-secondary" (click)="onCancel()">
+                  Cancel
+                </button>
+                <button 
+                  type="submit" 
+                  class="btn btn-primary"
+                  [disabled]="categoryForm.invalid || isSubmitting"
+                >
+                  @if (isSubmitting) {
+                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  }
+                  @if (isEditing) {
+                    Update Category
+                  } @else {
+                    Add Category
+                  }
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

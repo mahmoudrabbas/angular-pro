@@ -1,0 +1,73 @@
+<div class="container-fluid py-5">
+  <div class="container py-5">
+    <div class="text-center mx-auto mb-5" style="max-width: 700px;">
+      <h1 class="display-4">Product Categories</h1>
+      <p class="mb-4">Browse our wide range of product categories</p>
+    </div>
+    
+    <!-- Loading State -->
+    @if (loading) {
+      <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2">Loading categories...</p>
+      </div>
+    }
+
+    <!-- Error State -->
+    @if (error) {
+      <div class="alert alert-danger" role="alert">
+        {{ error }}
+        <button class="btn btn-outline-danger btn-sm ms-3" (click)="loadCategories()">
+          Try Again
+        </button>
+      </div>
+    }
+
+    <!-- Categories Grid -->
+    @if (!loading && !error && categories.length > 0) {
+      <div class="row g-4">
+        @for (category of categories; track category._id) {
+          <div class="col-lg-4 col-md-6 wow fadeInUp" [attr.data-wow-delay]="getDelay($index)">
+            <div class="category-card h-100">
+              <div class="category-image position-relative overflow-hidden">
+                <img 
+                  [src]="category.image || 'https://via.placeholder.com/400x300?text=No+Image'" 
+                  class="img-fluid w-100" 
+                  [alt]="category.name"
+                  style="height: 250px; object-fit: cover;"
+                >
+                <div class="category-overlay">
+                  <a [routerLink]="['/category', category.slug]" class="btn btn-primary px-4 py-2">
+                    View Products
+                  </a>
+                </div>
+              </div>
+              <div class="category-content p-4">
+                <h5 class="mb-3">{{ category.name }}</h5>
+                @if (category.description) {
+                  <p class="text-muted mb-4">{{ category.description }}</p>
+                }
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="badge bg-primary">{{ category.name }}</span>
+                  <a [routerLink]="['/category', category.slug]" class="text-decoration-none">
+                    Explore <i class="fa fa-arrow-right ms-2"></i>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Empty State -->
+    @if (!loading && !error && categories.length === 0) {
+      <div class="text-center py-5">
+        <h3>No Categories Found</h3>
+        <p class="text-muted">Check back later for new categories.</p>
+      </div>
+    }
+  </div>
+</div>

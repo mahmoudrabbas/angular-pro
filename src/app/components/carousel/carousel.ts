@@ -47,55 +47,60 @@ export class CarouselComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private loadCarouselFromProducts(): void {
     // Get products from your ProductService
-    const products = this.productService.getByTab('all').slice(0, 3);
+    this.productService.getByTab('all').subscribe(products => {
+      const carouselProducts = products.slice(0, 3);
 
-    // Transform products into carousel items
-    this.carouselItems = products.map((product, index) => ({
-      id: product.id,
-      image: product.image,
-      discount: index === 0 ? 'Save Up To A $400' : 'Save Up To A $200',
-      title: product.name,
-      description: 'Terms and Condition Apply',
-      buttonText: 'Shop Now',
-      buttonLink: `/product/${product.id}`,
-    }));
+      // Transform products into carousel items
+      this.carouselItems = carouselProducts.map((product, index) => ({
+        id: product.id,
+        image: product.image,
+        discount: index === 0 ? 'Save Up To A $400' : 'Save Up To A $200',
+        title: product.name,
+        description: 'Terms and Condition Apply',
+        buttonText: 'Shop Now',
+        buttonLink: `/product/${product.id}`,
+      }));
 
-    // You can also update banner offer with a real product
-    const featuredProduct = this.productService.getByTab('featured')[0];
-    if (featuredProduct) {
-      this.bannerOffer = {
-        image: featuredProduct.image,
-        saveText: 'Save $48.00',
-        offerText: 'Special Offer',
-        productName: featuredProduct.name,
-        oldPrice: featuredProduct.oldPrice || '$1,250.00',
-        newPrice: featuredProduct.newPrice || '$1,050.00',
-        category: featuredProduct.category,
-      };
-    }
+      // Update banner offer with a real product
+      if (products.length > 0) {
+        const featuredProduct = products[0];
+        this.bannerOffer = {
+          image: featuredProduct.image,
+          saveText: 'Save $48.00',
+          offerText: 'Special Offer',
+          productName: featuredProduct.name,
+          oldPrice: featuredProduct.oldPrice || '$1,250.00',
+          newPrice: featuredProduct.newPrice || '$1,050.00',
+          category: featuredProduct.category,
+        };
+      }
+    });
   }
 
   addToCart(): void {
     console.log('🛒 Added to cart:', this.bannerOffer.productName);
     // Find the actual product and add to cart
-    const product = this.productService.getById(1); // or find by name
-    if (product) {
-      // Emit or call cart service
-      console.log('Product details:', product);
-    }
+    this.productService.getById('1').subscribe(product => {
+      if (product) {
+        // Emit or call cart service
+        console.log('Product details:', product);
+      }
+    });
   }
 
   // Optional: Refresh carousel with different products
   refreshCarousel(tab: 'all' | 'new' | 'featured' | 'top' = 'all'): void {
-    const products = this.productService.getByTab(tab).slice(0, 3);
-    this.carouselItems = products.map((product, index) => ({
-      id: product.id,
-      image: product.image,
-      discount: index === 0 ? 'Save Up To A $400' : 'Save Up To A $200',
-      title: product.name,
-      description: 'Terms and Condition Apply',
-      buttonText: 'Shop Now',
-      buttonLink: `/product/${product.id}`,
-    }));
+    this.productService.getByTab(tab).subscribe(products => {
+      const carouselProducts = products.slice(0, 3);
+      this.carouselItems = carouselProducts.map((product, index) => ({
+        id: product.id,
+        image: product.image,
+        discount: index === 0 ? 'Save Up To A $400' : 'Save Up To A $200',
+        title: product.name,
+        description: 'Terms and Condition Apply',
+        buttonText: 'Shop Now',
+        buttonLink: `/product/${product.id}`,
+      }));
+    });
   }
 }

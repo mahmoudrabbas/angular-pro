@@ -59,6 +59,237 @@
     </div>
   </div>
 
+  <!-- Quick Actions -->
+  <div class="row g-4 mb-5">
+    <div class="col-md-6">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3 border-bottom-0">
+          <h5 class="mb-0 fw-bold">Add New Product</h5>
+        </div>
+        <div class="card-body">
+          <button 
+            class="btn btn-primary mb-3" 
+            (click)="toggleProductForm()"
+            [disabled]="isAddingCategory"
+          >
+            {{ isAddingProduct ? 'Cancel' : 'Add Product' }}
+          </button>
+          
+          @if (isAddingProduct) {
+            <form (ngSubmit)="addProduct()" class="border-top pt-3">
+              <div class="row g-3">
+                <div class="col-md-6">
+                  <label class="form-label">Product Name</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    [(ngModel)]="productForm.name"
+                    name="productName"
+                    required
+                  >
+                  @if (productFormErrors['name']) {
+                    <div class="text-danger small">{{ productFormErrors['name'] }}</div>
+                  }
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Category</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    [(ngModel)]="productForm.category"
+                    name="productCategory"
+                    required
+                  >
+                  @if (productFormErrors['category']) {
+                    <div class="text-danger small">{{ productFormErrors['category'] }}</div>
+                  }
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Price ($)</label>
+                  <input 
+                    type="number" 
+                    class="form-control" 
+                    [(ngModel)]="productForm.price"
+                    name="productPrice"
+                    min="0"
+                    step="0.01"
+                    required
+                  >
+                  @if (productFormErrors['price']) {
+                    <div class="text-danger small">{{ productFormErrors['price'] }}</div>
+                  }
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">SKU</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    [(ngModel)]="productForm.sku"
+                    name="productSku"
+                    required
+                  >
+                  @if (productFormErrors['sku']) {
+                    <div class="text-danger small">{{ productFormErrors['sku'] }}</div>
+                  }
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label">Inventory</label>
+                  <input 
+                    type="number" 
+                    class="form-control" 
+                    [(ngModel)]="productForm.inventory"
+                    name="productInventory"
+                    min="0"
+                    required
+                  >
+                  @if (productFormErrors['inventory']) {
+                    <div class="text-danger small">{{ productFormErrors['inventory'] }}</div>
+                  }
+                </div>
+                <div class="col-12">
+                  <label class="form-label">Description</label>
+                  <textarea 
+                    class="form-control" 
+                    rows="3"
+                    [(ngModel)]="productForm.description"
+                    name="productDescription"
+                    required
+                  ></textarea>
+                  @if (productFormErrors['description']) {
+                    <div class="text-danger small">{{ productFormErrors['description'] }}</div>
+                  }
+                </div>
+                <div class="col-12">
+                  <label class="form-label">Images</label>
+                  <div class="input-group mb-2">
+                    <input 
+                      type="text" 
+                      class="form-control" 
+                      placeholder="Image URL"
+                      #imageInput
+                    >
+                    <button 
+                      type="button" 
+                      class="btn btn-outline-secondary"
+                      (click)="productForm.images.push(imageInput.value); imageInput.value=''"
+                    >
+                      Add Image
+                    </button>
+                  </div>
+                  <div class="d-flex flex-wrap gap-2">
+                    @for (image of productForm.images; track $index) {
+                      <div class="position-relative">
+                        <img [src]="image" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;" alt="Product image">
+                        <button 
+                          type="button" 
+                          class="btn btn-sm btn-danger position-absolute"
+                          style="top: -10px; right: -10px;"
+                          (click)="productForm.images.splice($index, 1)"
+                        >
+                          ×
+                        </button>
+                      </div>
+                    }
+                  </div>
+                  @if (productFormErrors['images']) {
+                    <div class="text-danger small">{{ productFormErrors['images'] }}</div>
+                  }
+                </div>
+                <div class="col-12">
+                  <button type="submit" class="btn btn-success">Create Product</button>
+                  <button type="button" class="btn btn-secondary ms-2" (click)="toggleProductForm()">Cancel</button>
+                </div>
+                @if (productFormSuccess) {
+                  <div class="col-12">
+                    <div class="alert alert-success">Product created successfully!</div>
+                  </div>
+                }
+                @if (productFormErrors['general']) {
+                  <div class="col-12">
+                    <div class="alert alert-danger">{{ productFormErrors['general'] }}</div>
+                  </div>
+                }
+              </div>
+            </form>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-white py-3 border-bottom-0">
+          <h5 class="mb-0 fw-bold">Add New Category</h5>
+        </div>
+        <div class="card-body">
+          <button 
+            class="btn btn-primary mb-3" 
+            (click)="toggleCategoryForm()"
+            [disabled]="isAddingProduct"
+          >
+            {{ isAddingCategory ? 'Cancel' : 'Add Category' }}
+          </button>
+          
+          @if (isAddingCategory) {
+            <form (ngSubmit)="addCategory()" class="border-top pt-3">
+              <div class="row g-3">
+                <div class="col-12">
+                  <label class="form-label">Category Name</label>
+                  <input 
+                    type="text" 
+                    class="form-control" 
+                    [(ngModel)]="categoryForm.name"
+                    name="categoryName"
+                    required
+                  >
+                  @if (categoryFormErrors['name']) {
+                    <div class="text-danger small">{{ categoryFormErrors['name'] }}</div>
+                  }
+                </div>
+                <div class="col-12">
+                  <label class="form-label">Description</label>
+                  <textarea 
+                    class="form-control" 
+                    rows="3"
+                    [(ngModel)]="categoryForm.description"
+                    name="categoryDescription"
+                    required
+                  ></textarea>
+                  @if (categoryFormErrors['description']) {
+                    <div class="text-danger small">{{ categoryFormErrors['description'] }}</div>
+                  }
+                </div>
+                <div class="col-12">
+                  <label class="form-label">Image URL (optional)</label>
+                  <input 
+                    type="url" 
+                    class="form-control" 
+                    [(ngModel)]="categoryForm.image"
+                    name="categoryImage"
+                  >
+                </div>
+                <div class="col-12">
+                  <button type="submit" class="btn btn-success">Create Category</button>
+                  <button type="button" class="btn btn-secondary ms-2" (click)="toggleCategoryForm()">Cancel</button>
+                </div>
+                @if (categoryFormSuccess) {
+                  <div class="col-12">
+                    <div class="alert alert-success">Category created successfully!</div>
+                  </div>
+                }
+                @if (categoryFormErrors['general']) {
+                  <div class="col-12">
+                    <div class="alert alert-danger">{{ categoryFormErrors['general'] }}</div>
+                  </div>
+                }
+              </div>
+            </form>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="card border-0 shadow-sm">
     <div class="card-header bg-white py-3 border-bottom-0">
       <div class="d-flex align-items-center justify-content-between">

@@ -41,9 +41,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ProductCardComponent } from '../product-card/product-card';
-// import { ServicesComponent } from '../services/services.component';
 import { Product } from '../../models/product.model';
-import { ProductService } from '../../services/product.service'; // Fix import
+import { ProductService } from '../../services/product.service';
+import { Observable } from 'rxjs';
 
 type TabId = 'all' | 'new' | 'featured' | 'top';
 
@@ -55,7 +55,7 @@ interface Tab {
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [CommonModule, ProductCardComponent], // Add ServicesComponent here
+  imports: [CommonModule, ProductCardComponent],
   templateUrl: './product-list.component.html',
 })
 export class ProductListComponent implements OnInit {
@@ -69,11 +69,11 @@ export class ProductListComponent implements OnInit {
   ];
 
   products: Product[] = [];
+  products$: Observable<Product[]> = new Observable();
 
   // wow delays cycle: 0.1s, 0.3s, 0.5s, 0.7s
   wowDelays = ['0.1s', '0.3s', '0.5s', '0.7s'];
 
-  // Fix constructor - inject ProductService, not ServicesComponent
   constructor(private productService: ProductService) {}
 
   ngOnInit(): void {
@@ -82,7 +82,10 @@ export class ProductListComponent implements OnInit {
 
   loadTab(tab: TabId): void {
     this.activeTab = tab;
-    this.products = this.productService.getByTab(tab); // Use productService
+    this.products$ = this.productService.getByTab(tab);
+    this.products$.subscribe(products => {
+      this.products = products;
+    });
   }
 
   getDelay(index: number): string {

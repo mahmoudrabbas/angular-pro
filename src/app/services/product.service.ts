@@ -69,13 +69,18 @@
 // }
 
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Product } from '../models/product.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProductService {
-  private products: Product[] = [
+  private apiUrl = 'https://back-omega-amber.vercel.app/api/products';
+  
+  private mockProducts: Product[] = [
     // All Products
     {
       id: 1,
@@ -302,15 +307,76 @@ export class ProductService {
     },
   ];
 
-  getAll(): Product[] {
-    return this.products;
+  constructor(private http: HttpClient) {}
+
+  // Get all products from API
+  getAll(): Observable<Product[]> {
+    return this.http.get<any[]>(this.apiUrl).pipe(
+      map(products => {
+        console.log('API Response:', products);
+        const mappedProducts = products.map(product => this.mapApiToProduct(product));
+        console.log('Mapped Products:', mappedProducts);
+        return mappedProducts;
+      })
+    );
   }
 
-  getByTab(tab: 'all' | 'new' | 'featured' | 'top'): Product[] {
-    return this.products.filter((p) => p.tab.includes(tab));
+  // Add a new product to the API
+  create(product: Omit<Product, 'id' | 'tab'>): Observable<Product> {
+    console.log('Creating product with data:', product);
+    return this.http.post<any>(this.apiUrl, product).pipe(
+      map(response => {
+        console.log('Product API response:', response);
+        return this.mapApiToProduct(response);
+      })
+    );
   }
 
-  getById(id: number): Product | undefined {
-    return this.products.find((p) => p.id === id);
+  // Update an existing product
+  update(id: string, product: Partial<Product>): Observable<Product> {
+    return this.http.put<any>(`${this.apiUrl}/${id}`, product).pipe(
+      map(response => this.mapApiToProduct(response))
+    );
+  }
+
+  // Delete a product
+  delete(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  
+  // Get products by tab (all, new, featured, top)
+  getByTab(tab: 'all' | 'new' | 'featured' | 'top'): Observable<Product[]> {
+    return this.getAll().pipe(
+      map(products => {
+        if (tab === 'all') return products;
+        
+        // For other tabs, we'll need to filter based on API response
+        // For now, return all products and let the API handle filtering
+        return products;
+      })
+    );
+  }
+
+  // Get product by ID
+  getById(id: string): Observable<Product | undefined> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`).pipe(
+      map(product => this.mapApiToProduct(product))
+    );
+  }
+
+  // Map API response to Product interface
+  private mapApiToProduct(apiProduct: any): Product {
+    return {
+      id: apiProduct._id || Math.random(),
+      image: apiProduct.images?.[0] || 'assets/img/product-1.png',
+      category: apiProduct.category || 'Unknown',
+      name: apiProduct.name || 'Unknown Product',
+      oldPrice: `$${apiProduct.price}`,
+      newPrice: `$${apiProduct.price}`,
+      rating: 4, // Default rating, could be added to API
+      badge: null, // Could be added based on API fields
+      tab: ['all'] // Could be added based on API fields
+    };
   }
 }
