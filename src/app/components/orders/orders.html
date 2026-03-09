@@ -1,0 +1,209 @@
+<!-- ===== PAGE BODY ===== -->
+<div class="page-container">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-profile">
+      <div class="profile-avatar">ME</div>
+      <div class="profile-info">
+        <p class="profile-name">My Account</p>
+        <p class="profile-email">my&#64;email.com</p>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="#" class="sidebar-link">🏠 Dashboard</a>
+      <a routerLink="/orders" class="sidebar-link active">📦 My Orders</a>
+      <a href="#" class="sidebar-link">♡ Wishlist</a>
+      <a href="#" class="sidebar-link">📍 Addresses</a>
+      <a href="#" class="sidebar-link">💳 Payment Methods</a>
+      <a href="#" class="sidebar-link">⚙️ Account Settings</a>
+      <a href="#" class="sidebar-link">🔒 Change Password</a>
+      <a href="#" class="sidebar-link logout">🚪 Logout</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">My Orders</h1>
+        <p class="page-subtitle">Track, manage and review your orders</p>
+      </div>
+      <div class="header-stats">
+        <div class="stat-chip">
+          <span class="stat-number">{{ orders().length }}</span>
+          <span class="stat-label">Total Orders</span>
+        </div>
+        <div class="stat-chip accent">
+          <span class="stat-number">{{ countByStatus('delivered') }}</span>
+          <span class="stat-label">Delivered</span>
+        </div>
+      </div>
+    </div>
+
+    @if (isLoading()) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading your orders…</p>
+      </div>
+    }
+
+    @if (errorMsg() && !isLoading()) {
+      <div class="error-state">
+        <div class="error-icon">⚠️</div>
+        <p>{{ errorMsg() }}</p>
+        <button class="retry-btn" (click)="loadOrders()">↺ Try Again</button>
+      </div>
+    }
+
+    @if (!isLoading() && !errorMsg()) {
+      <div class="controls-bar">
+        <div class="search-orders">
+          <span class="search-icon">🔍</span>
+          <input
+            type="text"
+            placeholder="Search by order number or product name…"
+            [value]="searchQuery()"
+            (input)="onSearchChange($any($event.target).value)"
+          />
+        </div>
+        <div class="filter-tabs">
+          @for (filter of filters; track filter) {
+            <button
+              class="filter-tab"
+              [class.active]="activeFilter() === filter"
+              (click)="setFilter(filter)"
+            >
+              {{ capitalize(filter) }}
+              <span class="tab-count">{{ countByStatus(filter) }}</span>
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="orders-list">
+        @if (filteredOrders().length === 0) {
+          <div class="empty-state">
+            <div class="empty-icon">📭</div>
+            <h3>No orders found</h3>
+            <p>Try adjusting your search or filter</p>
+            <a href="#" class="shop-btn">Start Shopping</a>
+          </div>
+        }
+
+        @for (order of filteredOrders(); track order.id) {
+          <div class="order-card" [class.expanded]="isExpanded(order.id)">
+            <!-- Card Header Row -->
+            <div class="order-header" (click)="toggleExpand(order.id)">
+              <div class="order-id-block">
+                <p class="order-id">{{ order.orderNumber }}</p>
+                <p class="order-date">📅 {{ order.date }}</p>
+              </div>
+
+              <div class="order-items-preview">
+                @for (item of order.items.slice(0, 3); track item.name) {
+                  <span class="item-pill" [title]="item.name">{{ item.name }}</span>
+                }
+                @if (order.items.length > 3) {
+                  <span class="more-items">+{{ order.items.length - 3 }}</span>
+                }
+                <span class="items-count">
+                  {{ order.items.length }} item{{ order.items.length > 1 ? 's' : '' }}
+                </span>
+              </div>
+
+              <div class="order-total">
+                <p class="total-label">Total</p>
+                <p class="total-amount">${{ order.total.toLocaleString() }}</p>
+              </div>
+
+              <div class="order-badges">
+                <span class="status-badge" [ngClass]="getStatusClass(order.status)">
+                  {{ getStatusIcon(order.status) }} {{ capitalize(order.status) }}
+                </span>
+                <span class="payment-badge" [class.paid]="order.paymentStatus === 'paid'">
+                  {{ order.paymentStatus === 'paid' ? '✅ Paid' : '⏳ Unpaid' }}
+                </span>
+              </div>
+
+              <button class="expand-btn" [class.open]="isExpanded(order.id)">
+                {{ isExpanded(order.id) ? '▲' : '▼' }}
+              </button>
+            </div>
+
+            @if (isExpanded(order.id)) {
+              <div class="order-details">
+                <div class="details-grid">
+                  <div class="detail-section">
+                    <h4 class="detail-title">🛍️ Items Ordered</h4>
+                    <div class="items-list">
+                      @for (item of order.items; track item.name) {
+                        <div class="item-row">
+                          <div class="item-info">
+                            <p class="item-name">{{ item.name }}</p>
+                            <p class="item-qty">Qty: {{ item.quantity }}</p>
+                          </div>
+                          <p class="item-price">${{ item.price.toLocaleString() }}</p>
+                        </div>
+                      }
+                    </div>
+                    <div class="order-total-row">
+                      <span>Order Total</span>
+                      <span class="grand-total">${{ order.total.toLocaleString() }}</span>
+                    </div>
+                  </div>
+
+                  <div class="detail-section">
+                    <h4 class="detail-title">📍 Shipping Address</h4>
+                    <p class="detail-text">{{ order.address }}</p>
+
+                    <h4 class="detail-title" style="margin-top: 1.2rem">
+                      {{ getPaymentIcon(order.paymentMethod) }} Payment
+                    </h4>
+                    <p class="detail-text">
+                      {{ capitalize(order.paymentMethod) }} —
+                      <span [class.paid-text]="order.paymentStatus === 'paid'">
+                        {{ capitalize(order.paymentStatus) }}
+                      </span>
+                    </p>
+
+                    <h4 class="detail-title" style="margin-top: 1.2rem">📊 Status Timeline</h4>
+                    <div class="status-timeline">
+                      <div class="timeline-step" [class.done]="true">
+                        <div class="step-dot"></div>
+                        <span>Confirmed</span>
+                      </div>
+                      <div class="timeline-line"></div>
+                      <div
+                        class="timeline-step"
+                        [class.done]="['shipped', 'delivered'].includes(order.status.toLowerCase())"
+                      >
+                        <div class="step-dot"></div>
+                        <span>Shipped</span>
+                      </div>
+                      <div class="timeline-line"></div>
+                      <div
+                        class="timeline-step"
+                        [class.done]="order.status.toLowerCase() === 'delivered'"
+                      >
+                        <div class="step-dot"></div>
+                        <span>Delivered</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="details-footer">
+                  <button class="detail-action-btn invoice">🧾 Download Invoice</button>
+                  @if (order.status.toLowerCase() === 'delivered') {
+                    <button class="detail-action-btn review">⭐ Write a Review</button>
+                    <button class="detail-action-btn reorder-lg">↺ Reorder All</button>
+                  }
+                  <button class="detail-action-btn support">💬 Contact Support</button>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  </main>
+</div>

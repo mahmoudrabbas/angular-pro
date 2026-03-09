@@ -21,6 +21,7 @@ import { CategoryFormComponent } from './components/categories/category-form/cat
 import { PaymentSuccess } from './components/payment-success/payment-success';
 import { PaymentCancel } from './components/payment-cancel/payment-cancel';
 import { PaymentFailed } from './components/payment-failed/payment-failed';
+import { Orders } from './components/orders/orders';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -28,6 +29,7 @@ export const routes: Routes = [
 
   { path: 'product', component: ProductListComponent },
   { path: 'product/:id', component: ProductDetail },
+  { path: 'orders', component: Orders },
 
   // Category management
   { path: 'categories', component: CategoryListComponent },
@@ -39,8 +41,8 @@ export const routes: Routes = [
 
   // Payment results
   { path: 'payment/success', component: PaymentSuccess }, // Payment success
-  { path: 'payment/cancel', component: PaymentCancel },   // Payment cancelled
-  { path: 'payment/failed', component: PaymentFailed },   // Payment failed
+  { path: 'payment/cancel', component: PaymentCancel }, // Payment cancelled
+  { path: 'payment/failed', component: PaymentFailed }, // Payment failed
 
   { path: 'signin', component: Login }, // Login page
   { path: 'signup', component: Signup }, // Signup page

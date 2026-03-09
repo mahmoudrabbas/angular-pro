@@ -34,13 +34,11 @@ import { RouterLink, ActivatedRoute } from '@angular/router';
                   Payment is pending. Please complete payment to process your order.
                 </div>
               } @else {
-                <p class="text-muted mb-4">
-                  Thank you for your purchase!
-                </p>
+                <p class="text-muted mb-4">Thank you for your purchase!</p>
               }
 
               <div class="d-flex flex-column gap-3">
-                <a routerLink="/profile" class="btn btn-primary rounded-pill py-2 px-4">
+                <a routerLink="/orders" class="btn btn-primary rounded-pill py-2 px-4">
                   <i class="fas fa-box me-2"></i>View My Orders
                 </a>
                 <a routerLink="/product" class="btn btn-outline-secondary rounded-pill py-2 px-4">
@@ -59,7 +57,7 @@ export class PaymentSuccess implements OnInit {
   orderNumber: string | null = null;
   paymentPending = false;
 
-  constructor(private route: ActivatedRoute) { }
+  constructor(private route: ActivatedRoute) {}
 
   ngOnInit(): void {
     this.route.queryParams.subscribe((params) => {
