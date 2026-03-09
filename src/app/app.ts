@@ -5,6 +5,7 @@ import { ServicesComponent } from './components/services/services.component';
 import { ProductListComponent } from './components/product-list/product-list.component';
 import { FooterComponent } from './components/footer/footer';
 import { RouterOutlet } from '@angular/router';
+import { Chatbot } from './components/chatbot/chatbot';
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -15,6 +16,7 @@ import { RouterOutlet } from '@angular/router';
     ServicesComponent,
     FooterComponent,
     RouterOutlet,
+    Chatbot,
   ],
   templateUrl: './app.html',
   styleUrl: './app.css',

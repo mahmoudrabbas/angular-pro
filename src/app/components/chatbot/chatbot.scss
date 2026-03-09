@@ -1,0 +1,609 @@
+// chatbot.scss — Electro AI Assistant Widget
+// Features: draggable, maximizable, fully responsive
+
+$brand: #f28b00;
+$brand-dark: #d97a00;
+$bg-chat: #ffffff;
+$bg-user: $brand;
+$bg-assistant: #f4f5f7;
+$text-dark: #1a1a2e;
+$text-muted: #6b7280;
+$radius: 18px;
+$shadow: 0 8px 48px rgba(0, 0, 0, 0.22);
+$header-bg: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+
+// ── FAB button ────────────────────────────────────────────────────────────────
+.chat-fab {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 1055;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 50px;
+  background: $brand;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba($brand, 0.5);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  i {
+    font-size: 1.1rem;
+  }
+  .chat-fab-label {
+    font-size: 0.85rem;
+    letter-spacing: 0.03em;
+  }
+
+  &:hover {
+    background: $brand-dark;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 28px rgba($brand, 0.65);
+  }
+
+  &.open {
+    padding: 14px;
+    border-radius: 50%;
+    background: #374151;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  }
+}
+
+// ── Chat window ───────────────────────────────────────────────────────────────
+.chat-window {
+  position: fixed;
+  bottom: 100px;
+  right: 28px;
+  z-index: 1050;
+
+  width: 380px;
+  height: 560px;
+  min-width: 300px;
+  min-height: 400px;
+
+  display: flex;
+  flex-direction: column;
+  background: $bg-chat;
+  border-radius: 20px;
+  box-shadow: $shadow;
+  overflow: hidden;
+
+  // Hidden state
+  opacity: 0;
+  transform: translateY(20px) scale(0.97);
+  pointer-events: none;
+  transition:
+    opacity 0.25s ease,
+    transform 0.3s cubic-bezier(0.34, 1.2, 0.64, 1),
+    width 0.3s ease,
+    height 0.3s ease,
+    border-radius 0.3s ease;
+  /* top/left intentionally excluded — they're controlled by drag (no transition) */
+
+  &.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: all;
+  }
+
+  // ── Maximized (fullscreen) ─────────────────────────────────────────────────
+  &.maximized {
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    border-radius: 0 !important;
+    box-shadow: none;
+
+    .chat-messages {
+      max-height: none;
+    }
+
+    .product-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    .product-card {
+      flex-direction: column;
+
+      .product-img-wrap {
+        width: 100%;
+        img {
+          height: 140px;
+        }
+      }
+
+      .product-info {
+        padding: 10px 12px;
+      }
+    }
+  }
+
+  // ── Dragging state ─────────────────────────────────────────────────────────
+  &.dragging {
+    box-shadow: 0 16px 60px rgba(0, 0, 0, 0.35);
+    transition: none !important; // zero lag during drag
+    cursor: grabbing !important;
+    user-select: none;
+    will-change: left, top; // GPU hint for smooth repositioning
+  }
+
+  // Mobile
+  @media (max-width: 480px) {
+    width: calc(100vw - 20px) !important;
+    right: 10px;
+    bottom: 88px;
+    height: 72vh;
+    border-radius: 16px;
+  }
+}
+
+// ── Header (drag handle) ──────────────────────────────────────────────────────
+.chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 16px;
+  background: $header-bg;
+  color: #fff;
+  flex-shrink: 0;
+  transition: background 0.2s;
+
+  &.draggable {
+    cursor: grab;
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
+}
+
+.chat-header-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  pointer-events: none; // let drag events pass through to header
+}
+
+.chat-avatar {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba($brand, 0.2);
+  border: 2px solid $brand;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.95rem;
+  color: $brand;
+  flex-shrink: 0;
+}
+
+.online-dot {
+  position: absolute;
+  bottom: 1px;
+  right: 1px;
+  width: 9px;
+  height: 9px;
+  background: #22c55e;
+  border-radius: 50%;
+  border: 2px solid #1a1a2e;
+  animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0);
+  }
+}
+
+.chat-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.chat-subtitle {
+  font-size: 0.68rem;
+  opacity: 0.6;
+  margin-top: 1px;
+
+  .drag-hint {
+    opacity: 0.9;
+    color: $brand;
+    font-weight: 600;
+  }
+}
+
+.chat-header-actions {
+  display: flex;
+  gap: 2px;
+  pointer-events: all; // buttons must be clickable
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.55);
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    transform 0.15s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    transform: scale(1.1);
+  }
+
+  &.maximize-btn:hover {
+    color: $brand;
+  }
+  &.close-btn:hover {
+    color: #f87171;
+  }
+}
+
+// ── Messages ──────────────────────────────────────────────────────────────────
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  scroll-behavior: smooth;
+
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #e5e7eb;
+    border-radius: 4px;
+  }
+}
+
+.message-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  animation: fadeUp 0.22s ease forwards;
+
+  &.user {
+    justify-content: flex-end;
+  }
+  &.assistant {
+    justify-content: flex-start;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.assistant-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, $brand, $brand-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  color: #fff;
+  flex-shrink: 0;
+  margin-bottom: 2px;
+}
+
+.assistant-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 85%;
+}
+
+.bubble {
+  padding: 10px 14px;
+  border-radius: $radius;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  max-width: 100%;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.user-bubble {
+  background: $brand;
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+.assistant-bubble {
+  background: $bg-assistant;
+  color: $text-dark;
+  border-bottom-left-radius: 4px;
+}
+
+// ── Typing indicator ──────────────────────────────────────────────────────────
+.typing-bubble {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 60px;
+
+  span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: $text-muted;
+    display: inline-block;
+    animation: bounce 1.2s infinite ease-in-out;
+    &:nth-child(1) {
+      animation-delay: 0s;
+    }
+    &:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    &:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+  }
+}
+
+@keyframes bounce {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+  30% {
+    transform: translateY(-6px);
+    opacity: 1;
+  }
+}
+
+// ── Product cards ─────────────────────────────────────────────────────────────
+.product-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.product-card {
+  display: flex;
+  gap: 10px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  text-decoration: none;
+  transition:
+    box-shadow 0.2s,
+    transform 0.2s,
+    border-color 0.2s;
+
+  &:hover {
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.1);
+    border-color: $brand;
+    transform: translateY(-1px);
+  }
+}
+
+.product-img-wrap {
+  position: relative;
+  width: 72px;
+  flex-shrink: 0;
+
+  img {
+    width: 100%;
+    height: 72px;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+.stock-badge {
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  font-size: 0.52rem;
+  font-weight: 700;
+  padding: 2px 5px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+
+  &.in {
+    background: #dcfce7;
+    color: #15803d;
+  }
+  &.out {
+    background: #fee2e2;
+    color: #dc2626;
+  }
+}
+
+.product-info {
+  padding: 8px 10px 8px 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.product-name {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: $text-dark;
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.product-desc {
+  font-size: 0.68rem;
+  color: $text-muted;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.product-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.product-price {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: $brand;
+}
+
+.product-stars {
+  font-size: 0.62rem;
+  color: #f59e0b;
+  letter-spacing: -1px;
+}
+
+// ── Input area ────────────────────────────────────────────────────────────────
+.chat-input-area {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding: 12px 14px;
+  border-top: 1px solid #f3f4f6;
+  background: #fff;
+  flex-shrink: 0;
+}
+
+.chat-input {
+  flex: 1;
+  border: 1.5px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 0.875rem;
+  resize: none;
+  outline: none;
+  font-family: inherit;
+  line-height: 1.4;
+  max-height: 120px;
+  overflow-y: auto;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+
+  &:focus {
+    border-color: $brand;
+    box-shadow: 0 0 0 3px rgba($brand, 0.12);
+  }
+
+  &:disabled {
+    background: #f9fafb;
+    cursor: not-allowed;
+  }
+  &::placeholder {
+    color: #9ca3af;
+  }
+}
+
+.send-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  border: none;
+  background: $brand;
+  color: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background 0.2s,
+    transform 0.15s,
+    box-shadow 0.2s;
+
+  &:hover:not(:disabled) {
+    background: $brand-dark;
+    transform: scale(1.08);
+    box-shadow: 0 4px 12px rgba($brand, 0.4);
+  }
+
+  &:disabled {
+    background: #d1d5db;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+// ── Drag hint bar (shown once on first open) ──────────────────────────────────
+.drag-hint-bar {
+  padding: 5px 14px;
+  font-size: 0.65rem;
+  color: #9ca3af;
+  background: #f9fafb;
+  border-top: 1px solid #f3f4f6;
+  text-align: center;
+  flex-shrink: 0;
+  animation: fadeIn 0.4s ease 1s both;
+
+  i {
+    color: $brand;
+    margin-right: 2px;
+  }
+  strong {
+    color: $text-dark;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
