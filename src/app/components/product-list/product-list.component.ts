@@ -77,7 +77,7 @@ export class ProductListComponent implements OnInit {
   constructor(
     private productService: ProductService,
     private cartService: CartService,
-    @Inject(PLATFORM_ID) private platformId: Object
+    @Inject(PLATFORM_ID) private platformId: Object,
   ) {}
 
   ngOnInit(): void {
@@ -103,7 +103,7 @@ export class ProductListComponent implements OnInit {
       },
       error: (err) => {
         console.error('Failed to load products', err);
-      }
+      },
     });
   }
 

@@ -1,0 +1,160 @@
+<!-- FAB toggle button -->
+<button
+  class="chat-fab"
+  (click)="toggleChat()"
+  [class.open]="isOpen"
+  aria-label="Toggle chat assistant"
+>
+  <i class="fas" [class.fa-comments]="!isOpen" [class.fa-times]="isOpen"></i>
+  <span class="chat-fab-label" *ngIf="!isOpen">Ask AI</span>
+</button>
+
+<!-- Chat window -->
+<div
+  #chatWindow
+  class="chat-window"
+  [class.visible]="isOpen"
+  [class.maximized]="isMaximized"
+  [class.dragging]="isDragging"
+  [ngStyle]="windowStyle"
+>
+  <!-- ── Header (drag handle) ───────────────────────────────────────────── -->
+  <div
+    class="chat-header"
+    (mousedown)="onDragStart($event)"
+    (touchstart)="onTouchDragStart($event)"
+    [class.draggable]="!isMaximized"
+    title="{{ isMaximized ? '' : 'Drag to move' }}"
+  >
+    <div class="chat-header-info">
+      <div class="chat-avatar">
+        <i class="fas fa-robot"></i>
+        <span class="online-dot"></span>
+      </div>
+      <div>
+        <div class="chat-title">Electro Assistant</div>
+        <div class="chat-subtitle">
+          <span *ngIf="!isMaximized && !isDragging">Powered by AI · Always online</span>
+          <span *ngIf="!isMaximized && isDragging" class="drag-hint">
+            <i class="fas fa-arrows-alt"></i> Dragging…
+          </span>
+          <span *ngIf="isMaximized">Fullscreen mode</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-header-actions">
+      <!-- Clear -->
+      <button
+        class="icon-btn"
+        (mousedown)="$event.stopPropagation()"
+        (click)="clearChat()"
+        title="Clear chat"
+      >
+        <i class="fas fa-trash-alt"></i>
+      </button>
+
+      <!-- Maximize / Restore -->
+      <button
+        class="icon-btn maximize-btn"
+        (mousedown)="$event.stopPropagation()"
+        (click)="toggleMaximize()"
+        [title]="isMaximized ? 'Restore' : 'Fullscreen'"
+      >
+        <i class="fas" [class.fa-expand]="!isMaximized" [class.fa-compress]="isMaximized"></i>
+      </button>
+
+      <!-- Close -->
+      <button
+        class="icon-btn close-btn"
+        (mousedown)="$event.stopPropagation()"
+        (click)="toggleChat()"
+        title="Close"
+      >
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Messages ──────────────────────────────────────────────────────── -->
+  <div class="chat-messages" #messagesContainer>
+    <ng-container *ngFor="let msg of messages; trackBy: trackByIndex">
+      <!-- User message -->
+      <div class="message-row user" *ngIf="msg.role === 'user'">
+        <div class="bubble user-bubble">{{ msg.text }}</div>
+      </div>
+
+      <!-- Assistant message -->
+      <div class="message-row assistant" *ngIf="msg.role === 'assistant'">
+        <div class="assistant-avatar">
+          <i class="fas fa-robot"></i>
+        </div>
+        <div class="assistant-content">
+          <div class="bubble assistant-bubble">{{ msg.text }}</div>
+
+          <!-- Product cards -->
+          <div class="product-cards" *ngIf="msg.products && msg.products.length > 0">
+            <div
+              class="product-card"
+              *ngFor="let p of msg.products"
+              [routerLink]="['/product', p._id]"
+              (click)="toggleChat()"
+            >
+              <div class="product-img-wrap">
+                <img
+                  [src]="p.image || 'assets/img/product-1.png'"
+                  [alt]="p.name"
+                  (error)="$any($event.target).src = 'assets/img/product-1.png'"
+                />
+                <span class="stock-badge" [class.in]="p.inStock" [class.out]="!p.inStock">
+                  {{ p.inStock ? 'In Stock' : 'Out of Stock' }}
+                </span>
+              </div>
+              <div class="product-info">
+                <div class="product-name">{{ p.name }}</div>
+                <div class="product-desc" *ngIf="p.shortDescription">{{ p.shortDescription }}</div>
+                <div class="product-footer">
+                  <span class="product-price">${{ p.price | number: '1.2-2' }}</span>
+                  <span class="product-stars" *ngIf="p.rating > 0">
+                    {{ getRatingStars(p.rating) }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Typing indicator -->
+    <div class="message-row assistant" *ngIf="isTyping">
+      <div class="assistant-avatar">
+        <i class="fas fa-robot"></i>
+      </div>
+      <div class="bubble assistant-bubble typing-bubble">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Input area ────────────────────────────────────────────────────── -->
+  <div class="chat-input-area">
+    <textarea
+      [(ngModel)]="inputMessage"
+      (keydown)="onKeydown($event)"
+      placeholder="Ask me about any product..."
+      rows="1"
+      [disabled]="isTyping"
+      class="chat-input"
+    ></textarea>
+    <button class="send-btn" (click)="sendMessage()" [disabled]="!inputMessage.trim() || isTyping">
+      <i class="fas fa-paper-plane"></i>
+    </button>
+  </div>
+
+  <!-- Resize hint shown briefly after opening -->
+  <div class="drag-hint-bar" *ngIf="isOpen && !isMaximized && posX === null">
+    <i class="fas fa-arrows-alt"></i> Drag header to move &nbsp;·&nbsp;
+    <i class="fas fa-expand"></i> Click <strong>⤢</strong> to fullscreen
+  </div>
+</div>

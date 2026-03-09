@@ -28,7 +28,7 @@ export class Products implements OnInit {
   loadProducts(): void {
     this.loading = true;
     this.error = null;
-    
+
     this.productService.getAll().subscribe({
       next: (data) => {
         console.log('Products loaded:', data);
@@ -39,7 +39,7 @@ export class Products implements OnInit {
         console.error('Error loading products:', err);
         this.error = 'Failed to load products. Please try again later.';
         this.loading = false;
-      }
+      },
     });
   }
 

@@ -29,7 +29,7 @@ export class CarouselComponent implements OnInit, AfterViewInit, OnDestroy {
     @Inject(PLATFORM_ID) private platformId: Object,
     private scriptInit: ScriptInitService,
     private productService: ProductService,
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.loadCarouselFromProducts();
@@ -43,11 +43,11 @@ export class CarouselComponent implements OnInit, AfterViewInit, OnDestroy {
     }, 500);
   }
 
-  ngOnDestroy(): void { }
+  ngOnDestroy(): void {}
 
   private loadCarouselFromProducts(): void {
     // Get products from your ProductService
-    this.productService.getByTab('all').subscribe(products => {
+    this.productService.getByTab('all').subscribe((products) => {
       const carouselProducts = products.slice(0, 3);
 
       // Transform products into carousel items
@@ -80,7 +80,7 @@ export class CarouselComponent implements OnInit, AfterViewInit, OnDestroy {
   addToCart(): void {
     console.log('🛒 Added to cart:', this.bannerOffer.productName);
     // Find the actual product and add to cart
-    this.productService.getById('1').subscribe(product => {
+    this.productService.getById('1').subscribe((product) => {
       if (product) {
         // Emit or call cart service
         console.log('Product details:', product);
@@ -90,7 +90,7 @@ export class CarouselComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Optional: Refresh carousel with different products
   refreshCarousel(tab: 'all' | 'new' | 'featured' | 'top' = 'all'): void {
-    this.productService.getByTab(tab).subscribe(products => {
+    this.productService.getByTab(tab).subscribe((products) => {
       const carouselProducts = products.slice(0, 3);
       this.carouselItems = carouselProducts.map((product, index) => ({
         id: product.id,
