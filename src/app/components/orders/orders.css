@@ -1,4 +1,12 @@
 :host {
+  background: #f5f5f5 !important;
+}
+.page-header {
+  background: none !important;
+  background-image: none !important;
+}
+
+:host {
   --orange: #f5a623;
   --orange-dark: #e0941a;
   --orange-light: #fff4e0;

@@ -2,6 +2,7 @@ import { Component, signal, computed, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { OrderService, ApiOrder } from '../../services/order.service';
+import { Sidebar } from '../../shared/sidebar/sidebar';
 
 export interface OrderItem {
   name: string;
@@ -24,7 +25,7 @@ export interface Order {
 @Component({
   selector: 'app-orders',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, Sidebar],
   templateUrl: './orders.html',
   styleUrl: './orders.css',
 })

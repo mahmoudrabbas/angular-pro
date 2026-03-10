@@ -1,0 +1,307 @@
+:host {
+  --orange: #f5a623;
+  --orange-dark: #e0941a;
+  --orange-light: #fff4e0;
+  --red: #e8302a;
+  --white: #fff;
+  --bg: #f5f5f5;
+  --card: #fff;
+  --text-dark: #222;
+  --text-mid: #555;
+  --text-light: #888;
+  --border: #e8e8e8;
+  --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  --radius-lg: 14px;
+  display: block;
+  background: var(--bg);
+  min-height: 100vh;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+.page-container {
+  display: flex;
+  gap: 24px;
+  padding: 28px 32px;
+  max-width: 1300px;
+  margin: 0 auto;
+  align-items: flex-start;
+}
+.main-content {
+  flex: 1;
+  min-width: 0;
+}
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  /* background-color: wh; */
+}
+.page-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--text-dark);
+  margin: 0 0 4px;
+}
+.page-subtitle {
+  font-size: 14px;
+  color: var(--text-light);
+  margin: 0;
+}
+.add-btn {
+  background: var(--orange);
+  color: white;
+  border: none;
+  padding: 11px 22px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.add-btn:hover {
+  background: var(--orange-dark);
+}
+
+/* FORM */
+.form-card {
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  padding: 24px;
+  margin-bottom: 24px;
+  border: 1.5px solid var(--orange);
+  animation: slideDown 0.2s ease;
+}
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.form-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 0 0 20px;
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+.form-group label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.form-group input {
+  padding: 10px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.form-group input:focus {
+  border-color: var(--orange);
+}
+.label-tabs {
+  display: flex;
+  gap: 8px;
+}
+.label-tab {
+  padding: 7px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  background: white;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.label-tab.active {
+  background: var(--orange);
+  border-color: var(--orange);
+  color: white;
+  font-weight: 700;
+}
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: var(--text-mid);
+  cursor: pointer;
+}
+.checkbox-label input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--orange);
+}
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+.save-btn {
+  background: var(--orange);
+  color: white;
+  border: none;
+  padding: 11px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.save-btn:hover {
+  background: var(--orange-dark);
+}
+.cancel-btn {
+  background: white;
+  color: var(--text-mid);
+  border: 1.5px solid var(--border);
+  padding: 11px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.cancel-btn:hover {
+  border-color: var(--orange);
+  color: var(--orange);
+}
+
+/* ADDRESS GRID */
+.addresses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+.address-card {
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  border: 1.5px solid var(--border);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  position: relative;
+  transition: all 0.22s;
+}
+.address-card:hover {
+  border-color: var(--orange);
+  box-shadow: 0 6px 24px rgba(245, 166, 35, 0.18);
+}
+.address-card.default {
+  border-color: var(--orange);
+}
+.default-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: var(--orange);
+  color: white;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+.addr-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--orange-dark);
+  margin-bottom: 10px;
+}
+.addr-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 0 0 6px;
+}
+.addr-line {
+  font-size: 13px;
+  color: var(--text-mid);
+  margin: 0 0 4px;
+}
+.addr-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.addr-btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.18s;
+}
+.addr-btn.edit {
+  background: var(--orange-light);
+  color: var(--orange-dark);
+  border: 1px solid #f5c678;
+}
+.addr-btn.edit:hover {
+  background: var(--orange);
+  color: white;
+}
+.addr-btn.default {
+  background: #fff8e1;
+  color: #b8860b;
+  border: 1px solid #ffd54f;
+}
+.addr-btn.default:hover {
+  background: #ffd54f;
+}
+.addr-btn.delete {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+.addr-btn.delete:hover {
+  background: #721c24;
+  color: white;
+}
+
+/* EMPTY */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: var(--card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+}
+.empty-icon {
+  font-size: 60px;
+  margin-bottom: 16px;
+}
+.empty-state h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 0 0 6px;
+}
+.empty-state p {
+  font-size: 14px;
+  color: var(--text-light);
+  margin: 0 0 20px;
+}

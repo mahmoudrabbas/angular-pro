@@ -6,7 +6,7 @@ import { Cart } from './components/cart/cart';
 import { Checkout } from './components/checkout/checkout';
 import { Login } from './components/login/login';
 import { Signup } from './components/signup/signup';
-import { UserProfile } from './components/user-profile/user-profile';
+// import { UserProfile } from './components/user-profile/user-profile';
 import { CheckEmail } from './components/check-email/check-email';
 import { EmailVerified } from './components/email-verified/email-verified';
 import { ForgotPassword } from './components/forgot-password/forgot-password';
@@ -22,6 +22,10 @@ import { PaymentSuccess } from './components/payment-success/payment-success';
 import { PaymentCancel } from './components/payment-cancel/payment-cancel';
 import { PaymentFailed } from './components/payment-failed/payment-failed';
 import { Orders } from './components/orders/orders';
+import { Dashboard } from './components/dashboard/dashboard';
+import { Wishlist } from './components/wishlist/wishlist';
+import { Addresses } from './components/addresses/addresses';
+import { AccountSettings } from './components/account-settings/account-settings';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -29,7 +33,11 @@ export const routes: Routes = [
 
   { path: 'product', component: ProductListComponent },
   { path: 'product/:id', component: ProductDetail },
-  { path: 'orders', component: Orders },
+
+  { path: 'dashboard', component: Dashboard },
+  { path: 'wishlist', component: Wishlist },
+  { path: 'addresses', component: Addresses },
+  { path: 'account-settings', component: AccountSettings },
 
   // Category management
   { path: 'categories', component: CategoryListComponent },
@@ -72,6 +80,7 @@ export const routes: Routes = [
 
   { path: 'forgot-password', component: ForgotPassword },
   { path: 'reset-password/:id/:token', component: ResetPassword },
-  { path: 'profile', component: UserProfile }, // User profile
+  { path: 'profile', component: Orders }, // User profile
+  { path: 'orders', component: Orders }, // User profile
   { path: '**', redirectTo: '/home' },
 ];

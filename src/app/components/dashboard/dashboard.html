@@ -1,0 +1,92 @@
+<div class="page-wrapper">
+  <app-sidebar></app-sidebar>
+
+  <main class="page-main">
+    <div class="page-card">
+      <div class="welcome-banner">
+        <div>
+          <h1 class="welcome-title">Welcome back, {{ user?.name || 'there' }}! 👋</h1>
+          <p class="welcome-sub">Here's a summary of your account activity</p>
+        </div>
+        <a routerLink="/orders" class="orange-btn">View All Orders</a>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon orders-icon">📦</div>
+          <div>
+            <p class="stat-val">{{ totalOrders() }}</p>
+            <p class="stat-lbl">Total Orders</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon delivered-icon">✅</div>
+          <div>
+            <p class="stat-val">{{ deliveredOrders() }}</p>
+            <p class="stat-lbl">Delivered</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon pending-icon">⚙️</div>
+          <div>
+            <p class="stat-val">{{ pendingOrders() }}</p>
+            <p class="stat-lbl">In Progress</p>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon wishlist-icon">♡</div>
+          <div>
+            <p class="stat-val">0</p>
+            <p class="stat-lbl">Wishlist Items</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Orders -->
+      <div class="section-header">
+        <h2 class="section-title">Recent Orders</h2>
+        <a routerLink="/orders" class="see-all">See all →</a>
+      </div>
+
+      @if (isLoading()) {
+        <p class="loading-text">Loading…</p>
+      } @else if (recentOrders().length === 0) {
+        <div class="empty-dash">
+          <span>📭</span>
+          <p>No orders yet. <a routerLink="/shop">Start shopping!</a></p>
+        </div>
+      } @else {
+        <div class="recent-orders">
+          @for (order of recentOrders(); track order._id) {
+            <div class="recent-order-row">
+              <div>
+                <p class="r-order-id">{{ order.orderNumber }}</p>
+                <p class="r-order-date">{{ order.createdAt | date: 'mediumDate' }}</p>
+              </div>
+              <p class="r-order-items">
+                {{ order.items[0]?.name
+                }}{{ order.items.length > 1 ? ' +' + (order.items.length - 1) + ' more' : '' }}
+              </p>
+              <p class="r-order-total">${{ order.totalAmount.toLocaleString() }}</p>
+              <span class="r-status" [class]="'s-' + order.orderStatus">
+                {{ capitalize(order.orderStatus) }}
+              </span>
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Quick Links -->
+      <div class="section-header" style="margin-top: 28px">
+        <h2 class="section-title">Quick Actions</h2>
+      </div>
+      <div class="quick-links">
+        <a routerLink="/addresses" class="quick-link-card">📍<span>Manage Addresses</span></a>
+        <a routerLink="/account-settings" class="quick-link-card">⚙️<span>Edit Profile</span></a>
+        <a routerLink="/change-password" class="quick-link-card">🔒<span>Change Password</span></a>
+        <a routerLink="/wishlist" class="quick-link-card">♡<span>My Wishlist</span></a>
+      </div>
+    </div>
+  </main>
+</div>

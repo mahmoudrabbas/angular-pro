@@ -1,0 +1,70 @@
+<div class="page-wrapper">
+  <app-sidebar />
+
+  <main class="page-main">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">❤️ My Wishlist</h1>
+        <p class="page-subtitle">Products you saved for later</p>
+      </div>
+
+      @if (products().length > 0) {
+        <div class="d-flex align-items-center gap-3">
+          <div class="count-chip">
+            {{ products().length }} item{{ products().length > 1 ? 's' : '' }} saved
+          </div>
+          <button
+            class="btn btn-outline-danger btn-sm rounded-pill px-3"
+            [class.disabled]="clearing()"
+            (click)="clearAll()"
+          >
+            @if (clearing()) {
+              <span class="spinner-border spinner-border-sm me-1"></span> Clearing…
+            } @else {
+              <i class="fas fa-trash me-1"></i> Clear All
+            }
+          </button>
+        </div>
+      }
+    </div>
+
+    @if (isLoading()) {
+      <div class="loading-state">
+        <div class="spinner"></div>
+        <p>Loading your wishlist…</p>
+      </div>
+    }
+
+    @if (errorMsg() && !isLoading()) {
+      <div class="error-state">
+        <div class="error-icon">⚠️</div>
+        <p>{{ errorMsg() }}</p>
+        <button class="retry-btn" (click)="loadWishlist()">↺ Try Again</button>
+      </div>
+    }
+
+    @if (!isLoading() && !errorMsg() && products().length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">❤️</div>
+        <h3>Your wishlist is empty</h3>
+        <p>Browse our shop and save items you love</p>
+        <a routerLink="/shop" class="orange-btn">Browse Products</a>
+      </div>
+    }
+
+    @if (!isLoading() && !errorMsg() && products().length > 0) {
+      <div class="row g-4">
+        @for (product of products(); track product.id; let i = $index) {
+          <div class="col-md-6 col-lg-4 col-xl-3">
+            <app-product-card
+              [product]="product"
+              [wowDelay]="i * 0.1 + 's'"
+              [isInWishlist]="true"
+              (removed)="removeEntry($event)"
+            />
+          </div>
+        }
+      </div>
+    }
+  </main>
+</div>
