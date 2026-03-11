@@ -93,13 +93,17 @@
                 </div>
                 <div class="col-md-6">
                   <label class="form-label">Category</label>
-                  <input 
-                    type="text" 
-                    class="form-control" 
+                  <select 
+                    class="form-select" 
                     [(ngModel)]="productForm.category"
                     name="productCategory"
                     required
                   >
+                    <option value="">Select a category</option>
+                    @for (category of categories; track category._id) {
+                      <option [value]="category._id">{{ category.name }}</option>
+                    }
+                  </select>
                   @if (productFormErrors['category']) {
                     <div class="text-danger small">{{ productFormErrors['category'] }}</div>
                   }
@@ -173,8 +177,14 @@
                       class="btn btn-outline-secondary"
                       (click)="productForm.images.push(imageInput.value); imageInput.value=''"
                     >
-                      Add Image
+                      Add URL
                     </button>
+                    <input 
+                      type="file" 
+                      class="form-control" 
+                      accept="image/*"
+                      (change)="onFileSelected($event)"
+                    >
                   </div>
                   <div class="d-flex flex-wrap gap-2">
                     @for (image of productForm.images; track $index) {

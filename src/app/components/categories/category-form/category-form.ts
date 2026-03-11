@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { CategoryService } from '../../../services/category.service';
@@ -8,15 +8,15 @@ import { Category } from '../../../models/category.model';
 @Component({
   selector: 'app-category-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './category-form.html',
   styleUrls: ['./category-form.scss']
 })
 export class CategoryFormComponent implements OnInit {
   categoryForm: FormGroup;
   isEditing = false;
-  isSubmitting = false;
   categoryId: string | null = null;
+  isSubmitting = false;
 
   constructor(
     private fb: FormBuilder,
@@ -25,10 +25,9 @@ export class CategoryFormComponent implements OnInit {
     private router: Router
   ) {
     this.categoryForm = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(3)]],
-      slug: ['', [Validators.required, Validators.pattern('^[a-z0-9-]+$')]],
-      description: [''],
-      image: ['']
+      name: ['', [Validators.required, Validators.minLength(2)]],
+      description: ['', [Validators.required, Validators.minLength(10)]],
+      slug: ['', [Validators.required, Validators.pattern(/^[a-z0-9-]+$/)]]
     });
   }
 
@@ -46,73 +45,82 @@ export class CategoryFormComponent implements OnInit {
         if (category) {
           this.categoryForm.patchValue({
             name: category.name,
-            slug: category.slug,
-            description: category.description || '',
-            image: category.image || ''
+            description: category.description,
+            slug: category.slug
           });
         }
       },
       error: (err) => {
         console.error('Error loading category:', err);
-        // Handle error - could show a notification
       }
     });
+  }
+
+  onSubmit(): void {
+    if (this.categoryForm.valid) {
+      this.isSubmitting = true;
+      const categoryData = this.categoryForm.value;
+      
+      if (this.isEditing && this.categoryId) {
+        this.categoryService.update(this.categoryId, categoryData).subscribe({
+          next: () => {
+            this.isSubmitting = false;
+            this.router.navigate(['/admin/categories']);
+          },
+          error: (err) => {
+            this.isSubmitting = false;
+            console.error('Error updating category:', err);
+          }
+        });
+      } else {
+        this.categoryService.create(categoryData).subscribe({
+          next: () => {
+            this.isSubmitting = false;
+            this.router.navigate(['/admin/categories']);
+          },
+          error: (err) => {
+            this.isSubmitting = false;
+            console.error('Error creating category:', err);
+          }
+        });
+      }
+    }
+  }
+
+  onCancel(): void {
+    this.router.navigate(['/admin/categories']);
   }
 
   generateSlug(): void {
     const name = this.categoryForm.get('name')?.value;
     if (name) {
-      const slug = name
-        .toLowerCase()
-        .trim()
-        .replace(/[^\w\s-]/g, '')
-        .replace(/[\s_-]+/g, '-')
+      const slug = name.toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-+|-+$/g, '');
-      
       this.categoryForm.get('slug')?.setValue(slug);
     }
   }
 
-  onSubmit(): void {
-    if (this.categoryForm.invalid) {
-      return;
-    }
+  addDefaultCategories(): void {
+    const defaultCategories = [
+      { name: 'Electronics', description: 'Electronic devices and accessories', slug: 'electronics' },
+      { name: 'Clothing', description: 'Apparel and fashion items', slug: 'clothing' },
+      { name: 'Home & Garden', description: 'Home improvement and gardening', slug: 'home-garden' },
+      { name: 'Sports', description: 'Sports equipment and activewear', slug: 'sports' },
+      { name: 'Books', description: 'Books and educational materials', slug: 'books' }
+    ];
 
-    this.isSubmitting = true;
-    const categoryData = this.categoryForm.value;
-
-    if (this.isEditing && this.categoryId) {
-      this.categoryService.update(this.categoryId, categoryData).subscribe({
-        next: () => {
-          this.router.navigate(['/categories']);
-        },
-        error: (err) => {
-          console.error('Error updating category:', err);
-          this.isSubmitting = false;
-        }
-      });
-    } else {
-      this.categoryService.create(categoryData).subscribe({
-        next: () => {
-          this.router.navigate(['/categories']);
-        },
-        error: (err) => {
-          console.error('Error creating category:', err);
-          this.isSubmitting = false;
-        }
-      });
-    }
-  }
-
-  onCancel(): void {
-    this.router.navigate(['/categories']);
-  }
-
-  get name() {
-    return this.categoryForm.get('name')!;
-  }
-
-  get slug() {
-    return this.categoryForm.get('slug')!;
+    defaultCategories.forEach((category, index) => {
+      setTimeout(() => {
+        this.categoryService.create(category).subscribe({
+          next: (createdCategory) => {
+            console.log(`Added category: ${createdCategory.name}`);
+          },
+          error: (err) => {
+            console.error(`Error adding category ${category.name}:`, err);
+          }
+        });
+      }, index * 500); 
+    });
   }
 }

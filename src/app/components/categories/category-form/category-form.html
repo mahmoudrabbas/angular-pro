@@ -22,14 +22,14 @@
                     class="form-control" 
                     id="name"
                     formControlName="name"
-                    [class.is-invalid]="name.invalid && name.touched"
+                    [class.is-invalid]="categoryForm.get('name')?.invalid && categoryForm.get('name')?.touched"
                   >
-                  @if (name.invalid && name.touched) {
+                  @if (categoryForm.get('name')?.invalid && categoryForm.get('name')?.touched) {
                     <div class="invalid-feedback">
-                      @if (name.errors?.['required']) {
+                      @if (categoryForm.get('name')?.errors?.['required']) {
                         Category name is required.
                       }
-                      @if (name.errors?.['minlength']) {
+                      @if (categoryForm.get('name')?.errors?.['minlength']) {
                         Category name must be at least 3 characters long.
                       }
                     </div>
@@ -43,15 +43,15 @@
                     class="form-control" 
                     id="slug"
                     formControlName="slug"
-                    [class.is-invalid]="slug.invalid && slug.touched"
+                    [class.is-invalid]="categoryForm.get('slug')?.invalid && categoryForm.get('slug')?.touched"
                     (input)="generateSlug()"
                   >
-                  @if (slug.invalid && slug.touched) {
+                  @if (categoryForm.get('slug')?.invalid && categoryForm.get('slug')?.touched) {
                     <div class="invalid-feedback">
-                      @if (slug.errors?.['required']) {
+                      @if (categoryForm.get('slug')?.errors?.['required']) {
                         Slug is required.
                       }
-                      @if (slug.errors?.['pattern']) {
+                      @if (categoryForm.get('slug')?.errors?.['pattern']) {
                         Slug can only contain lowercase letters, numbers, and hyphens.
                       }
                     </div>

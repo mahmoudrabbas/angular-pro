@@ -3,12 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError, switchMap } from 'rxjs/operators';
 import { Product } from '../models/product.model';
+import { environment } from '../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProductService {
-  private apiUrl = 'http://localhost:3000/api/products';
+  private apiUrl = `${environment.apiUrl}/api/products`;
 
   constructor(private http: HttpClient) {}
 
@@ -51,12 +52,28 @@ export class ProductService {
   }
 
   // Add a new product to the API
-  create(product: Omit<Product, 'id' | 'tab'>): Observable<Product> {
-    console.log('Creating product with data:', product);
+  create(product: any): Observable<Product> {
+    console.log('Creating product with data, images:', product.images);
     return this.http.post<any>(this.apiUrl, product).pipe(
       map((response) => {
         console.log('Product API response:', response);
-        return this.mapApiToProduct(response);
+        // Handle nested response format {success: true, product: {...}}
+        const productData = response.product || response;
+        
+        console.log('productData.images:', productData.images);
+        console.log('input product.images:', product.images);
+        
+        // If backend doesn't return images, use the ones we sent
+        const mappedProduct = this.mapApiToProduct(productData);
+        const hasNoImages = !productData.images || !productData.images.length || 
+                           (productData.images.length === 1 && !productData.images[0]);
+        
+        if (hasNoImages && product.images && product.images.length > 0) {
+          console.log('Using input images since backend didn\'t return any');
+          console.log('Setting image to:', product.images[0]);
+          mappedProduct.image = product.images[0] || mappedProduct.image;
+        }
+        return mappedProduct;
       }),
     );
   }
@@ -65,7 +82,11 @@ export class ProductService {
   update(id: string, product: Partial<Product>): Observable<Product> {
     return this.http
       .put<any>(`${this.apiUrl}/${id}`, product)
-      .pipe(map((response) => this.mapApiToProduct(response)));
+      .pipe(map((response) => {
+        // Handle nested response format {success: true, product: {...}}
+        const productData = response.product || response;
+        return this.mapApiToProduct(productData);
+      }));
   }
 
   // Delete a product
@@ -132,19 +153,48 @@ export class ProductService {
 
   // Map API response to Product interface
   private mapApiToProduct(apiProduct: any): Product {
-    // Extract image URL - API returns images as [{url: "...", ...}]
+    console.log('DEBUG: Mapping product, raw response:', JSON.stringify(apiProduct).substring(0, 500));
+    
     let imageUrl = 'assets/img/product-1.png';
+    
     if (apiProduct.images && apiProduct.images.length > 0) {
-      imageUrl = apiProduct.images[0].url || apiProduct.images[0] || imageUrl;
+      const firstImage = apiProduct.images[0];
+      console.log('DEBUG: First image:', firstImage);
+      
+      if (typeof firstImage === 'string') {
+        imageUrl = firstImage || imageUrl;
+      } else if (firstImage && typeof firstImage === 'object') {
+        imageUrl = firstImage.url || firstImage.uri || imageUrl;
+      }
     }
+    // Also check for direct 'image' property
+    if (!imageUrl || imageUrl === 'assets/img/product-1.png') {
+      if (apiProduct.image) {
+        console.log('DEBUG: Using direct image property:', apiProduct.image);
+        imageUrl = apiProduct.image;
+      }
+    }
+    
+    console.log('DEBUG: Final imageUrl:', imageUrl);
 
     const price = apiProduct.price || 0;
     const compareAtPrice = apiProduct.compareAtPrice || price;
+    
+    // Handle category - can be string ID, object with name, or shortDescription fallback
+    let category = 'Electronics';
+    if (apiProduct.category) {
+      if (typeof apiProduct.category === 'object') {
+        category = apiProduct.category.name || apiProduct.shortDescription || 'Electronics';
+      } else {
+        // Category is a string ID - we can't display the name without fetching it
+        category = apiProduct.shortDescription || 'Electronics';
+      }
+    }
 
     return {
       id: apiProduct._id || apiProduct.id || Math.random(),
       image: imageUrl,
-      category: apiProduct.category?.name || apiProduct.shortDescription || 'Electronics',
+      category: category,
       name: apiProduct.name || 'Unknown Product',
       oldPrice: `$${compareAtPrice.toLocaleString('en-US', { minimumFractionDigits: 2 })}`,
       newPrice: `$${price.toLocaleString('en-US', { minimumFractionDigits: 2 })}`,

@@ -30,15 +30,48 @@ export class CategoryListComponent implements OnInit {
     this.error = null;
     
     this.categoryService.getAll().subscribe({
-      next: (data) => {
-        this.categories = data;
+      next: (categories) => {
+        this.categories = categories;
         this.loading = false;
       },
       error: (err) => {
-        this.error = 'Failed to load categories. Please try again later.';
-        this.loading = false;
         console.error('Error loading categories:', err);
+        this.error = 'Failed to load categories. Please try again.';
+        this.loading = false;
       }
+    });
+  }
+
+  addDefaultCategories(): void {
+    const defaultCategories = [
+      { name: 'Electronics', description: 'Electronic devices and accessories', slug: 'electronics' },
+      { name: 'Clothing', description: 'Apparel and fashion items', slug: 'clothing' },
+      { name: 'Home & Garden', description: 'Home improvement and gardening', slug: 'home-garden' },
+      { name: 'Sports', description: 'Sports equipment and activewear', slug: 'sports' },
+      { name: 'Books', description: 'Books and educational materials', slug: 'books' }
+    ];
+
+    let completed = 0;
+    let errors = 0;
+
+    defaultCategories.forEach((category, index) => {
+      setTimeout(() => {
+        this.categoryService.create(category).subscribe({
+          next: (createdCategory) => {
+            completed++;
+            console.log(`Added category: ${createdCategory.name}`);
+            
+            if (completed === defaultCategories.length) {
+              console.log(`Success! Added ${completed} default categories.`);
+              this.loadCategories(); // Reload categories to show them
+            }
+          },
+          error: (err) => {
+            errors++;
+            console.error(`Error adding category ${category.name}:`, err);
+          }
+        });
+      }, index * 500); // Add with small delay to avoid conflicts
     });
   }
 

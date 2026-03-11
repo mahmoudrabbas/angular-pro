@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ProductService } from '../../services/product.service';
 import { CategoryService } from '../../services/category.service';
+import { Category } from '../../models/category.model';
 
 interface Stats {
   totalProducts: number;
@@ -101,10 +102,17 @@ export class AdminDashboard {
   categoryFormErrors: { [key: string]: string } = {};
   categoryFormSuccess = false;
 
+  // Categories for dropdown
+  categories: Category[] = [];
+
   constructor(
     private productService: ProductService,
     private categoryService: CategoryService
   ) {}
+
+  ngOnInit(): void {
+    this.loadCategories();
+  }
 
   getStatusClass(status: string): string {
     switch (status) {
@@ -297,6 +305,73 @@ export class AdminDashboard {
     }
   }
 
+  // Load categories for dropdown
+  loadCategories(): void {
+    console.log('Loading categories...');
+    this.categoryService.getAll().subscribe({
+      next: (categories) => {
+        console.log('Categories loaded successfully:', categories);
+        this.categories = categories;
+        console.log('Categories array length:', this.categories.length);
+      },
+      error: (err) => {
+        console.error('Error loading categories:', err);
+        console.error('Error status:', err.status);
+        console.error('Error message:', err.message);
+      }
+    });
+  }
+
+  // Handle file upload for product images with compression
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        alert('Please select an image file');
+        return;
+      }
+
+      // Compress and convert to base64
+      this.compressImage(file, 800, 0.7, (base64Image: string) => {
+        this.productForm.images.push(base64Image);
+      });
+    }
+  }
+
+  // Compress image using canvas
+  private compressImage(file: File, maxWidth: number, quality: number, callback: (base64: string) => void): void {
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        let width = img.width;
+        let height = img.height;
+
+        // Calculate new dimensions while maintaining aspect ratio
+        if (width > maxWidth) {
+          height = (height * maxWidth) / width;
+          width = maxWidth;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          // Convert to base64 with compression
+          const base64 = canvas.toDataURL('image/jpeg', quality);
+          callback(base64);
+        }
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // Remove image from product form
   removeImage(index: number): void {
     this.productForm.images.splice(index, 1);
   }
