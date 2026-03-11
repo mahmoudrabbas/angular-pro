@@ -1,54 +1,113 @@
-/* 1. Design Tokens & Branding */
+/* ── Design Tokens ─────────────────────────────────────────────────────────── */
 :root {
-  --bs-primary: #f97316; /* Your orange accent */
+  --bs-primary: #f97316;
   --bs-primary-rgb: 249, 115, 22;
-  --bs-dark: #1b1c1e; /* Your sidebar background */
+  --bs-dark: #1b1c1e;
 }
 
-/* 2. Sidebar Logic (Handles the collapsing width) */
+/* ── Sidebar ───────────────────────────────────────────────────────────────── */
 .sidebar {
   background-color: var(--bs-dark);
   width: 240px;
   flex-shrink: 0;
   z-index: 1000;
+  overflow: hidden;
 }
 
 .sidebar.collapsed {
-  width: 75px;
+  width: 72px;
 }
 
-/* Hide text when collapsed */
 .sidebar.collapsed .nav-text,
-.sidebar.collapsed .brand-name {
+.sidebar.collapsed .brand-name,
+.sidebar.collapsed .admin-mini-avatar + div {
   display: none;
 }
 
-/* 3. Navigation Styling */
+.sidebar.collapsed .admin-mini-avatar {
+  margin: 0 auto;
+}
+
+/* ── Nav links ─────────────────────────────────────────────────────────────── */
 .nav-link {
-  color: #718096; /* muted */
-  font-size: 0.9rem;
+  color: #718096;
+  font-size: 0.88rem;
   font-weight: 500;
-  transition: all 0.2s;
+  border-radius: 6px;
+  transition: all 0.18s ease;
+  white-space: nowrap;
 }
 
 .nav-link:hover {
-  background-color: rgba(255, 255, 255, 0.05);
-  color: white;
+  background-color: rgba(255, 255, 255, 0.06);
+  color: #fff;
 }
 
 .nav-link.active {
   background-color: rgba(var(--bs-primary-rgb), 0.15) !important;
   color: var(--bs-primary) !important;
   border-left: 3px solid var(--bs-primary);
-  border-radius: 0 !important; /* Sharp edge on active tab */
+  border-radius: 0 6px 6px 0 !important;
 }
 
 .fw-icon {
   width: 20px;
   text-align: center;
+  flex-shrink: 0;
 }
 
-/* 4. Utilities */
+/* ── Admin mini avatar (sidebar bottom) ────────────────────────────────────── */
+.admin-mini-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(var(--bs-primary-rgb), 0.2);
+  color: var(--bs-primary);
+  font-size: 0.7rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ── Logout button ─────────────────────────────────────────────────────────── */
+.hover-logout {
+  transition: background 0.18s;
+  &:hover {
+    background-color: rgba(var(--bs-primary-rgb), 0.1) !important;
+  }
+}
+
+/* ── Topbar ────────────────────────────────────────────────────────────────── */
+.admin-topbar {
+  height: 60px;
+  z-index: 900;
+  box-shadow: 0 1px 0 #f1f5f9;
+}
+
+.admin-search .form-control:focus {
+  box-shadow: none;
+  border-color: #dee2e6;
+}
+
+/* ── Topbar avatar ─────────────────────────────────────────────────────────── */
+.topbar-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(var(--bs-primary-rgb), 0.15);
+  color: var(--bs-primary);
+  font-size: 0.7rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+  flex-shrink: 0;
+}
+
+/* ── Utilities ─────────────────────────────────────────────────────────────── */
 .transition-all {
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -59,10 +118,11 @@
   font-family: 'JetBrains Mono', monospace;
 }
 
-/* Custom Scrollbar for Sidebar */
+/* ── Sidebar scrollbar ─────────────────────────────────────────────────────── */
 .sidebar::-webkit-scrollbar {
   width: 4px;
 }
 .sidebar::-webkit-scrollbar-thumb {
-  background: var(--bs-dark);
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
 }

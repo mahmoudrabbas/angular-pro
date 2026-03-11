@@ -1,0 +1,358 @@
+<!-- Success toast -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
+  <div class="toast show align-items-center text-white bg-success border-0" *ngIf="successMsg">
+    <div class="d-flex">
+      <div class="toast-body"><i class="fas fa-check-circle me-2"></i>{{ successMsg }}</div>
+      <button class="btn-close btn-close-white me-2 m-auto" (click)="successMsg = null"></button>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid p-4">
+  <!-- Header -->
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+    <div>
+      <h4 class="fw-bold mb-1">Products</h4>
+      <p class="text-muted small mb-0">
+        {{ totalProducts.toLocaleString() }} products in your store
+      </p>
+    </div>
+    <button class="btn btn-primary rounded-pill px-4" (click)="openAdd()">
+      <i class="fas fa-plus me-2"></i>Add Product
+    </button>
+  </div>
+
+  <!-- Error -->
+  <div
+    class="alert alert-danger d-flex align-items-center justify-content-between gap-2 mb-4"
+    *ngIf="error"
+  >
+    <span><i class="fas fa-exclamation-circle me-2"></i>{{ error }}</span>
+    <button class="btn btn-sm btn-outline-danger rounded-pill" (click)="loadProducts()">
+      Retry
+    </button>
+  </div>
+
+  <!-- Search + table card -->
+  <div class="card border-0 shadow-sm overflow-hidden">
+    <!-- Search bar -->
+    <div class="card-header bg-white border-0 py-3 px-4">
+      <div class="input-group" style="max-width: 320px">
+        <span class="input-group-text bg-white border-end-0 text-muted"
+          ><i class="fas fa-search fa-sm"></i
+        ></span>
+        <input
+          type="text"
+          class="form-control border-start-0 ps-0"
+          placeholder="Search products…"
+          (input)="onSearch($any($event.target).value)"
+        />
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="prod-thead">
+          <tr>
+            <th class="ps-4">Product</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>SKU</th>
+            <th>Stock</th>
+            <th>Status</th>
+            <th class="text-end pe-4">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Skeleton loader -->
+          <ng-container *ngIf="loading">
+            <tr class="placeholder-glow" *ngFor="let i of [1, 2, 3, 4, 5]">
+              <td colspan="7" class="p-0">
+                <div class="d-flex align-items-center px-4 py-3 border-bottom gap-3">
+                  <span class="placeholder rounded-2" style="width: 42px; height: 42px"></span>
+                  <span class="placeholder col-2"></span>
+                  <span class="placeholder col-1 ms-auto"></span>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+
+          <!-- Empty -->
+          <tr *ngIf="!loading && products.length === 0">
+            <td colspan="7" class="text-center py-5">
+              <i class="fas fa-box-open fa-2x d-block mb-2 opacity-25 text-muted"></i>
+              <p class="text-muted mb-0">No products found.</p>
+            </td>
+          </tr>
+
+          <!-- Rows -->
+          <tr *ngFor="let p of products; trackBy: trackById">
+            <td class="ps-4">
+              <div class="d-flex align-items-center gap-3">
+                <img
+                  [src]="getProductImage(p)"
+                  [alt]="p.name"
+                  class="prod-thumb rounded-2 border object-fit-cover"
+                  (error)="$any($event.target).src = 'assets/img/product-1.png'"
+                />
+                <span class="fw-semibold small text-dark">{{ p.name }}</span>
+              </div>
+            </td>
+            <td class="text-muted small">{{ p.category?.name || p.category || '—' }}</td>
+            <td class="fw-semibold">${{ p.price || 0 | number: '1.2-2' }}</td>
+            <td>
+              <code class="small text-muted">{{ p.sku || '—' }}</code>
+            </td>
+            <td>
+              <span
+                class="stock-pill"
+                [ngClass]="getStockClass(p.inventory?.quantity ?? p.inventory ?? 0)"
+              >
+                {{ p.inventory?.quantity ?? p.inventory ?? 0 }}
+              </span>
+            </td>
+            <td>
+              <span
+                class="badge rounded-pill px-2 py-1"
+                [class.bg-success-subtle]="p.isActive !== false"
+                [class.text-success]="p.isActive !== false"
+                [class.bg-danger-subtle]="p.isActive === false"
+                [class.text-danger]="p.isActive === false"
+              >
+                {{ p.isActive !== false ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+            <td class="text-end pe-4">
+              <div class="btn-group btn-group-sm">
+                <button
+                  class="btn btn-light border text-muted px-2"
+                  (click)="openEdit(p)"
+                  title="Edit"
+                >
+                  <i class="fas fa-pen"></i>
+                </button>
+                <button
+                  class="btn btn-light border text-danger px-2"
+                  (click)="openDelete(p)"
+                  title="Delete"
+                >
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div
+      class="card-footer bg-white border-0 py-3 d-flex justify-content-center"
+      *ngIf="totalPages > 1 && !loading"
+    >
+      <nav>
+        <ul class="pagination pagination-sm mb-0 gap-1">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <button class="page-link rounded" (click)="goToPage(currentPage - 1)">‹</button>
+          </li>
+          <li class="page-item" *ngFor="let pg of pages" [class.active]="pg === currentPage">
+            <button class="page-link rounded" (click)="goToPage(pg)">{{ pg }}</button>
+          </li>
+          <li class="page-item" [class.disabled]="currentPage === totalPages">
+            <button class="page-link rounded" (click)="goToPage(currentPage + 1)">›</button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ADD / EDIT MODAL ══════════════════════════════════════════════════════ -->
+<div
+  class="modal fade show d-block"
+  tabindex="-1"
+  *ngIf="showFormModal"
+  style="background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px)"
+>
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header border-bottom-0 pt-4 px-4">
+        <h5 class="modal-title fw-bold">
+          <i
+            class="fas me-2 text-primary"
+            [class.fa-plus]="!isEditing"
+            [class.fa-pen]="isEditing"
+          ></i>
+          {{ isEditing ? 'Edit Product' : 'New Product' }}
+        </h5>
+        <button class="btn-close" (click)="closeFormModal()"></button>
+      </div>
+      <div class="modal-body px-4 pb-4">
+        <div class="alert alert-danger py-2 small" *ngIf="modalError">
+          <i class="fas fa-exclamation-circle me-2"></i>{{ modalError }}
+        </div>
+
+        <form [formGroup]="productForm" (ngSubmit)="submitForm()">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label modal-label">Product Name</label>
+              <input
+                formControlName="name"
+                type="text"
+                class="form-control"
+                [class.is-invalid]="invalid('name')"
+              />
+              <div class="invalid-feedback">Name is required (min 2 chars).</div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label modal-label">Category</label>
+              <input
+                formControlName="category"
+                type="text"
+                class="form-control"
+                placeholder="e.g. Electronics"
+                [class.is-invalid]="invalid('category')"
+              />
+              <div class="invalid-feedback">Category is required.</div>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label modal-label">Price ($)</label>
+              <input
+                formControlName="price"
+                type="number"
+                class="form-control"
+                min="0"
+                step="0.01"
+                [class.is-invalid]="invalid('price')"
+              />
+              <div class="invalid-feedback">Must be > 0.</div>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label modal-label">SKU</label>
+              <input
+                formControlName="sku"
+                type="text"
+                class="form-control"
+                [class.is-invalid]="invalid('sku')"
+              />
+              <div class="invalid-feedback">SKU is required.</div>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label modal-label">Inventory</label>
+              <input
+                formControlName="inventory"
+                type="number"
+                class="form-control"
+                min="0"
+                [class.is-invalid]="invalid('inventory')"
+              />
+              <div class="invalid-feedback">Cannot be negative.</div>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label modal-label">Description</label>
+              <textarea
+                formControlName="description"
+                class="form-control"
+                rows="3"
+                [class.is-invalid]="invalid('description')"
+              ></textarea>
+              <div class="invalid-feedback">Description is required.</div>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label modal-label">Images</label>
+              <div class="input-group mb-2">
+                <input
+                  type="text"
+                  class="form-control"
+                  placeholder="Paste image URL…"
+                  [(ngModel)]="imageInputVal"
+                  [ngModelOptions]="{ standalone: true }"
+                />
+                <button type="button" class="btn btn-outline-secondary" (click)="addImage()">
+                  <i class="fas fa-plus me-1"></i>Add
+                </button>
+              </div>
+              <div class="d-flex flex-wrap gap-2" *ngIf="currentImages.length">
+                <div *ngFor="let img of currentImages; let i = index" class="img-thumb-wrap">
+                  <img
+                    [src]="img"
+                    class="img-thumbnail"
+                    style="width: 58px; height: 58px; object-fit: cover"
+                    (error)="$any($event.target).src = 'assets/img/product-1.png'"
+                  />
+                  <button type="button" class="btn-rm-img" (click)="removeImage(i)">
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 d-flex justify-content-end gap-2 pt-2">
+              <button
+                type="button"
+                class="btn btn-light border px-4 rounded-pill"
+                (click)="closeFormModal()"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                class="btn btn-primary px-4 rounded-pill fw-semibold"
+                [disabled]="modalLoading"
+              >
+                <span *ngIf="modalLoading" class="spinner-border spinner-border-sm me-2"></span>
+                {{ isEditing ? 'Save Changes' : 'Create Product' }}
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DELETE MODAL ══════════════════════════════════════════════════════════ -->
+<div
+  class="modal fade show d-block"
+  tabindex="-1"
+  *ngIf="showDeleteModal"
+  style="background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px)"
+>
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header border-0 pt-4 px-4">
+        <h5 class="modal-title fw-bold text-danger">
+          <i class="fas fa-triangle-exclamation me-2"></i>Delete Product
+        </h5>
+        <button class="btn-close" (click)="closeDelete()"></button>
+      </div>
+      <div class="modal-body px-4">
+        <div class="alert alert-danger py-2 small" *ngIf="deleteError">{{ deleteError }}</div>
+        <p class="text-muted mb-1">
+          Are you sure you want to delete <strong class="text-dark">{{ deleteTarget?.name }}</strong
+          >?
+        </p>
+        <p class="text-muted small">This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer border-0 px-4 pb-4 gap-2">
+        <button class="btn btn-light border px-4 rounded-pill" (click)="closeDelete()">
+          Cancel
+        </button>
+        <button
+          class="btn btn-danger px-4 rounded-pill fw-semibold"
+          (click)="confirmDelete()"
+          [disabled]="deleteLoading"
+        >
+          <span *ngIf="deleteLoading" class="spinner-border spinner-border-sm me-2"></span>
+          <i *ngIf="!deleteLoading" class="fas fa-trash me-1"></i>Delete
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

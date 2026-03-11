@@ -1,0 +1,340 @@
+<!-- Success toast -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
+  <div class="toast show align-items-center text-white bg-success border-0" *ngIf="successMsg">
+    <div class="d-flex">
+      <div class="toast-body"><i class="fas fa-check-circle me-2"></i>{{ successMsg }}</div>
+      <button class="btn-close btn-close-white me-2 m-auto" (click)="successMsg = null"></button>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid p-4">
+  <!-- Header -->
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+    <div>
+      <h4 class="fw-bold mb-1">Orders</h4>
+      <p class="text-muted small mb-0">{{ totalOrders.toLocaleString() }} orders total</p>
+    </div>
+  </div>
+
+  <!-- Error -->
+  <div
+    class="alert alert-danger d-flex align-items-center justify-content-between gap-2 mb-4"
+    *ngIf="error"
+  >
+    <span><i class="fas fa-exclamation-circle me-2"></i>{{ error }}</span>
+    <button class="btn btn-sm btn-outline-danger rounded-pill" (click)="loadOrders()">Retry</button>
+  </div>
+
+  <!-- Filters + table card -->
+  <div class="card border-0 shadow-sm overflow-hidden">
+    <!-- Filters bar -->
+    <div class="card-header bg-white border-0 py-3 px-4 d-flex flex-wrap gap-3 align-items-center">
+      <div class="input-group flex-grow-1" style="max-width: 280px">
+        <span class="input-group-text bg-white border-end-0 text-muted"
+          ><i class="fas fa-search fa-sm"></i
+        ></span>
+        <input
+          type="text"
+          class="form-control border-start-0 ps-0"
+          placeholder="Search by ID or customer…"
+          (input)="onSearch($any($event.target).value)"
+        />
+      </div>
+      <select
+        class="form-select form-select-sm rounded-pill"
+        style="max-width: 160px"
+        [ngModel]="statusFilter"
+        (ngModelChange)="onStatusFilter($event)"
+      >
+        <option value="">All statuses</option>
+        <option *ngFor="let s of statusOptions" [value]="s">{{ s | titlecase }}</option>
+      </select>
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="ord-thead">
+          <tr>
+            <th class="ps-4">Order ID</th>
+            <th>Customer</th>
+            <th>Items</th>
+            <th>Total</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th class="text-end pe-4">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Skeleton -->
+          <ng-container *ngIf="loading">
+            <tr class="placeholder-glow" *ngFor="let i of [1, 2, 3, 4, 5]">
+              <td colspan="7" class="p-0">
+                <div class="d-flex align-items-center px-4 py-3 border-bottom gap-3">
+                  <span class="placeholder col-2"></span>
+                  <span class="placeholder col-2"></span>
+                  <span class="placeholder col-1 ms-auto"></span>
+                </div>
+              </td>
+            </tr>
+          </ng-container>
+
+          <!-- Empty -->
+          <tr *ngIf="!loading && orders.length === 0">
+            <td colspan="7" class="text-center py-5">
+              <i class="fas fa-inbox fa-2x d-block mb-2 opacity-25 text-muted"></i>
+              <p class="text-muted mb-0">No orders found.</p>
+            </td>
+          </tr>
+
+          <!-- Rows -->
+          <tr *ngFor="let o of orders; trackBy: trackById">
+            <td class="ps-4">
+              <span class="order-id">#{{ o._id || o.id | slice: 0 : 8 }}</span>
+            </td>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <div class="ord-avatar">
+                  {{ getInitials(o.user?.name || o.customerName || '?') }}
+                </div>
+                <span class="small fw-semibold">{{
+                  o.user?.name || o.customerName || 'Guest'
+                }}</span>
+              </div>
+            </td>
+            <td class="text-muted small">{{ (o.items || o.orderItems || []).length }} item(s)</td>
+            <td class="fw-semibold">${{ o.totalAmount || o.total || 0 | number: '1.2-2' }}</td>
+            <td class="text-muted small">{{ formatDate(o.createdAt) }}</td>
+            <td>
+              <span class="ord-status-badge" [ngClass]="statusClass(o.status)">{{
+                o.status || 'pending'
+              }}</span>
+            </td>
+            <td class="text-end pe-4">
+              <div class="btn-group btn-group-sm">
+                <button
+                  class="btn btn-light border text-muted px-2"
+                  (click)="openDetail(o)"
+                  title="View"
+                >
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button
+                  class="btn btn-light border text-primary px-2"
+                  (click)="openStatus(o)"
+                  title="Update status"
+                >
+                  <i class="fas fa-pencil-alt"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div
+      class="card-footer bg-white border-0 py-3 d-flex justify-content-center"
+      *ngIf="totalPages > 1 && !loading"
+    >
+      <nav>
+        <ul class="pagination pagination-sm mb-0 gap-1">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <button class="page-link rounded" (click)="goToPage(currentPage - 1)">‹</button>
+          </li>
+          <li class="page-item" *ngFor="let pg of pages" [class.active]="pg === currentPage">
+            <button class="page-link rounded" (click)="goToPage(pg)">{{ pg }}</button>
+          </li>
+          <li class="page-item" [class.disabled]="currentPage === totalPages">
+            <button class="page-link rounded" (click)="goToPage(currentPage + 1)">›</button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ORDER DETAIL MODAL ══════════════════════════════════════════════════════ -->
+<div
+  class="modal fade show d-block"
+  tabindex="-1"
+  *ngIf="showDetail"
+  style="background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px)"
+>
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header border-0 pt-4 px-4">
+        <h5 class="modal-title fw-bold">
+          <i class="fas fa-shopping-bag me-2 text-primary"></i>
+          Order
+          <span class="text-primary"
+            >#{{ detailOrder?._id || detailOrder?.id | slice: 0 : 8 }}</span
+          >
+        </h5>
+        <button class="btn-close" (click)="closeDetail()"></button>
+      </div>
+      <div class="modal-body px-4 pb-4" *ngIf="detailOrder">
+        <!-- Summary row -->
+        <div class="row g-3 mb-4">
+          <div class="col-6 col-md-3">
+            <div class="detail-stat-card">
+              <div class="detail-stat-label">Total</div>
+              <div class="detail-stat-value">
+                ${{ detailOrder.totalAmount || detailOrder.total || 0 | number: '1.2-2' }}
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="detail-stat-card">
+              <div class="detail-stat-label">Status</div>
+              <div class="mt-1">
+                <span class="ord-status-badge" [ngClass]="statusClass(detailOrder.status)">{{
+                  detailOrder.status || 'pending'
+                }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="detail-stat-card">
+              <div class="detail-stat-label">Date</div>
+              <div class="detail-stat-value">{{ formatDate(detailOrder.createdAt) }}</div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="detail-stat-card">
+              <div class="detail-stat-label">Items</div>
+              <div class="detail-stat-value">
+                {{ (detailOrder.items || detailOrder.orderItems || []).length }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Customer info -->
+        <div class="card border-0 bg-light rounded-3 p-3 mb-3">
+          <div class="row g-2">
+            <div class="col-md-6">
+              <p class="detail-section-label mb-1">Customer</p>
+              <p class="fw-semibold small mb-0">
+                {{ detailOrder.user?.name || detailOrder.customerName || 'Guest' }}
+              </p>
+              <p class="text-muted small mb-0">
+                {{ detailOrder.user?.email || detailOrder.customerEmail || '—' }}
+              </p>
+            </div>
+            <div class="col-md-6" *ngIf="detailOrder.shippingAddress">
+              <p class="detail-section-label mb-1">Shipping Address</p>
+              <p class="small mb-0">
+                {{
+                  detailOrder.shippingAddress.street || detailOrder.shippingAddress.address || '—'
+                }},
+                {{ detailOrder.shippingAddress.city || '' }}
+                {{ detailOrder.shippingAddress.country || '' }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order items -->
+        <p class="detail-section-label mb-2">Order Items</p>
+        <div
+          *ngIf="!(detailOrder.items || detailOrder.orderItems)?.length"
+          class="text-muted small text-center py-3"
+        >
+          No item details available.
+        </div>
+        <div class="table-responsive" *ngIf="(detailOrder.items || detailOrder.orderItems)?.length">
+          <table class="table table-sm align-middle mb-0">
+            <thead class="table-light" style="font-size: 0.7rem">
+              <tr>
+                <th>Product</th>
+                <th class="text-center">Qty</th>
+                <th class="text-end">Price</th>
+                <th class="text-end">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of detailOrder.items || detailOrder.orderItems || []">
+                <td class="small fw-semibold">
+                  {{ item.product?.name || item.name || 'Product' }}
+                </td>
+                <td class="text-center text-muted small">{{ item.quantity || item.qty || 1 }}</td>
+                <td class="text-end text-muted small">${{ item.price || 0 | number: '1.2-2' }}</td>
+                <td class="text-end fw-semibold small">
+                  ${{ (item.price || 0) * (item.quantity || item.qty || 1) | number: '1.2-2' }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer border-0 px-4 pb-4 gap-2">
+        <button
+          class="btn btn-outline-primary rounded-pill px-3"
+          (click)="openStatus(detailOrder); closeDetail()"
+        >
+          <i class="fas fa-pencil-alt me-1"></i>Update Status
+        </button>
+        <button class="btn btn-light border rounded-pill px-4" (click)="closeDetail()">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ STATUS UPDATE MODAL ══════════════════════════════════════════════════ -->
+<div
+  class="modal fade show d-block"
+  tabindex="-1"
+  *ngIf="showStatusModal"
+  style="background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(4px)"
+>
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 400px">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header border-0 pt-4 px-4">
+        <h5 class="modal-title fw-bold">
+          <i class="fas fa-sync-alt me-2 text-primary"></i>Update Status
+        </h5>
+        <button class="btn-close" (click)="closeStatus()"></button>
+      </div>
+      <div class="modal-body px-4 pb-2">
+        <div class="alert alert-danger py-2 small" *ngIf="statusError">{{ statusError }}</div>
+        <p class="text-muted small mb-3">
+          Order <strong>#{{ statusTarget?._id || statusTarget?.id | slice: 0 : 8 }}</strong>
+        </p>
+        <label class="form-label modal-label">New Status</label>
+        <select class="form-select" [(ngModel)]="newStatus">
+          <option *ngFor="let s of statusOptions" [value]="s">{{ s | titlecase }}</option>
+        </select>
+
+        <!-- Visual flow -->
+        <div class="status-flow d-flex align-items-center justify-content-between mt-3">
+          <div
+            *ngFor="let s of statusOptions.slice(0, 4)"
+            class="status-step"
+            [class.active]="s === newStatus"
+            [class.passed]="statusOptions.indexOf(s) < statusOptions.indexOf(newStatus)"
+          >
+            <div class="step-dot"></div>
+            <div class="step-label">{{ s | titlecase }}</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer border-0 px-4 pb-4 gap-2">
+        <button class="btn btn-light border px-4 rounded-pill" (click)="closeStatus()">
+          Cancel
+        </button>
+        <button
+          class="btn btn-primary px-4 rounded-pill fw-semibold"
+          (click)="updateStatus()"
+          [disabled]="statusLoading"
+        >
+          <span *ngIf="statusLoading" class="spinner-border spinner-border-sm me-2"></span>
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

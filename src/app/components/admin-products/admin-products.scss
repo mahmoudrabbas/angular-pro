@@ -1,0 +1,76 @@
+$primary: #f97316;
+$success: #22c55e;
+$danger: #ef4444;
+$warning: #eab308;
+
+.prod-thead th {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #94a3b8;
+  background: #f8fafc;
+  border: none;
+  padding-top: 0.85rem;
+  padding-bottom: 0.85rem;
+}
+
+.prod-thumb {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+}
+
+// Stock pill
+.stock-pill {
+  display: inline-block;
+  padding: 0.2rem 0.65rem;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 700;
+
+  &.stock-ok {
+    background: rgba($success, 0.12);
+    color: darken($success, 10%);
+  }
+  &.stock-low {
+    background: rgba($warning, 0.16);
+    color: darken($warning, 20%);
+  }
+  &.stock-out {
+    background: rgba($danger, 0.12);
+    color: darken($danger, 10%);
+  }
+}
+
+// Modal label
+.modal-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+  margin-bottom: 0.3rem;
+}
+
+// Image thumb
+.img-thumb-wrap {
+  position: relative;
+  .btn-rm-img {
+    position: absolute;
+    top: -7px;
+    right: -7px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: $danger;
+    color: #fff;
+    border: none;
+    font-size: 0.55rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+  }
+}

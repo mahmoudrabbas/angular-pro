@@ -5,21 +5,6 @@ import { FormsModule } from '@angular/forms';
 import { ProductService } from '../../services/product.service';
 import { CategoryService } from '../../services/category.service';
 
-interface Stats {
-  totalProducts: number;
-  totalOrders: number;
-  totalUsers: number;
-  totalRevenue: number;
-}
-
-interface Order {
-  id: string;
-  customer: string;
-  date: string;
-  total: number;
-  status: string;
-}
-
 interface ProductFormData {
   name: string;
   description: string;
@@ -38,45 +23,6 @@ interface ProductFormData {
   styleUrls: ['./admin-dashboard.scss'],
 })
 export class AdminDashboard {
-  stats: Stats = {
-    totalProducts: 1234,
-    totalOrders: 567,
-    totalUsers: 8901,
-    totalRevenue: 234567,
-  };
-
-  recentOrders: Order[] = [
-    { id: 'ORD-001', customer: 'John Doe', date: '2024-03-05', total: 299.99, status: 'Completed' },
-    {
-      id: 'ORD-002',
-      customer: 'Jane Smith',
-      date: '2024-03-05',
-      total: 149.5,
-      status: 'Processing',
-    },
-    {
-      id: 'ORD-003',
-      customer: 'Bob Johnson',
-      date: '2024-03-04',
-      total: 549.99,
-      status: 'Pending',
-    },
-    {
-      id: 'ORD-004',
-      customer: 'Alice Williams',
-      date: '2024-03-04',
-      total: 89.99,
-      status: 'Completed',
-    },
-    {
-      id: 'ORD-005',
-      customer: 'Charlie Brown',
-      date: '2024-03-03',
-      total: 399.99,
-      status: 'Cancelled',
-    },
-  ];
-
   // Product form state
   isAddingProduct = false;
   productForm: ProductFormData = {
@@ -86,7 +32,7 @@ export class AdminDashboard {
     category: '',
     sku: '',
     inventory: 0,
-    images: []
+    images: [],
   };
   productFormErrors: { [key: string]: string } = {};
   productFormSuccess = false;
@@ -96,32 +42,15 @@ export class AdminDashboard {
   categoryForm = {
     name: '',
     description: '',
-    image: ''
+    image: '',
   };
   categoryFormErrors: { [key: string]: string } = {};
   categoryFormSuccess = false;
 
   constructor(
     private productService: ProductService,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
   ) {}
-
-  getStatusClass(status: string): string {
-    switch (status) {
-      case 'Completed':
-        return 'dot-confirmed';
-      case 'Processing':
-      case 'Pending':
-      case 'Cancelled':
-        return 'dot-pending';
-      default:
-        return 'dot-pending';
-    }
-  }
-
-  trackById(index: number, order: Order): string {
-    return order.id;
-  }
 
   // Toggle product form
   toggleProductForm(): void {
@@ -148,7 +77,7 @@ export class AdminDashboard {
       category: '',
       sku: '',
       inventory: 0,
-      images: []
+      images: [],
     };
     this.productFormErrors = {};
     this.productFormSuccess = false;
@@ -158,7 +87,7 @@ export class AdminDashboard {
     this.categoryForm = {
       name: '',
       description: '',
-      image: ''
+      image: '',
     };
     this.categoryFormErrors = {};
     this.categoryFormSuccess = false;
@@ -228,32 +157,32 @@ export class AdminDashboard {
       sku: this.productForm.sku,
       inventory: this.productForm.inventory,
       seo: {
-        slug: this.productForm.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+        slug: this.productForm.name
+          .toLowerCase()
+          .replace(/\s+/g, '-')
+          .replace(/[^a-z0-9-]/g, ''),
       },
       images: this.productForm.images,
       image: this.productForm.images[0] || '',
       oldPrice: `$${this.productForm.price}`,
       newPrice: `$${this.productForm.price}`,
       rating: 4,
-      badge: null
+      badge: null,
     };
 
-    console.log('Creating product with data:', productData);
-    
     this.productService.create(productData).subscribe({
       next: (product) => {
         console.log('Product created successfully:', product);
         this.productFormSuccess = true;
-        // Show success message for 3 seconds then reset
         setTimeout(() => {
           this.resetProductForm();
         }, 3000);
       },
       error: (err) => {
         console.error('Error creating product:', err);
-        console.error('Error details:', err.error);
-        this.productFormErrors['general'] = 'Failed to create product. Please check the console for details.';
-      }
+        this.productFormErrors['general'] =
+          'Failed to create product. Please check the console for details.';
+      },
     });
   }
 
@@ -267,34 +196,26 @@ export class AdminDashboard {
       name: this.categoryForm.name,
       description: this.categoryForm.description,
       image: this.categoryForm.image || '',
-      slug: this.categoryForm.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+      slug: this.categoryForm.name
+        .toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[^a-z0-9-]/g, ''),
     };
 
-    console.log('Creating category with data:', categoryData);
-    
     this.categoryService.create(categoryData).subscribe({
       next: (category) => {
         console.log('Category created successfully:', category);
         this.categoryFormSuccess = true;
-        // Show success message for 3 seconds then reset
         setTimeout(() => {
           this.resetCategoryForm();
         }, 3000);
       },
       error: (err) => {
         console.error('Error creating category:', err);
-        console.error('Error details:', err.error);
-        this.categoryFormErrors['general'] = 'Failed to create category. Please check the console for details.';
-      }
+        this.categoryFormErrors['general'] =
+          'Failed to create category. Please check the console for details.';
+      },
     });
-  }
-
-  // Handle image upload (simple text input for now)
-  addImage(): void {
-    const imageUrl = prompt('Enter image URL:');
-    if (imageUrl) {
-      this.productForm.images.push(imageUrl);
-    }
   }
 
   removeImage(index: number): void {

@@ -10,6 +10,7 @@ import { Product } from '../models/product.model';
 export class ProductService {
   private apiUrl = 'http://localhost:3000/api/products';
 
+  //private apiUrl = 'https://back-omega-amber.vercel.app/api/products';
   constructor(private http: HttpClient) {}
 
   // Get all products from API
@@ -33,20 +34,23 @@ export class ProductService {
   }
 
   // Get full paginated response
-  getPaginated(page: number = 1, limit: number = 10): Observable<{ products: Product[], total: number, page: number, pages: number }> {
+  getPaginated(
+    page: number = 1,
+    limit: number = 10,
+  ): Observable<{ products: Product[]; total: number; page: number; pages: number }> {
     return this.http.get<any>(`${this.apiUrl}?page=${page}&limit=${limit}`).pipe(
-      map(response => {
+      map((response) => {
         const products = response.products || response;
         const mappedProducts = (Array.isArray(products) ? products : []).map((p: any) =>
-          this.mapApiToProduct(p)
+          this.mapApiToProduct(p),
         );
         return {
           products: mappedProducts,
           total: response.total || mappedProducts.length,
           page: response.page || 1,
-          pages: response.pages || 1
+          pages: response.pages || 1,
         };
-      })
+      }),
     );
   }
 
@@ -74,7 +78,11 @@ export class ProductService {
   }
 
   // Get products by tab (all, new, featured, top)
-  getByTab(tab: 'all' | 'new' | 'featured' | 'top', page?: number, limit?: number): Observable<Product[]> {
+  getByTab(
+    tab: 'all' | 'new' | 'featured' | 'top',
+    page?: number,
+    limit?: number,
+  ): Observable<Product[]> {
     return this.getAll(page, limit).pipe(
       map((products) => {
         if (tab === 'all') return products;
@@ -86,13 +94,17 @@ export class ProductService {
     );
   }
 
-  getPaginatedByTab(tab: 'all' | 'new' | 'featured' | 'top', page: number = 1, limit: number = 10): Observable<{ products: Product[], total: number, page: number, pages: number }> {
-     return this.getPaginated(page, limit).pipe(
-        map((res) => {
-           if (tab === 'all') return res;
-           return res; // let API handle filters later
-        })
-     )
+  getPaginatedByTab(
+    tab: 'all' | 'new' | 'featured' | 'top',
+    page: number = 1,
+    limit: number = 10,
+  ): Observable<{ products: Product[]; total: number; page: number; pages: number }> {
+    return this.getPaginated(page, limit).pipe(
+      map((res) => {
+        if (tab === 'all') return res;
+        return res; // let API handle filters later
+      }),
+    );
   }
 
   // Get product by ID - with fallback to full list if single-product endpoint fails

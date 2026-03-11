@@ -1,13 +1,16 @@
 <div class="d-flex vh-100 overflow-hidden" id="admin-shell">
+  <!-- ══ SIDEBAR ══════════════════════════════════════════════════════════════ -->
   <aside class="sidebar d-flex flex-column transition-all" [class.collapsed]="sidebarCollapsed">
+    <!-- Brand -->
     <div class="brand d-flex align-items-center gap-2 px-4 py-4 border-bottom border-secondary">
-      <i class="fas fa-crown text-primary fs-4"></i>
+      <i class="fas fa-crown text-primary fs-4 flex-shrink-0"></i>
       <span class="brand-name fw-bold text-uppercase text-white ls-wide small mb-0"
         >Admin Panel</span
       >
     </div>
 
-    <nav class="nav nav-pills flex-column p-2 flex-grow-1 gap-1">
+    <!-- Nav -->
+    <nav class="nav nav-pills flex-column p-2 flex-grow-1 gap-1 overflow-auto">
       <a
         routerLink="/admin/dashboard"
         routerLinkActive="active"
@@ -42,32 +45,83 @@
       </a>
     </nav>
 
+    <!-- Admin user card + logout -->
     <div class="p-3 border-top border-secondary">
+      <!-- Admin info (visible when expanded) -->
+      <div class="d-flex align-items-center gap-2 px-1 mb-2 nav-text">
+        <div class="admin-mini-avatar flex-shrink-0">
+          {{ getInitials(authService.currentUser()?.name || 'Admin') }}
+        </div>
+        <div class="overflow-hidden">
+          <div class="text-white small fw-semibold text-truncate">
+            {{ authService.currentUser()?.name || 'Admin' }}
+          </div>
+          <div class="text-muted" style="font-size: 0.68rem">Administrator</div>
+        </div>
+      </div>
+
       <button
         (click)="logout()"
-        class="btn btn-outline-light border-0 w-100 d-flex flex-column align-items-start p-2 rounded-3 bg-opacity-10 bg-white"
+        class="btn btn-outline-light border-0 w-100 d-flex align-items-center gap-3 p-2 rounded-3 hover-logout"
       >
-        <span class="text-primary fw-mono h5 mb-0">↪</span>
+        <i class="fas fa-sign-out-alt fw-icon text-primary"></i>
         <span class="nav-text small text-uppercase ls-wide opacity-75">Logout</span>
       </button>
     </div>
   </aside>
 
+  <!-- ══ MAIN ═════════════════════════════════════════════════════════════════ -->
   <main class="flex-grow-1 d-flex flex-column bg-light overflow-auto">
-    <header class="navbar bg-white border-bottom px-4 py-3 sticky-top">
-      <button class="btn btn-link text-muted p-0 border-0" (click)="toggleSidebar()">
+    <!-- Topbar -->
+    <header class="admin-topbar navbar bg-white border-bottom px-4 py-0 sticky-top">
+      <button
+        class="btn btn-link text-muted p-0 border-0 me-3"
+        (click)="toggleSidebar()"
+        title="Toggle sidebar"
+      >
         <i class="fas fa-bars fs-5"></i>
       </button>
 
-      <div class="input-group ms-auto" style="max-width: 300px">
-        <span class="input-group-text bg-white border-end-0 text-muted">
-          <i class="fas fa-search"></i>
-        </span>
-        <input type="text" class="form-control border-start-0 ps-0" placeholder="Search..." />
+      <!-- Breadcrumb-style page title slot (filled by router) -->
+      <span class="text-muted small d-none d-md-inline">
+        <i class="fas fa-home me-1 opacity-50"></i>
+        <a routerLink="/home" class="text-muted text-decoration-none">Store</a>
+        <span class="mx-2 opacity-30">›</span>
+        <span class="text-dark fw-semibold">Admin</span>
+      </span>
+
+      <div class="ms-auto d-flex align-items-center gap-3">
+        <!-- Search -->
+        <div class="input-group admin-search d-none d-lg-flex">
+          <span class="input-group-text bg-white border-end-0 text-muted">
+            <i class="fas fa-search fa-sm"></i>
+          </span>
+          <input
+            type="text"
+            class="form-control border-start-0 ps-0"
+            placeholder="Search anything…"
+            style="max-width: 220px"
+          />
+        </div>
+
+        <!-- Visit store -->
+        <a
+          routerLink="/home"
+          class="btn btn-sm btn-outline-secondary rounded-pill d-none d-md-flex align-items-center gap-1"
+        >
+          <i class="fas fa-external-link-alt fa-xs"></i>
+          <span>View Store</span>
+        </a>
+
+        <!-- Admin avatar -->
+        <div class="topbar-avatar" title="{{ authService.currentUser()?.name }}">
+          {{ getInitials(authService.currentUser()?.name || 'A') }}
+        </div>
       </div>
     </header>
 
-    <div class="p-4">
+    <!-- Page content -->
+    <div class="flex-grow-1">
       <router-outlet></router-outlet>
     </div>
   </main>
