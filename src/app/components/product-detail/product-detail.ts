@@ -202,7 +202,12 @@ export class ProductDetail implements OnInit {
 
   addToCart(): void {
     if (this.product) {
-      this.cartService.addToCart(this.product.id.toString(), this.quantity).subscribe({
+      const meta = {
+        name: this.product.name,
+        price: parseFloat(this.product.newPrice.replace(/[^0-9.]/g, '')) || 0,
+        image: this.product.images[0] || 'assets/img/product-3.png',
+      };
+      this.cartService.addToCart(this.product.id.toString(), this.quantity, meta).subscribe({
         next: () => console.log('Added to cart'),
         error: (err: any) => console.error('Failed to add to cart', err),
       });
@@ -211,7 +216,12 @@ export class ProductDetail implements OnInit {
 
   buyNow(): void {
     if (this.product) {
-      this.cartService.addToCart(this.product.id.toString(), this.quantity).subscribe({
+      const meta = {
+        name: this.product.name,
+        price: parseFloat(this.product.newPrice.replace(/[^0-9.]/g, '')) || 0,
+        image: this.product.images[0] || 'assets/img/product-3.png',
+      };
+      this.cartService.addToCart(this.product.id.toString(), this.quantity, meta).subscribe({
         next: () => this.router.navigate(['/checkout']),
         error: (err: any) => console.error('Failed to add to cart', err),
       });

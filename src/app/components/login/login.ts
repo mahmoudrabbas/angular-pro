@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { Router, RouterLink } from '@angular/router';
 import { finalize, Subscription } from 'rxjs';
 import { AuthService, LoginError } from '../../services/auth.service'; // 👈 Import LoginError
+import { CartService } from '../../services/cart.service';
 import { OnDestroy } from '@angular/core';
 import { ChangeDetectorRef } from '@angular/core';
 @Component({
@@ -27,6 +28,7 @@ export class Login implements OnDestroy {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
+    private cartService: CartService,
     private router: Router,
     private cd: ChangeDetectorRef,
   ) {
@@ -85,7 +87,10 @@ export class Login implements OnDestroy {
           }),
         )
         .subscribe({
-          next: () => this.router.navigate([this.authService.isAdmin() ? '/admin' : '/']),
+          next: () => {
+            this.cartService.mergeGuestCart();
+            this.router.navigate([this.authService.isAdmin() ? '/admin' : '/']);
+          },
           error: (err: LoginError) => {
             this.errorMessage = err.message;
             this.errorField = err.field;

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CartService } from '../../services/cart.service';
+import { ConfirmDialogService } from '../../services/confirm-dialog.service';
 import { CartItem } from '../../models/cart.model';
 
 @Component({
@@ -12,7 +13,10 @@ import { CartItem } from '../../models/cart.model';
   styleUrls: ['./cart.scss'],
 })
 export class Cart implements OnInit {
-  constructor(public cartService: CartService) { }
+  constructor(
+    public cartService: CartService,
+    private confirmDialog: ConfirmDialogService,
+  ) { }
 
   ngOnInit(): void {
     this.cartService.loadCart();
@@ -56,12 +60,24 @@ export class Cart implements OnInit {
     }
   }
 
-  removeItem(item: CartItem): void {
-    this.cartService.removeItem(item.product._id).subscribe();
+  async removeItem(item: CartItem): Promise<void> {
+    const confirmed = await this.confirmDialog.open(
+      'Remove Item',
+      `Are you sure you want to remove "${item.product.name}" from your cart?`,
+    );
+    if (confirmed) {
+      this.cartService.removeItem(item.product._id).subscribe();
+    }
   }
 
-  clearCart(): void {
-    this.cartService.clearCart().subscribe();
+  async clearCart(): Promise<void> {
+    const confirmed = await this.confirmDialog.open(
+      'Clear Cart',
+      'Are you sure you want to remove all items from your cart? This action cannot be undone.',
+    );
+    if (confirmed) {
+      this.cartService.clearCart().subscribe();
+    }
   }
 
   getProductImage(item: CartItem): string {

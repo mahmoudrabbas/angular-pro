@@ -3,6 +3,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ScriptInitService } from '../../components/services/script-init.service';
 import { ProductService } from '../../services/product.service';
+import { CartService } from '../../services/cart.service';
 import { Product } from '../../models/product.model';
 
 @Component({
@@ -29,6 +30,7 @@ export class CarouselComponent implements OnInit, AfterViewInit, OnDestroy {
     @Inject(PLATFORM_ID) private platformId: Object,
     private scriptInit: ScriptInitService,
     private productService: ProductService,
+    private cartService: CartService,
   ) {}
 
   ngOnInit(): void {
@@ -78,14 +80,18 @@ export class CarouselComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   addToCart(): void {
-    console.log('🛒 Added to cart:', this.bannerOffer.productName);
-    // Find the actual product and add to cart
-    this.productService.getById('1').subscribe((product) => {
-      if (product) {
-        // Emit or call cart service
-        console.log('Product details:', product);
-      }
-    });
+    if (this.carouselItems.length > 0) {
+      const featured = this.carouselItems[0];
+      const meta = {
+        name: featured.title || this.bannerOffer.productName,
+        price: parseFloat(this.bannerOffer.newPrice.replace(/[^0-9.]/g, '')) || 0,
+        image: featured.image || this.bannerOffer.image,
+      };
+      this.cartService.addToCart(featured.id?.toString() || '1', 1, meta).subscribe({
+        next: () => console.log('Added to cart:', meta.name),
+        error: (err: any) => console.error('Failed to add to cart', err),
+      });
+    }
   }
 
   // Optional: Refresh carousel with different products

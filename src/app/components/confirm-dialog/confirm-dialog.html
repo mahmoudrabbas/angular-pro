@@ -1,0 +1,15 @@
+@if (dialogService.visible()) {
+<div class="dialog-overlay" (click)="dialogService.cancel()">
+  <div class="dialog-card" (click)="$event.stopPropagation()">
+    <div class="dialog-icon">
+      <i class="fas fa-exclamation-triangle"></i>
+    </div>
+    <h3 class="dialog-title">{{ dialogService.title() }}</h3>
+    <p class="dialog-message">{{ dialogService.message() }}</p>
+    <div class="dialog-actions">
+      <button class="btn-cancel" (click)="dialogService.cancel()">Cancel</button>
+      <button class="btn-confirm" (click)="dialogService.confirm()">Remove</button>
+    </div>
+  </div>
+</div>
+}

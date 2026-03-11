@@ -40,3 +40,12 @@ export interface CheckoutResponse {
     orderNumber: string;
     totalAmount: number;
 }
+
+/** Guest cart item stored in localStorage */
+export interface GuestCartItem {
+    productId: string;
+    name: string;
+    price: number;
+    image: string;
+    quantity: number;
+}

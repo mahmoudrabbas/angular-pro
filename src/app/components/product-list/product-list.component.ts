@@ -112,7 +112,12 @@ export class ProductListComponent implements OnInit {
   }
 
   onAddToCart(product: Product): void {
-    this.cartService.addToCart(product.id.toString(), 1).subscribe({
+    const meta = {
+      name: product.name,
+      price: parseFloat(product.newPrice?.replace(/[^0-9.]/g, '') || '0'),
+      image: product.image || 'assets/img/product-3.png',
+    };
+    this.cartService.addToCart(product.id.toString(), 1, meta).subscribe({
       next: () => console.log('Added to cart:', product.name),
       error: (err) => console.error('Failed to add to cart', err),
     });
