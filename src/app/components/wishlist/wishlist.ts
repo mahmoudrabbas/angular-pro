@@ -31,7 +31,7 @@ export class Wishlist implements OnInit {
     this.wishlistService.clearWishlist().subscribe({
       next: () => {
         this.allEntries.set([]);
-        this.wishlistStateService.clear(); // update ma global state
+        this.wishlistStateService.clearWishlist().subscribe();
         this.clearing.set(false);
       },
       error: () => this.clearing.set(false),

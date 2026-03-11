@@ -19,6 +19,13 @@
       </div>
     </div>
 
+    @if (cancelSuccess()) {
+      <div class="alert-success">{{ cancelSuccess() }}</div>
+    }
+    @if (cancelError() && !showCancelModal()) {
+      <div class="alert-error">{{ cancelError() }}</div>
+    }
+
     @if (isLoading()) {
       <div class="loading-state">
         <div class="spinner"></div>
@@ -71,7 +78,6 @@
 
         @for (order of filteredOrders(); track order.id) {
           <div class="order-card" [class.expanded]="isExpanded(order.id)">
-            <!-- Card Header Row -->
             <div class="order-header" (click)="toggleExpand(order.id)">
               <div class="order-id-block">
                 <p class="order-id">{{ order.orderNumber }}</p>
@@ -172,12 +178,27 @@
                 </div>
 
                 <div class="details-footer">
-                  <button class="detail-action-btn invoice">🧾 Download Invoice</button>
+                  <!-- Generates PDF inline -->
+                  <button class="detail-action-btn invoice" (click)="downloadInvoice(order)">
+                    🧾 Download Invoice
+                  </button>
+
                   @if (order.status.toLowerCase() === 'delivered') {
                     <button class="detail-action-btn review">⭐ Write a Review</button>
                     <button class="detail-action-btn reorder-lg">↺ Reorder All</button>
                   }
-                  <button class="detail-action-btn support">💬 Contact Support</button>
+
+                  <!-- Only for pending orders — opens modal -->
+                  @if (order.status.toLowerCase() === 'pending') {
+                    <button class="detail-action-btn cancel" (click)="openCancelModal(order)">
+                      ❌ Cancel Order
+                    </button>
+                  }
+
+                  <!-- Navigates to /contact -->
+                  <!-- <button class="detail-action-btn support" (click)="goToContact()">
+                    💬 Contact Support
+                  </button> -->
                 </div>
               </div>
             }
@@ -187,3 +208,43 @@
     }
   </main>
 </div>
+
+<!-- ── CANCEL MODAL ── -->
+@if (showCancelModal() && orderToCancel()) {
+  <div class="modal-overlay" (click)="closeCancelModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-icon">❌</div>
+      <h3 class="modal-title">Cancel Order?</h3>
+      <p class="modal-body">
+        Are you sure you want to cancel
+        <strong>{{ orderToCancel()!.orderNumber }}</strong
+        >? This action cannot be undone.
+      </p>
+
+      @if (cancelError()) {
+        <p class="modal-error">{{ cancelError() }}</p>
+      }
+
+      <div class="modal-actions">
+        <button
+          class="modal-btn secondary"
+          (click)="closeCancelModal()"
+          [disabled]="cancellingId() !== null"
+        >
+          Keep Order
+        </button>
+        <button
+          class="modal-btn danger"
+          (click)="confirmCancel()"
+          [disabled]="cancellingId() !== null"
+        >
+          @if (cancellingId() !== null) {
+            <span class="btn-spinner"></span> Cancelling…
+          } @else {
+            Yes, Cancel It
+          }
+        </button>
+      </div>
+    </div>
+  </div>
+}
