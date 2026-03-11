@@ -9,6 +9,7 @@ import { CartService } from '../../services/cart.service';
 import { SearchService, SearchProduct } from '../../services/search.service';
 import { VisualSearchService, Product } from '../../services/visual-search.service';
 import { WishlistStateService } from '../../services/wishlist-state.service';
+import { TranslationService } from '../../services/translation.service';
 
 // import { NavigationEnd } from '@angular/router';
 // import { filter } from 'rxjs/operators';
@@ -76,12 +77,20 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private visualSearchService: VisualSearchService,
     private router: Router,
     private elRef: ElementRef,
+    public translationService: TranslationService,
   ) {}
 
   ngOnInit() {
     setTimeout(() => (this.isLoading = false), 500);
     this.cartService.loadCart();
     this.wishlistState.load();
+
+    // Listen for language change events
+    window.addEventListener('languageChange', this.handleLanguageChange.bind(this));
+
+    // Set initial language from service
+    const currentLang = this.translationService.getCurrentLanguage();
+    this.selectedLanguage = currentLang === 'ar' ? 'Arabic' : 'English';
 
     // this.router.events
     //   .pipe(
@@ -207,6 +216,17 @@ export class NavbarComponent implements OnInit, OnDestroy {
   logout() {
     this.authService.signout();
     this.isDashboardDropdownOpen = false;
+  }
+
+  switchLanguage(language: string): void {
+    this.translationService.setLanguage(language === 'English' ? 'en' : 'ar');
+    this.selectedLanguage = language;
+    this.isLanguageDropdownOpen = false;
+  }
+
+  private handleLanguageChange(event: any): void {
+    const newLanguage = event.detail.language;
+    this.selectedLanguage = newLanguage === 'ar' ? 'Arabic' : 'English';
   }
 
   // ── Visual Search ─────────────────────────────────────────────────────────
