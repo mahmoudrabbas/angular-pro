@@ -1,17 +1,19 @@
-import { Component, signal, OnInit } from '@angular/core';
+import { Component, signal, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Router } from '@angular/router';
 import { Sidebar } from '../../shared/sidebar/sidebar';
 import { environment } from '../../environments/environment';
+import { CurrentUserService } from '../../services/current-user.service';
 
 export interface UserProfile {
-  name: string;
-  email: string;
+  firstName: string;
+  lastName: string;
+  displayName: string;
   phone: string;
-  city: string;
-  country: string;
-  avatar: string;
+  bio: string;
+  profilePicture: { url: string; alt: string };
 }
 
 @Component({
@@ -22,25 +24,30 @@ export interface UserProfile {
   styleUrl: './account-settings.css',
 })
 export class AccountSettings implements OnInit {
-  private http: HttpClient;
-  constructor(http: HttpClient) {
-    this.http = http;
-  }
+  private currentUserService = inject(CurrentUserService);
+  private http = inject(HttpClient);
+  private router = inject(Router);
 
-  isLoading = signal(false);
   isSaving = signal(false);
+  isLoading = signal(false);
   successMsg = signal('');
   errorMsg = signal('');
-  activeTab = signal<'profile' | 'password' | 'notifications'>('profile');
+  activeTab = signal<'profile' | 'password'>('profile');
 
   profile = signal<UserProfile>({
-    name: '',
-    email: '',
+    firstName: '',
+    lastName: '',
+    displayName: '',
     phone: '',
-    city: '',
-    country: '',
-    avatar: '',
+    bio: '',
+    profilePicture: { url: '', alt: '' },
   });
+
+  memberSince = signal('');
+  userEmail = signal('');
+
+  // Phone validation state
+  phoneError = signal('');
 
   passwordForm = signal({
     currentPassword: '',
@@ -52,32 +59,52 @@ export class AccountSettings implements OnInit {
   showNewPw = signal(false);
   showConfirmPw = signal(false);
 
-  notifications = signal({
-    orderUpdates: true,
-    promotions: false,
-    newArrivals: true,
-    priceDrops: true,
-    newsletter: false,
-  });
-
+  // Egyptian phone: 010, 011, 012, 015 followed by 8 digits = 11 digits total
+  private readonly egyptianPhoneRegex = /^01[0125][0-9]{8}$/;
   ngOnInit() {
-    const raw = localStorage.getItem('user') || sessionStorage.getItem('user');
-    if (raw) {
-      try {
-        const u = JSON.parse(raw);
-        this.profile.set({
-          name: u.name ?? '',
-          email: u.email ?? '',
-          phone: u.phone ?? '',
-          city: u.city ?? '',
-          country: u.country ?? '',
-          avatar: u.avatar ?? '',
-        });
-      } catch {}
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    if (!token) {
+      this.router.navigate(['/login']);
+      return;
     }
-  }
 
-  setTab(tab: 'profile' | 'password' | 'notifications') {
+    const storedUser = this.currentUserService.user();
+    this.userEmail.set(storedUser?.email ?? '');
+    if (storedUser?.['createdAt']) {
+      const date = new Date(storedUser['createdAt']);
+      this.memberSince.set(date.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }));
+    }
+
+    this.isLoading.set(true);
+    this.http
+      .get<any>(`${environment.apiUrl}/api/profile`, { headers: this.getAuthHeaders() })
+      .subscribe({
+        next: (res) => {
+          if (res.success && res.profile) {
+            const p = res.profile;
+
+            this.profile.set({
+              firstName: p.firstName ?? '',
+              lastName: p.lastName ?? '',
+              displayName: p.displayName ?? '',
+              phone: p.phone ?? '',
+              bio: p.bio ?? '',
+              profilePicture: p.profilePicture ?? { url: '', alt: '' },
+            });
+
+            this.currentUserService.updateUser({
+              name: p.displayName || `${p.firstName} ${p.lastName}`.trim(),
+            });
+          }
+          this.isLoading.set(false);
+        },
+        error: (err) => {
+          if (err.status === 401) this.router.navigate(['/login']);
+          this.isLoading.set(false);
+        },
+      });
+  }
+  setTab(tab: 'profile' | 'password') {
     this.activeTab.set(tab);
     this.successMsg.set('');
     this.errorMsg.set('');
@@ -85,31 +112,62 @@ export class AccountSettings implements OnInit {
 
   updateProfile(field: string, value: string) {
     this.profile.update((p) => ({ ...p, [field]: value }));
+
+    // Live phone validation on every keystroke
+    if (field === 'phone') {
+      this.validatePhone(value);
+    }
+  }
+
+  // Validates and sets phoneError signal
+  private validatePhone(value: string): boolean {
+    if (!value) {
+      this.phoneError.set('');
+      return true;
+    }
+
+    const cleaned = value.replace(/[\s\-]/g, '');
+    if (!this.egyptianPhoneRegex.test(cleaned)) {
+      this.phoneError.set('Enter a valid Egyptian number (010, 011, 012, or 015 + 8 digits)');
+      return false;
+    }
+    this.phoneError.set('');
+    return true;
   }
 
   updatePassword(field: string, value: string) {
     this.passwordForm.update((f) => ({ ...f, [field]: value }));
   }
 
-  updateNotification(field: string, value: boolean) {
-    this.notifications.update((n) => ({ ...n, [field]: value }));
+  getInitials(): string {
+    const first = this.profile().firstName.trim();
+    const last = this.profile().lastName.trim();
+    if (first && last) return (first[0] + last[0]).toUpperCase();
+    if (first) return first.slice(0, 2).toUpperCase();
+    return 'ME';
   }
 
-  getInitials(): string {
-    return (
-      this.profile()
-        .name.split(' ')
-        .map((w) => w[0])
-        .join('')
-        .toUpperCase()
-        .slice(0, 2) || 'ME'
-    );
+  getFullName(): string {
+    const p = this.profile();
+    const full = `${p.firstName} ${p.lastName}`.trim();
+    return full || p.displayName || 'Your Name';
+  }
+
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token') || sessionStorage.getItem('token') || '';
+    return new HttpHeaders({ Authorization: `Bearer ${token}` });
   }
 
   saveProfile() {
     const p = this.profile();
-    if (!p.name || !p.email) {
-      this.errorMsg.set('Name and email are required.');
+
+    if (!p.firstName) {
+      this.errorMsg.set('First name is required.');
+      return;
+    }
+
+    if (p.phone && !this.validatePhone(p.phone)) {
+      this.errorMsg.set('Please fix the phone number before saving.');
       return;
     }
 
@@ -117,33 +175,38 @@ export class AccountSettings implements OnInit {
     this.errorMsg.set('');
     this.successMsg.set('');
 
-    const token = localStorage.getItem('token') || sessionStorage.getItem('token') || '';
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    const cleanedPhone = p.phone.replace(/[\s\-]/g, '');
+
+    const body = {
+      firstName: p.firstName,
+      lastName: p.lastName,
+      displayName: p.displayName || `${p.firstName} ${p.lastName}`.trim(),
+      phone: cleanedPhone,
+      bio: p.bio,
+    };
 
     this.http
-      .put(
-        `${environment.apiUrl}/api/users/profile`,
-        { name: p.name, phone: p.phone, city: p.city, country: p.country },
-        { headers },
-      )
+      .put<any>(`${environment.apiUrl}/api/profile`, body, {
+        headers: this.getAuthHeaders(),
+      })
       .subscribe({
-        next: (res: any) => {
-          const raw = localStorage.getItem('user') || sessionStorage.getItem('user');
-          if (raw) {
-            const u = JSON.parse(raw);
-            const updated = { ...u, name: p.name, phone: p.phone };
-            localStorage.setItem('user', JSON.stringify(updated));
+        next: (res) => {
+          if (res.success && res.profile) {
+            const p = res.profile;
+            this.currentUserService.updateUser({
+              name: p.displayName || `${p.firstName} ${p.lastName}`.trim(),
+            });
           }
-          this.successMsg.set('✅ Profile updated successfully!');
+          this.successMsg.set('Profile updated successfully!');
           this.isSaving.set(false);
         },
-        error: () => {
-          const raw = localStorage.getItem('user') || sessionStorage.getItem('user');
-          if (raw) {
-            const u = JSON.parse(raw);
-            localStorage.setItem('user', JSON.stringify({ ...u, ...p }));
-          }
-          this.successMsg.set('✅ Profile saved locally.');
+        error: (err) => {
+          this.errorMsg.set(
+            err.status === 401
+              ? 'Session expired. Please log in again.'
+              : err.error?.message || 'Failed to update profile. Please try again.',
+          );
+          if (err.status === 401) this.router.navigate(['/login']);
           this.isSaving.set(false);
         },
       });
@@ -168,18 +231,19 @@ export class AccountSettings implements OnInit {
     }
 
     this.isSaving.set(true);
-    const token = localStorage.getItem('token') || sessionStorage.getItem('token') || '';
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
 
     this.http
-      .put(
-        `${environment.apiUrl}/api/users/change-password`,
-        { currentPassword: f.currentPassword, newPassword: f.newPassword },
-        { headers },
+      .put<any>(
+        `${environment.apiUrl}/auth/reset-password`,
+        {
+          oldPassword: f.currentPassword,
+          newPassword: f.newPassword,
+        },
+        { headers: this.getAuthHeaders() },
       )
       .subscribe({
         next: () => {
-          this.successMsg.set('✅ Password changed successfully!');
+          this.successMsg.set('Password changed successfully!');
           this.passwordForm.set({ currentPassword: '', newPassword: '', confirmPassword: '' });
           this.isSaving.set(false);
         },
@@ -187,20 +251,14 @@ export class AccountSettings implements OnInit {
           this.errorMsg.set(
             err.status === 400
               ? 'Current password is incorrect.'
-              : 'Failed to change password. Try again.',
+              : err.status === 401
+                ? 'Session expired. Please log in again.'
+                : 'Failed to change password. Try again.',
           );
+          if (err.status === 401) this.router.navigate(['/login']);
           this.isSaving.set(false);
         },
       });
-  }
-
-  saveNotifications() {
-    this.isSaving.set(true);
-    localStorage.setItem('notifications', JSON.stringify(this.notifications()));
-    setTimeout(() => {
-      this.successMsg.set('✅ Notification preferences saved!');
-      this.isSaving.set(false);
-    }, 400);
   }
 
   getPasswordStrength(): { label: string; level: number; color: string } {

@@ -17,7 +17,6 @@
   font-family: 'Segoe UI', Arial, sans-serif;
 }
 
-/* ── LAYOUT ── */
 .page-container {
   display: flex;
   gap: 24px;
@@ -47,7 +46,6 @@
   margin: 0;
 }
 
-/* ── AVATAR ROW ── */
 .avatar-row {
   display: flex;
   align-items: center;
@@ -90,7 +88,6 @@
   margin: 0;
 }
 
-/* ── TABS ── */
 .tabs {
   display: flex;
   gap: 4px;
@@ -122,7 +119,6 @@
   font-weight: 700;
 }
 
-/* ── ALERTS ── */
 .alert {
   padding: 12px 18px;
   border-radius: 8px;
@@ -141,7 +137,6 @@
   border: 1px solid #f5c6cb;
 }
 
-/* ── SETTINGS CARD ── */
 .settings-card {
   background: var(--card);
   border-radius: var(--radius-lg);
@@ -172,7 +167,6 @@
   margin: 0 0 20px;
 }
 
-/* ── FORM GRID ── */
 .form-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -212,7 +206,6 @@
   color: var(--text-light);
 }
 
-/* ── PASSWORD FIELD ── */
 .pw-field {
   position: relative;
   display: flex;
@@ -233,7 +226,6 @@
   line-height: 1;
 }
 
-/* ── STRENGTH BAR ── */
 .strength-bar {
   display: flex;
   align-items: center;
@@ -265,7 +257,6 @@
   font-weight: 600;
 }
 
-/* ── PASSWORD TIPS ── */
 .password-tips {
   margin-top: 20px;
   background: var(--bg);
@@ -308,7 +299,6 @@
   color: #28a745;
 }
 
-/* ── NOTIFICATION LIST ── */
 .notif-list {
   display: flex;
   flex-direction: column;
@@ -337,7 +327,6 @@
   margin: 0;
 }
 
-/* ── TOGGLE SWITCH ── */
 .toggle {
   position: relative;
   display: inline-block;
@@ -377,7 +366,6 @@
   transform: translateX(20px);
 }
 
-/* ── CARD FOOTER ── */
 .card-footer {
   display: flex;
   gap: 12px;
@@ -419,4 +407,114 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.form-group textarea {
+  padding: 10px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  resize: vertical;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+.form-group textarea:focus {
+  border-color: var(--orange);
+}
+.avatar-img {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.loading-bar {
+  background: var(--orange-light);
+  color: var(--orange-dark);
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.disabled-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: #f0f0f0;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  cursor: not-allowed;
+  user-select: none;
+}
+.disabled-icon {
+  font-size: 15px;
+  flex-shrink: 0;
+}
+.disabled-value {
+  font-size: 14px;
+  color: var(--text-light);
+  flex: 1;
+}
+.disabled-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: #888;
+  background: #e0e0e0;
+  padding: 2px 8px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+/* ── PHONE VALIDATION STATES ── */
+.input-error {
+  border-color: var(--red) !important;
+  background: #fff5f5;
+}
+.input-valid {
+  border-color: #28a745 !important;
+  background: #f4fff6;
+}
+.field-error {
+  font-size: 12px;
+  color: var(--red);
+  font-weight: 600;
+}
+.field-success {
+  font-size: 12px;
+  color: #28a745;
+  font-weight: 600;
+}
+
+.form-group textarea {
+  padding: 10px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  resize: vertical;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+.form-group textarea:focus {
+  border-color: var(--orange);
+}
+
+.avatar-img {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.loading-bar {
+  background: var(--orange-light);
+  color: var(--orange-dark);
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 16px;
 }

@@ -1,6 +1,8 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { Router } from '@angular/router';
+import { CurrentUserService } from '../../services/current-user.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -10,30 +12,31 @@ import { Router } from '@angular/router';
   styleUrl: './sidebar.css',
 })
 export class Sidebar {
+  constructor(public authService: AuthService) {}
   private router = inject(Router);
+  private currentUserService = inject(CurrentUserService);
 
-  user = JSON.parse(
-    localStorage.getItem('user') ||
-      sessionStorage.getItem('user') ||
-      '{"name":"My Account","email":"my@email.com"}',
-  );
+  isDashboardDropdownOpen = false;
+
+  user = this.currentUserService.user;
 
   get initials(): string {
-    return this.user?.name
-      ? this.user.name
-          .split(' ')
-          .map((n: string) => n[0])
-          .join('')
-          .toUpperCase()
-          .slice(0, 2)
-      : 'ME';
+    const name = this.user()?.name;
+    if (!name) return 'ME';
+    return name
+      .split(' ')
+      .filter((n: string) => n.length > 0)
+      .map((n: string) => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
   }
 
   logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    sessionStorage.removeItem('token');
-    sessionStorage.removeItem('user');
-    this.router.navigate(['/login']);
+    // this.currentUserService.clear();
+    // this.router.navigate(['/login']);
+
+    this.authService.signout();
+    this.isDashboardDropdownOpen = false;
   }
 }

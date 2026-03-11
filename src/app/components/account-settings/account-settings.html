@@ -2,25 +2,34 @@
   <app-sidebar />
 
   <main class="main-content">
-    <!-- Header -->
-    <!-- <div class="page-header">
-      <div>
-        <h1 class="page-title">Account Settings</h1>
-        <p class="page-subtitle">Manage your profile, password and preferences</p>
-      </div>
-    </div> -->
+    @if (isLoading()) {
+      <div class="loading-bar">Loading profile…</div>
+    }
 
-    <!-- Avatar Row -->
     <div class="avatar-row">
-      <div class="big-avatar">{{ getInitials() }}</div>
+      <div class="big-avatar">
+        @if (
+          profile().profilePicture?.url && !profile().profilePicture.url.includes('placeholder')
+        ) {
+          <img
+            [src]="profile().profilePicture.url"
+            [alt]="profile().profilePicture.alt"
+            class="avatar-img"
+          />
+        } @else {
+          {{ getInitials() }}
+        }
+      </div>
       <div class="avatar-info">
-        <p class="avatar-name">{{ profile().name || 'Your Name' }}</p>
-        <p class="avatar-email">{{ profile().email || 'your@email.com' }}</p>
-        <p class="avatar-meta">Member since 2025</p>
+        <p class="avatar-name">{{ getFullName() }}</p>
+        <p class="avatar-email">{{ userEmail() || 'your@email.com' }}</p>
+        <p class="avatar-meta">
+          {{ memberSince() ? 'Member since ' + memberSince() : 'Welcome!' }}
+        </p>
       </div>
     </div>
 
-    <!-- Tabs -->
+    <!-- tabs -->
     <div class="tabs">
       <button class="tab" [class.active]="activeTab() === 'profile'" (click)="setTab('profile')">
         👤 Profile Info
@@ -28,16 +37,8 @@
       <button class="tab" [class.active]="activeTab() === 'password'" (click)="setTab('password')">
         🔒 Change Password
       </button>
-      <button
-        class="tab"
-        [class.active]="activeTab() === 'notifications'"
-        (click)="setTab('notifications')"
-      >
-        🔔 Notifications
-      </button>
     </div>
 
-    <!-- Alert Messages -->
     @if (successMsg()) {
       <div class="alert success">{{ successMsg() }}</div>
     }
@@ -45,65 +46,89 @@
       <div class="alert error">{{ errorMsg() }}</div>
     }
 
-    <!-- ── PROFILE TAB ── -->
     @if (activeTab() === 'profile') {
       <div class="settings-card">
         <h3 class="card-title">📋 Personal Information</h3>
         <div class="form-grid">
           <div class="form-group">
-            <label>Full Name *</label>
+            <label>First Name *</label>
             <input
               type="text"
-              placeholder="Your full name"
-              [value]="profile().name"
-              (input)="updateProfile('name', $any($event.target).value)"
+              placeholder="First name"
+              [value]="profile().firstName"
+              (input)="updateProfile('firstName', $any($event.target).value)"
             />
           </div>
 
           <div class="form-group">
-            <label>Email Address *</label>
+            <label>Last Name</label>
             <input
-              type="email"
-              placeholder="your@email.com"
-              [value]="profile().email"
-              (input)="updateProfile('email', $any($event.target).value)"
+              type="text"
+              placeholder="Last name"
+              [value]="profile().lastName"
+              (input)="updateProfile('lastName', $any($event.target).value)"
             />
-            <span class="field-hint">Changing email may require re-verification</span>
           </div>
 
+          <div class="form-group">
+            <label>Display Name</label>
+            <input
+              type="text"
+              placeholder="How others see your name"
+              [value]="profile().displayName"
+              (input)="updateProfile('displayName', $any($event.target).value)"
+            />
+          </div>
+
+          <div class="form-group">
+            <label>Email Address</label>
+            <div class="disabled-field">
+              <span class="disabled-icon">✉️</span>
+              <span class="disabled-value">{{ userEmail() || 'your@email.com' }}</span>
+              <span class="disabled-badge">Cannot be changed</span>
+            </div>
+          </div>
+
+          <!-- Egyptian phone validation -->
           <div class="form-group">
             <label>Phone Number</label>
             <input
               type="tel"
-              placeholder="+20 1234 567890"
+              placeholder="010XXXXXXXX"
+              maxlength="11"
               [value]="profile().phone"
+              [class.input-error]="phoneError()"
+              [class.input-valid]="!phoneError() && profile().phone.length === 11"
               (input)="updateProfile('phone', $any($event.target).value)"
             />
+            @if (phoneError()) {
+              <span class="field-error">⚠️ {{ phoneError() }}</span>
+            } @else if (!phoneError() && profile().phone.length === 11) {
+              <span class="field-success">Valid Egyptian number</span>
+            } @else {
+              <span class="field-hint">Egyptian numbers only: 010, 011, 012, or 015</span>
+            }
           </div>
 
-          <div class="form-group">
-            <label>City</label>
-            <input
-              type="text"
-              placeholder="Your city"
-              [value]="profile().city"
-              (input)="updateProfile('city', $any($event.target).value)"
-            />
-          </div>
-
-          <div class="form-group">
-            <label>Country</label>
-            <input
-              type="text"
-              placeholder="Your country"
-              [value]="profile().country"
-              (input)="updateProfile('country', $any($event.target).value)"
-            />
+          <div class="form-group" style="grid-column: 1 / -1">
+            <label>Bio</label>
+            <textarea
+              placeholder="Tell us a bit about yourself (max 500 characters)"
+              maxlength="500"
+              rows="3"
+              [value]="profile().bio"
+              (input)="updateProfile('bio', $any($event.target).value)"
+            ></textarea>
+            <span class="field-hint">{{ profile().bio.length }}/500</span>
           </div>
         </div>
 
         <div class="card-footer">
-          <button class="save-btn" (click)="saveProfile()" [disabled]="isSaving()">
+          <button
+            class="save-btn"
+            (click)="saveProfile()"
+            [disabled]="isSaving() || isLoading() || !!phoneError()"
+          >
             @if (isSaving()) {
               <span class="btn-spinner"></span> Saving…
             } @else {
@@ -121,7 +146,6 @@
           <div class="form-group">
             <label>Current Password *</label>
             <div class="pw-field">
-              <!-- [type]="showCurrentPw() ? 'text' : 'password'" -->
               <input
                 [type]="showCurrentPw() ? 'text' : 'password'"
                 placeholder="Enter current password"
@@ -147,7 +171,6 @@
                 {{ showNewPw() ? '🙈' : '👁️' }}
               </button>
             </div>
-            <!-- Strength bar -->
             @if (passwordForm().newPassword) {
               <div class="strength-bar">
                 <div class="strength-track">
@@ -204,101 +227,6 @@
               <span class="btn-spinner"></span> Saving…
             } @else {
               🔒 Update Password
-            }
-          </button>
-        </div>
-      </div>
-    }
-
-    <!-- ── NOTIFICATIONS TAB ── -->
-    @if (activeTab() === 'notifications') {
-      <div class="settings-card">
-        <h3 class="card-title">🔔 Notification Preferences</h3>
-        <p class="card-subtitle">Choose what you want to be notified about</p>
-
-        <div class="notif-list">
-          <div class="notif-row">
-            <div class="notif-info">
-              <p class="notif-title">📦 Order Updates</p>
-              <p class="notif-desc">Shipping, delivery and order status changes</p>
-            </div>
-            <label class="toggle">
-              <input
-                type="checkbox"
-                [checked]="notifications().orderUpdates"
-                (change)="updateNotification('orderUpdates', $any($event.target).checked)"
-              />
-              <span class="slider"></span>
-            </label>
-          </div>
-
-          <div class="notif-row">
-            <div class="notif-info">
-              <p class="notif-title">🏷️ Promotions & Deals</p>
-              <p class="notif-desc">Discount codes, flash sales and special offers</p>
-            </div>
-            <label class="toggle">
-              <input
-                type="checkbox"
-                [checked]="notifications().promotions"
-                (change)="updateNotification('promotions', $any($event.target).checked)"
-              />
-              <span class="slider"></span>
-            </label>
-          </div>
-
-          <div class="notif-row">
-            <div class="notif-info">
-              <p class="notif-title">🆕 New Arrivals</p>
-              <p class="notif-desc">Be the first to know about new products</p>
-            </div>
-            <label class="toggle">
-              <input
-                type="checkbox"
-                [checked]="notifications().newArrivals"
-                (change)="updateNotification('newArrivals', $any($event.target).checked)"
-              />
-              <span class="slider"></span>
-            </label>
-          </div>
-
-          <div class="notif-row">
-            <div class="notif-info">
-              <p class="notif-title">💰 Price Drops</p>
-              <p class="notif-desc">Get notified when wishlist items go on sale</p>
-            </div>
-            <label class="toggle">
-              <input
-                type="checkbox"
-                [checked]="notifications().priceDrops"
-                (change)="updateNotification('priceDrops', $any($event.target).checked)"
-              />
-              <span class="slider"></span>
-            </label>
-          </div>
-
-          <div class="notif-row">
-            <div class="notif-info">
-              <p class="notif-title">📧 Newsletter</p>
-              <p class="notif-desc">Weekly digest of top picks and tech news</p>
-            </div>
-            <label class="toggle">
-              <input
-                type="checkbox"
-                [checked]="notifications().newsletter"
-                (change)="updateNotification('newsletter', $any($event.target).checked)"
-              />
-              <span class="slider"></span>
-            </label>
-          </div>
-        </div>
-
-        <div class="card-footer">
-          <button class="save-btn" (click)="saveNotifications()" [disabled]="isSaving()">
-            @if (isSaving()) {
-              <span class="btn-spinner"></span> Saving…
-            } @else {
-              🔔 Save Preferences
             }
           </button>
         </div>

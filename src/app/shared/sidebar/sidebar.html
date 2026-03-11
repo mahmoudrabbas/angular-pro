@@ -2,8 +2,8 @@
   <div class="sidebar-profile">
     <div class="profile-avatar">{{ initials }}</div>
     <div class="profile-info">
-      <p class="profile-name">{{ user?.name || 'My Account' }}</p>
-      <p class="profile-email">{{ user?.email || 'my@email.com' }}</p>
+      <p class="profile-name">{{ user()?.name || 'My Account' }}</p>
+      <p class="profile-email">{{ user()?.email || 'my@email.com' }}</p>
     </div>
   </div>
 
