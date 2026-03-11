@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter, inject, signal, OnInit } from '
 import { CommonModule } from '@angular/common';
 import { Product } from '../../models/product.model';
 import { RouterLink } from '@angular/router';
-import { WishlistService } from '../../services/wishlist.service';
+import { WishlistStateService } from '../../services/wishlist-state.service'; // ← CHANGE
 import { CartService } from '../../services/cart.service';
 import { CompareService } from '../../services/compare.service';
 
@@ -22,9 +22,9 @@ export class ProductCardComponent implements OnInit {
   @Output() addToCart = new EventEmitter<Product>();
   @Output() addToWishlist = new EventEmitter<Product>();
   @Output() quickView = new EventEmitter<Product>();
-  @Output() removed = new EventEmitter<string>(); // emits productId
+  @Output() removed = new EventEmitter<string>();
 
-  private wishlistService = inject(WishlistService);
+  private wishlistState = inject(WishlistStateService); // ← CHANGE
   private cartService = inject(CartService);
 
   wishlistLoading = signal(false);
@@ -35,12 +35,6 @@ export class ProductCardComponent implements OnInit {
   cartAdded = signal(false);
 
   ngOnInit() {
-    // ── debug ──────────────────────────────────────────
-    console.log('[ProductCard] product.id     =', this.product.id);
-    console.log('[ProductCard] isInWishlist   =', this.isInWishlist);
-    console.log('[ProductCard] wishlistEntryId=', this.wishlistEntryId);
-    // ──────────────────────────────────────────────────
-
     if (this.isInWishlist) {
       this.wishlistAdded.set(true);
       this.entryId.set(this.wishlistEntryId || null);
@@ -56,23 +50,17 @@ export class ProductCardComponent implements OnInit {
     return Array.from({ length: 5 }, (_, i) => i < this.product.rating);
   }
 
-  // ── Wishlist ──────────────────────────────────────────────────────────────
-
   toggleWishlist() {
     if (this.wishlistLoading()) return;
-
-    console.log('[toggleWishlist] added=', this.wishlistAdded(), '| entryId=', this.entryId());
-
     this.wishlistAdded() ? this.removeFromWishlist() : this.addToWishlistFn();
   }
 
   private addToWishlistFn() {
     this.wishlistLoading.set(true);
 
-    this.wishlistService.addItem(this.product.id.toString()).subscribe({
+    this.wishlistState.addItem(this.product.id.toString()).subscribe({
+      // ← CHANGE
       next: (res) => {
-        console.log('[addItem] response=', res);
-
         const products = res.wishlist?.products ?? [];
         const match = [...products]
           .reverse()
@@ -97,12 +85,10 @@ export class ProductCardComponent implements OnInit {
 
   private removeFromWishlist() {
     this.wishlistLoading.set(true);
-    this.doRemove(this.product.id.toString());
-  }
 
-  private doRemove(productId: string) {
-    this.wishlistService.removeItem(productId).subscribe({
-      next: (res) => {
+    this.wishlistState.removeItem(this.product.id.toString()).subscribe({
+      // ← CHANGE
+      next: () => {
         this.wishlistAdded.set(false);
         this.entryId.set(null);
         this.wishlistLoading.set(false);
@@ -116,19 +102,18 @@ export class ProductCardComponent implements OnInit {
     });
   }
 
-  // ── Cart ───────────────────────────────────────────────────────────────────
-
   onAddToCart() {
     if (this.cartLoading()) return;
     this.cartLoading.set(true);
 
     const rawPrice = this.p.price ?? this.p.newPrice;
-    const price = typeof rawPrice === 'string' ? parseFloat(rawPrice.replace(/[^0-9.]/g, '')) : rawPrice || 0;
-    
+    const price =
+      typeof rawPrice === 'string' ? parseFloat(rawPrice.replace(/[^0-9.]/g, '')) : rawPrice || 0;
+
     const meta = {
       name: this.product.name,
-      price: price,
-      image: this.p.image || this.p.images?.[0]?.url || 'assets/img/product-3.png'
+      price,
+      image: this.p.image || this.p.images?.[0]?.url || 'assets/img/product-3.png',
     };
 
     this.cartService.addToCart(this.product.id.toString(), 1, meta).subscribe({
@@ -142,8 +127,6 @@ export class ProductCardComponent implements OnInit {
     });
   }
 
-  // ── Compare ────────────────────────────────────────────────────────────────
-
   private get p(): any {
     return this.product as any;
   }
@@ -151,11 +134,9 @@ export class ProductCardComponent implements OnInit {
   get productId(): string {
     return String(this.p._id || this.p.id || '');
   }
-
   get isInCompare(): boolean {
     return this.compareService.isAdded(this.productId);
   }
-
   get compareDisabled(): boolean {
     return this.compareService.isFull() && !this.isInCompare;
   }

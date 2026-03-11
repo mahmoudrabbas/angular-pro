@@ -8,6 +8,10 @@ import { AuthService } from '../../services/auth.service';
 import { CartService } from '../../services/cart.service';
 import { SearchService, SearchProduct } from '../../services/search.service';
 import { VisualSearchService, Product } from '../../services/visual-search.service';
+import { WishlistStateService } from '../../services/wishlist-state.service';
+
+// import { NavigationEnd } from '@angular/router';
+// import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-navbar',
@@ -39,8 +43,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
   selectedLanguage = 'English';
 
   categories = ['All Category', 'Electronics', 'Fashion', 'Gaming', 'Fitness', 'Books', 'Home'];
-  currencies = ['USD', 'Euro', 'Dolar'];
-  languages = ['English', 'Turkish', 'Spanish', 'Italiano'];
+  currencies = ['USD', 'EGP', 'SAR'];
+  languages = ['English', 'Arabic'];
 
   sidebarCategories = [
     { name: 'Accessories', count: 3 },
@@ -65,6 +69,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   constructor(
+    public wishlistState: WishlistStateService,
     public authService: AuthService,
     public cartService: CartService,
     private searchService: SearchService,
@@ -76,8 +81,20 @@ export class NavbarComponent implements OnInit, OnDestroy {
   ngOnInit() {
     setTimeout(() => (this.isLoading = false), 500);
     this.cartService.loadCart();
+    this.wishlistState.load();
 
-    // Debounced suggestions pipeline
+    // this.router.events
+    //   .pipe(
+    //     filter((e) => e instanceof NavigationEnd),
+    //     takeUntil(this.destroy$),
+    //   )
+    //   .subscribe(() => {
+    //     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+    //     if (token) {
+    //       this.wishlistState.load();
+    //     }
+    //   });
+
     this.searchInput$
       .pipe(
         debounceTime(300),

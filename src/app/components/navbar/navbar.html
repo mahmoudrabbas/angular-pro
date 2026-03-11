@@ -219,10 +219,19 @@
         </a>
         <a
           routerLink="/wishlist"
-          href="javascript:void(0)"
-          class="text-muted d-flex align-items-center justify-content-center me-3"
+          class="text-muted d-flex align-items-center justify-content-center me-3 position-relative"
         >
-          <span class="rounded-circle btn-md-square border"><i class="fas fa-heart"></i></span>
+          <span class="rounded-circle btn-md-square border">
+            <i class="fas fa-heart"></i>
+          </span>
+          @if (wishlistState.wishlistCount() > 0) {
+            <span
+              class="position-absolute top-0 start-75 translate-middle badge rounded-pill bg-danger"
+              style="font-size: 10px"
+            >
+              {{ wishlistState.wishlistCount() }}
+            </span>
+          }
         </a>
 
         <a

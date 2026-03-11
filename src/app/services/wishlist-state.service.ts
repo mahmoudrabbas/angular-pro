@@ -1,13 +1,14 @@
 import { Injectable, signal, computed } from '@angular/core';
-import { WishlistService } from './wishlist.service';
+import { Observable, tap } from 'rxjs';
+import { WishlistService, WishlistActionResponse } from './wishlist.service';
 
 @Injectable({ providedIn: 'root' })
 export class WishlistStateService {
   private productIds = signal<Set<string>>(new Set());
 
-  constructor(private wishlistService: WishlistService) {
-    this.load();
-  }
+  wishlistCount = computed(() => this.productIds().size);
+
+  constructor(private wishlistService: WishlistService) {}
 
   load() {
     const token = localStorage.getItem('token') || sessionStorage.getItem('token');
@@ -33,19 +34,37 @@ export class WishlistStateService {
     return this.productIds().has(productId);
   }
 
-  add(productId: string) {
-    this.productIds.update((set) => new Set([...set, productId]));
+  addItem(productId: string): Observable<WishlistActionResponse> {
+    return this.wishlistService.addItem(productId).pipe(
+      tap((res) => {
+        if (res.success) {
+          this.productIds.update((set) => new Set([...set, productId]));
+        }
+      }),
+    );
   }
 
-  remove(productId: string) {
-    this.productIds.update((set) => {
-      const next = new Set(set);
-      next.delete(productId);
-      return next;
-    });
+  removeItem(productId: string): Observable<WishlistActionResponse> {
+    return this.wishlistService.removeItem(productId).pipe(
+      tap((res) => {
+        if (res.success) {
+          this.productIds.update((set) => {
+            const next = new Set(set);
+            next.delete(productId);
+            return next;
+          });
+        }
+      }),
+    );
   }
 
-  clear() {
-    this.productIds.set(new Set());
+  clearWishlist(): Observable<WishlistActionResponse> {
+    return this.wishlistService.clearWishlist().pipe(
+      tap((res) => {
+        if (res.success) {
+          this.productIds.set(new Set());
+        }
+      }),
+    );
   }
 }
