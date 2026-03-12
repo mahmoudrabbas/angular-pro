@@ -1,0 +1,220 @@
+:host {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 160px); // subtract topbar + navbar height
+  padding: 60px 24px;
+  background: #f8f8f8;
+}
+
+$orange: #f97316;
+$orange-dark: #ea6c0a;
+$orange-light: #fff7ed;
+$orange-mid: #fed7aa;
+$dark: #1c1c1c;
+$muted: #9ca3af;
+$border: #e5e7eb;
+$white: #ffffff;
+
+.error-wrap {
+  text-align: center;
+  max-width: 620px;
+  width: 100%;
+  animation: fadeUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ── Illustration ──────────────────────────────────
+.illustration {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+
+.num-404 {
+  font-size: clamp(100px, 20vw, 160px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -8px;
+  color: $orange-mid;
+  user-select: none;
+}
+
+.cart-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: $orange;
+  width: 88px;
+  height: 88px;
+  border-radius: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 12px 36px rgba(249, 115, 22, 0.4);
+  animation: bounce 2.2s ease-in-out infinite;
+
+  i {
+    font-size: 34px;
+    color: $white;
+  }
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) translateY(0);
+  }
+  50% {
+    transform: translate(-50%, -50%) translateY(-10px);
+  }
+}
+
+// ── Badge ─────────────────────────────────────────
+.oops-badge {
+  display: inline-block;
+  background: $orange-light;
+  color: $orange;
+  border: 1.5px solid $orange-mid;
+  border-radius: 50px;
+  padding: 5px 18px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+// ── Heading ───────────────────────────────────────
+h1 {
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 700;
+  color: $dark;
+  margin-bottom: 14px;
+  line-height: 1.35;
+
+  span {
+    color: $orange;
+  }
+}
+
+.divider {
+  width: 48px;
+  height: 3px;
+  background: $orange;
+  border-radius: 2px;
+  margin: 0 auto 22px;
+}
+
+p {
+  color: $muted;
+  font-size: 0.95rem;
+  line-height: 1.8;
+  max-width: 430px;
+  margin: 0 auto 36px;
+}
+
+// ── Buttons ───────────────────────────────────────
+.btn-row {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 28px;
+  border-radius: 50px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s,
+    background 0.2s,
+    border-color 0.2s,
+    color 0.2s;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+
+  &.btn-orange {
+    background: $orange;
+    color: $white;
+    box-shadow: 0 6px 20px rgba(249, 115, 22, 0.35);
+
+    &:hover {
+      background: $orange-dark;
+      box-shadow: 0 10px 28px rgba(249, 115, 22, 0.5);
+    }
+  }
+
+  &.btn-ghost {
+    background: $white;
+    color: $dark;
+    border: 1.5px solid $border;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+
+    &:hover {
+      border-color: $orange;
+      color: $orange;
+    }
+  }
+}
+
+// ── Quick links ───────────────────────────────────
+.quick-links {
+  margin-top: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+
+  span {
+    font-size: 0.8rem;
+    color: $muted;
+  }
+
+  a {
+    font-size: 0.8rem;
+    color: $orange;
+    text-decoration: none;
+    font-weight: 500;
+    padding: 4px 13px;
+    background: $orange-light;
+    border-radius: 20px;
+    border: 1px solid $orange-mid;
+    transition: background 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
+    i {
+      font-size: 0.7rem;
+    }
+
+    &:hover {
+      background: $orange-mid;
+    }
+  }
+}

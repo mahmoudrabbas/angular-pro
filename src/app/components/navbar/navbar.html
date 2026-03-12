@@ -3,45 +3,68 @@
   <div class="row gx-0 align-items-center">
     <div class="col-lg-4 text-center text-lg-start mb-lg-0">
       <div class="d-inline-flex align-items-center" style="height: 45px">
-        <a href="javascript:void(0)" class="text-muted me-2"> {{ translationService.getTranslation('Help') }}</a><small>
-          / </small>
-        <a href="javascript:void(0)" class="text-muted mx-2"> {{ translationService.getTranslation('Support')
-          }}</a><small> / </small>
-        <a href="javascript:void(0)" class="text-muted ms-2"> {{ translationService.getTranslation('Contact Us') }}</a>
+        <p href="javascript:void(0)" class="text-muted">
+          <small class="text-dark me-2">#</small> Free_Palestine
+        </p>
       </div>
     </div>
     <div class="col-lg-4 text-center d-flex align-items-center justify-content-center">
       <small class="text-dark">{{ translationService.getTranslation('Call Us') }}:</small>
-      <a href="javascript:void(0)" class="text-muted">(+012) 1234 567890</a>
+      <a href="javascript:void(0)" class="text-muted">(+010) 1234 567890</a>
     </div>
     <div class="col-lg-4 text-center text-lg-end">
       <div class="d-inline-flex align-items-center" style="height: 45px">
         <!-- Currency Dropdown -->
         <div class="dropdown" (mouseleave)="isCurrencyDropdownOpen = false">
-          <a href="javascript:void(0)" class="dropdown-toggle text-muted me-2" (click)="toggleDropdown('currency')">
+          <a
+            href="javascript:void(0)"
+            class="dropdown-toggle text-muted me-2"
+            (click)="toggleDropdown('currency')"
+          >
             <small> {{ selectedCurrency }}</small>
           </a>
           <div class="dropdown-menu rounded" [class.show]="isCurrencyDropdownOpen">
-            <a *ngFor="let currency of currencies" href="javascript:void(0)" class="dropdown-item"
-              (click)="selectedCurrency = currency; isCurrencyDropdownOpen = false">{{ currency }}</a>
+            <a
+              *ngFor="let currency of currencies"
+              href="javascript:void(0)"
+              class="dropdown-item"
+              (click)="selectedCurrency = currency; isCurrencyDropdownOpen = false"
+              >{{ currency }}</a
+            >
           </div>
         </div>
 
         <!-- Language Dropdown -->
         <div class="dropdown" (mouseleave)="isLanguageDropdownOpen = false">
-          <a href="javascript:void(0)" class="dropdown-toggle text-muted mx-2" (click)="toggleDropdown('language')">
+          <a
+            href="javascript:void(0)"
+            class="dropdown-toggle text-muted mx-2"
+            (click)="toggleDropdown('language')"
+          >
             <small> {{ selectedLanguage }}</small>
           </a>
           <div class="dropdown-menu rounded" [class.show]="isLanguageDropdownOpen">
-            <a *ngFor="let language of languages" href="javascript:void(0)" class="dropdown-item"
-              (click)="switchLanguage(language)">{{ language }}</a>
+            <a
+              *ngFor="let language of languages"
+              href="javascript:void(0)"
+              class="dropdown-item"
+              (click)="switchLanguage(language)"
+              >{{ language }}</a
+            >
           </div>
         </div>
 
         <!-- Dashboard Dropdown -->
         <div class="dropdown" (mouseleave)="isDashboardDropdownOpen = false">
-          <a href="javascript:void(0)" class="dropdown-toggle text-muted ms-2" (click)="toggleDropdown('dashboard')">
-            <small><i class="fa fa-home me-2"></i> {{ translationService.getTranslation('My Account') }}</small>
+          <a
+            href="javascript:void(0)"
+            class="dropdown-toggle text-muted ms-2"
+            (click)="toggleDropdown('dashboard')"
+          >
+            <small
+              ><i class="fa fa-home me-2"></i>
+              {{ translationService.getTranslation('My Account') }}</small
+            >
           </a>
           <div class="dropdown-menu rounded" [class.show]="isDashboardDropdownOpen">
             <ng-container *ngIf="authService.currentUser() as user; else guestMenu">
@@ -49,19 +72,30 @@
                 <i class="fas fa-user me-1"></i> Hi, {{ user.name }}
               </a>
               <hr class="dropdown-divider" />
-              <a routerLink="/wishlist" class="dropdown-item"> {{ translationService.getTranslation('Wishlist') }}</a>
-              <a routerLink="/cart" class="dropdown-item"> {{ translationService.getTranslation('Cart') }}</a>
-              <a routerLink="/notifications" class="dropdown-item"> {{
-                translationService.getTranslation('Notifications') }}</a>
-              <a routerLink="/account-settings" class="dropdown-item"> {{ translationService.getTranslation('Settings')
-                }}</a>
+              <a routerLink="/wishlist" class="dropdown-item">{{
+                translationService.getTranslation('Wishlist')
+              }}</a>
+              <a routerLink="/cart" class="dropdown-item">{{
+                translationService.getTranslation('Cart')
+              }}</a>
+              <a routerLink="/notifications" class="dropdown-item">{{
+                translationService.getTranslation('Notifications')
+              }}</a>
+              <a routerLink="/account-settings" class="dropdown-item">{{
+                translationService.getTranslation('Settings')
+              }}</a>
               <a href="javascript:void(0)" class="dropdown-item text-danger" (click)="logout()">
-                <i class="fas fa-sign-out-alt me-1"></i> {{ translationService.getTranslation('Logout') }}
+                <i class="fas fa-sign-out-alt me-1"></i>
+                {{ translationService.getTranslation('Logout') }}
               </a>
             </ng-container>
             <ng-template #guestMenu>
-              <a routerLink="/signin" class="dropdown-item"> {{ translationService.getTranslation('Login') }}</a>
-              <a routerLink="/signup" class="dropdown-item"> {{ translationService.getTranslation('Register') }}</a>
+              <a routerLink="/signin" class="dropdown-item">{{
+                translationService.getTranslation('Login')
+              }}</a>
+              <a routerLink="/signup" class="dropdown-item">{{
+                translationService.getTranslation('Register')
+              }}</a>
             </ng-template>
           </div>
         </div>
@@ -78,46 +112,69 @@
     <div class="col-md-4 col-lg-3 text-center text-lg-start">
       <div class="d-inline-flex align-items-center">
         <a routerLink="/" class="navbar-brand p-0">
-          <h1 class="display-5 text-primary m-0">
-            <i class="fas fa-shopping-bag text-secondary me-2"></i>Electro
-          </h1>
+          <h1 class="display-6 text-primary m-0">#<span class="text-dark">Sooq</span></h1>
         </a>
       </div>
     </div>
 
-    <!-- ── AI Smart Search Bar ──────────────────────────────────────────────── -->
+    <!-- AI Smart Search Bar -->
     <div class="col-md-4 col-lg-6 text-center">
       <div class="position-relative ps-4">
         <!-- Search input row -->
-        <div class="d-flex border rounded-pill smart-search-bar" [class.suggest-open]="isSuggestOpen">
+        <div
+          class="d-flex border rounded-pill smart-search-bar"
+          [class.suggest-open]="isSuggestOpen"
+        >
           <!-- Input + AI badge wrapper -->
           <div class="position-relative flex-grow-1">
-            <input class="form-control border-0 rounded-pill w-100 py-3 ps-3 pe-5" type="text" [(ngModel)]="searchQuery"
-              (ngModelChange)="onSearchInput()" (keydown)="onSearchKeydown($event)" (focus)="onSearchInput()"
-              placeholder="Search anything — try 'gaming headset' or 'gift under $50'..." autocomplete="off" />
-            <!-- AI pill badge inside input -->
-            <span class="ai-pill"> <i class="fas fa-bolt me-1"></i>AI </span>
+            <input
+              class="form-control border-0 rounded-pill w-100 py-3 ps-3 pe-5"
+              type="text"
+              [(ngModel)]="searchQuery"
+              (ngModelChange)="onSearchInput()"
+              (keydown)="onSearchKeydown($event)"
+              (focus)="onSearchInput()"
+              placeholder="Search anything — try 'gaming headset' or 'gift under $50'..."
+              autocomplete="off"
+            />
+            <span class="ai-pill"><i class="fas fa-bolt me-1"></i>AI</span>
           </div>
 
           <!-- Category select -->
-          <select class="form-select text-dark border-0 border-start rounded-0 p-3" style="width: 200px"
-            [(ngModel)]="selectedCategory">
+          <select
+            class="form-select text-dark border-0 border-start rounded-0 p-3"
+            style="width: 200px"
+            [(ngModel)]="selectedCategory"
+          >
             <option *ngFor="let category of categories" [value]="category">{{ category }}</option>
           </select>
 
           <!-- Visual Search camera button -->
-          <button type="button" class="visual-search-btn" title="Search by image" (click)="openVisualSearch()">
+          <button
+            type="button"
+            class="visual-search-btn"
+            title="Search by image"
+            (click)="openVisualSearch()"
+          >
             <i class="fas fa-camera"></i>
           </button>
 
           <!-- Search button -->
-          <button type="button" class="btn btn-primary rounded-pill py-3 px-5" style="border: 0" (click)="onSearch()">
+          <button
+            type="button"
+            class="btn btn-primary rounded-pill py-3 px-5"
+            style="border: 0"
+            (click)="onSearch()"
+          >
             <i class="fas fa-search"></i>
           </button>
         </div>
 
-        <!-- ── Suggestions Dropdown ─────────────────────────────────────────── -->
-        <div class="suggestions-dropdown" *ngIf="isSuggestLoading || (isSuggestOpen && suggestions.length > 0)">
+        <!-- Suggestions Dropdown -->
+        <div
+          class="suggestions-dropdown"
+          *ngIf="isSuggestLoading || (isSuggestOpen && suggestions.length > 0)"
+        >
           <!-- Loading spinner -->
           <div class="suggest-loading" *ngIf="isSuggestLoading">
             <span class="spinner-border spinner-border-sm me-2 text-primary"></span>
@@ -131,10 +188,19 @@
               <span>AI Suggestions</span>
             </div>
 
-            <div *ngFor="let p of suggestions; let i = index" class="suggest-row"
-              [class.active]="activeSuggestion === i" (mouseenter)="activeSuggestion = i" (click)="selectSuggestion(p)">
-              <img [src]="p.image || 'assets/img/product-1.png'" [alt]="p.name" class="suggest-thumb"
-                (error)="$any($event.target).src = 'assets/img/product-1.png'" />
+            <div
+              *ngFor="let p of suggestions; let i = index"
+              class="suggest-row"
+              [class.active]="activeSuggestion === i"
+              (mouseenter)="activeSuggestion = i"
+              (click)="selectSuggestion(p)"
+            >
+              <img
+                [src]="p.image || 'assets/img/product-1.png'"
+                [alt]="p.name"
+                class="suggest-thumb"
+                (error)="$any($event.target).src = 'assets/img/product-1.png'"
+              />
               <div class="suggest-meta">
                 <div class="suggest-name">{{ p.name }}</div>
                 <div class="suggest-desc" *ngIf="p.shortDescription">{{ p.shortDescription }}</div>
@@ -158,29 +224,43 @@
     <!-- Icons -->
     <div class="col-md-4 col-lg-3 text-center text-lg-end">
       <div class="d-inline-flex align-items-center">
-        <a href="javascript:void(0)" class="text-muted d-flex align-items-center justify-content-center me-3">
+        <a
+          href="javascript:void(0)"
+          class="text-muted d-flex align-items-center justify-content-center me-3"
+        >
           <span class="rounded-circle btn-md-square border"><i class="fas fa-random"></i></span>
         </a>
-        <a routerLink="/wishlist"
-          class="text-muted d-flex align-items-center justify-content-center me-3 position-relative">
+        <a
+          routerLink="/wishlist"
+          class="text-muted d-flex align-items-center justify-content-center me-3 position-relative"
+        >
           <span class="rounded-circle btn-md-square border">
             <i class="fas fa-heart"></i>
           </span>
           @if (wishlistState.wishlistCount() > 0) {
-          <span class="position-absolute top-0 start-75 translate-middle badge rounded-pill bg-danger"
-            style="font-size: 10px">
-            {{ wishlistState.wishlistCount() }}
-          </span>
+            <span
+              class="position-absolute top-0 start-75 translate-middle badge rounded-pill bg-danger"
+              style="font-size: 10px"
+            >
+              {{ wishlistState.wishlistCount() }}
+            </span>
           }
         </a>
 
-        <a routerLink="/cart" class="text-muted d-flex align-items-center justify-content-center position-relative">
-          <span class="rounded-circle btn-md-square border"><i class="fas fa-shopping-cart"></i></span>
+        <a
+          routerLink="/cart"
+          class="text-muted d-flex align-items-center justify-content-center position-relative"
+        >
+          <span class="rounded-circle btn-md-square border"
+            ><i class="fas fa-shopping-cart"></i
+          ></span>
           @if (cartService.cartItemCount() > 0) {
-          <span class="position-absolute top-0 start-75 translate-middle badge rounded-pill bg-danger"
-            style="font-size: 10px">
-            {{ cartService.cartItemCount() }}
-          </span>
+            <span
+              class="position-absolute top-0 start-75 translate-middle badge rounded-pill bg-danger"
+              style="font-size: 10px"
+            >
+              {{ cartService.cartItemCount() }}
+            </span>
           }
           <span class="text-dark ms-2">${{ cartService.cartTotal().toFixed(2) }}</span>
         </a>
@@ -196,20 +276,23 @@
     <!-- All Categories Sidebar (Desktop) -->
     <div class="col-lg-3 d-none d-lg-block">
       <nav class="navbar navbar-light position-relative" style="width: 250px">
-        <button class="navbar-toggler border-0 fs-4 w-100 px-0 text-start" type="button"
-          (click)="toggleAllCategories()">
+        <button
+          class="navbar-toggler border-0 fs-4 w-100 px-0 text-start"
+          type="button"
+          (click)="toggleAllCategories()"
+        >
           <h4 class="m-0"><i class="fa fa-bars me-2"></i>All Categories</h4>
         </button>
         <div class="collapse navbar-collapse rounded-bottom" [class.show]="isAllCategoriesOpen">
           <div class="navbar-nav ms-auto py-0">
             <ul class="list-unstyled categories-bars">
               @for (category of sidebarCategories; track category.name) {
-              <li>
-                <div class="categories-bars-item">
-                  <a href="javascript:void(0)">{{ category.name }}</a>
-                  <span>({{ category.count }})</span>
-                </div>
-              </li>
+                <li>
+                  <div class="categories-bars-item">
+                    <a href="javascript:void(0)">{{ category.name }}</a>
+                    <span>({{ category.count }})</span>
+                  </div>
+                </li>
               }
             </ul>
           </div>
@@ -222,7 +305,7 @@
       <nav class="navbar navbar-expand-lg navbar-light bg-primary">
         <a routerLink="/" class="navbar-brand d-block d-lg-none">
           <h1 class="display-5 text-secondary m-0">
-            <i class="fas fa-shopping-bag text-white me-2"></i>Electro
+            <i class="fas fa-shopping-bag text-white me-2"></i>Sooq
           </h1>
         </a>
         <button class="navbar-toggler ms-auto" type="button" (click)="toggleMobileMenu()">
@@ -230,42 +313,68 @@
         </button>
         <div class="collapse navbar-collapse" [class.show]="isMobileMenuOpen">
           <div class="navbar-nav ms-auto py-0">
-            <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
-              class="nav-item nav-link">{{ translationService.getTranslation('Home') }}</a>
+            <a
+              routerLink="/"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: true }"
+              class="nav-item nav-link"
+              >{{ translationService.getTranslation('Home') }}</a
+            >
             <a routerLink="/product" routerLinkActive="active" class="nav-item nav-link">{{
-              translationService.getTranslation('Shop') }}</a>
+              translationService.getTranslation('Shop')
+            }}</a>
             <a routerLink="/profile" routerLinkActive="active" class="nav-item nav-link">{{
-              translationService.getTranslation('Profile') }}</a>
-            <a routerLink="/ai-setup-builder" routerLinkActive="active" class="nav-item nav-link ai-setup-link">
+              translationService.getTranslation('Profile')
+            }}</a>
+            <a
+              routerLink="/ai-setup-builder"
+              routerLinkActive="active"
+              class="nav-item nav-link ai-setup-link"
+            >
               <i class="fas fa-magic me-1"></i>{{ translationService.getTranslation('AI Setup') }}
               <span class="ai-setup-badge">NEW</span>
             </a>
 
             <!-- Pages Dropdown -->
             <div class="nav-item dropdown">
-              <a href="javascript:void(0)" class="nav-link dropdown-toggle"
-                (click)="isPagesDropdownOpen = !isPagesDropdownOpen">{{ translationService.getTranslation('Pages')
-                }}</a>
+              <a
+                href="javascript:void(0)"
+                class="nav-link dropdown-toggle"
+                (click)="isPagesDropdownOpen = !isPagesDropdownOpen"
+                >{{ translationService.getTranslation('Pages') }}</a
+              >
               <div class="dropdown-menu m-0" [class.show]="isPagesDropdownOpen">
                 <a routerLink="/ai-setup-builder" class="dropdown-item">
-                  <i class="fas fa-magic me-1 text-primary"></i>{{ translationService.getTranslation('AI Setup Builder')
-                  }}
+                  <i class="fas fa-magic me-1 text-primary"></i
+                  >{{ translationService.getTranslation('AI Setup Builder') }}
                 </a>
-                <a routerLink="/bestseller" class="dropdown-item">{{ translationService.getTranslation('Bestseller')
-                  }}</a>
-                <a routerLink="/cart" class="dropdown-item">{{ translationService.getTranslation('Cart Page') }}</a>
-                <a routerLink="/checkout" class="dropdown-item">{{ translationService.getTranslation('Checkout') }}</a>
-                <a routerLink="/404" class="dropdown-item">{{ translationService.getTranslation('404 Page') }}</a>
+                <a routerLink="/bestseller" class="dropdown-item">{{
+                  translationService.getTranslation('Bestseller')
+                }}</a>
+                <a routerLink="/cart" class="dropdown-item">{{
+                  translationService.getTranslation('Cart Page')
+                }}</a>
+                <a routerLink="/checkout" class="dropdown-item">{{
+                  translationService.getTranslation('Checkout')
+                }}</a>
+                <a routerLink="/404" class="dropdown-item">{{
+                  translationService.getTranslation('404 Page')
+                }}</a>
               </div>
             </div>
 
             <a routerLink="/contact" routerLinkActive="active" class="nav-item nav-link me-2">{{
-              translationService.getTranslation('Contact Us') }}</a>
+              translationService.getTranslation('Contact Us')
+            }}</a>
 
             <!-- Mobile Categories Dropdown -->
             <div class="nav-item dropdown d-block d-lg-none mb-3">
-              <a href="javascript:void(0)" class="nav-link dropdown-toggle"
-                (click)="isMobileCategoriesOpen = !isMobileCategoriesOpen">All Category</a>
+              <a
+                href="javascript:void(0)"
+                class="nav-link dropdown-toggle"
+                (click)="isMobileCategoriesOpen = !isMobileCategoriesOpen"
+                >All Category</a
+              >
               <div class="dropdown-menu m-0" [class.show]="isMobileCategoriesOpen">
                 <ul class="list-unstyled categories-bars">
                   <li *ngFor="let category of sidebarCategories">
@@ -280,15 +389,24 @@
 
             <!-- Mobile Search -->
             <div class="d-flex d-lg-none px-3 pb-3">
-              <input type="text" class="form-control rounded-pill me-2" [(ngModel)]="searchQuery"
+              <input
+                type="text"
+                class="form-control rounded-pill me-2"
+                [(ngModel)]="searchQuery"
                 (keydown.enter)="onSearch()"
-                placeholder="{{ translationService.getTranslation('Search') }} {{ translationService.getTranslation('Products') }}..." />
+                placeholder="{{ translationService.getTranslation('Search') }} {{
+                  translationService.getTranslation('Products')
+                }}..."
+              />
               <button class="btn btn-secondary rounded-pill px-3" (click)="onSearch()">
                 <i class="fas fa-search"></i>
               </button>
             </div>
           </div>
-          <a href="tel:+01234567890" class="btn btn-secondary rounded-pill py-2 px-4 px-lg-3 mb-3 mb-md-3 mb-lg-0">
+          <a
+            href="tel:+01234567890"
+            class="btn btn-secondary rounded-pill py-2 px-4 px-lg-3 mb-3 mb-md-3 mb-lg-0"
+          >
             <i class="fa fa-mobile-alt me-2"></i> +0123 456 7890
           </a>
         </div>
@@ -298,13 +416,13 @@
 </div>
 <!-- Navbar End -->
 
-<!-- ══════════════════ VISUAL SEARCH MODAL ══════════════════ -->
+<!-- VISUAL SEARCH MODAL -->
 <div class="vs-backdrop" *ngIf="isVisualSearchOpen" (click)="closeVisualSearch()"></div>
 
 <div class="vs-modal" [class.vs-modal--open]="isVisualSearchOpen">
   <!-- Header -->
   <div class="vs-modal__header">
-    <span class="vs-modal__title"> <i class="fas fa-camera me-2"></i>Search by Image </span>
+    <span class="vs-modal__title"><i class="fas fa-camera me-2"></i>Search by Image</span>
     <button class="vs-modal__close" (click)="closeVisualSearch()">
       <i class="fas fa-times"></i>
     </button>
@@ -314,9 +432,16 @@
   <div class="vs-modal__body">
     <!-- Left: upload -->
     <div class="vs-upload-panel">
-      <div class="vs-dropzone" [class.vs-dropzone--drag]="vsIsDragging" [class.vs-dropzone--filled]="vsPreviewUrl"
-        (dragenter)="vsDragEnter($event)" (dragleave)="vsDragLeave($event)" (dragover)="$event.preventDefault()"
-        (drop)="vsDrop($event)" (click)="vsFileInput.click()">
+      <div
+        class="vs-dropzone"
+        [class.vs-dropzone--drag]="vsIsDragging"
+        [class.vs-dropzone--filled]="vsPreviewUrl"
+        (dragenter)="vsDragEnter($event)"
+        (dragleave)="vsDragLeave($event)"
+        (dragover)="$event.preventDefault()"
+        (drop)="vsDrop($event)"
+        (click)="vsFileInput.click()"
+      >
         <ng-container *ngIf="vsPreviewUrl; else emptyDrop">
           <img [src]="vsPreviewUrl" class="vs-dropzone__preview" alt="preview" />
           <div class="vs-dropzone__overlay">
@@ -331,9 +456,19 @@
           </div>
         </ng-template>
       </div>
-      <input #vsFileInput type="file" accept="image/*" style="display: none" (change)="vsOnFileSelected($event)" />
+      <input
+        #vsFileInput
+        type="file"
+        accept="image/*"
+        style="display: none"
+        (change)="vsOnFileSelected($event)"
+      />
 
-      <button class="btn btn-primary w-100 mt-3" [disabled]="!vsSelectedFile || vsIsLoading" (click)="vsSearch()">
+      <button
+        class="btn btn-primary w-100 mt-3"
+        [disabled]="!vsSelectedFile || vsIsLoading"
+        (click)="vsSearch()"
+      >
         <span *ngIf="vsIsLoading" class="spinner-border spinner-border-sm me-2"></span>
         <i *ngIf="!vsIsLoading" class="fas fa-search me-2"></i>
         {{ vsIsLoading ? 'Analyzing…' : 'Find Similar Products' }}
@@ -376,11 +511,18 @@
         <div class="vs-grid">
           <div class="vs-card" *ngFor="let p of vsResults" (click)="vsGoToProduct(p._id)">
             <div class="vs-card__img">
-              <img [src]="p.image || 'assets/img/product-1.png'" [alt]="p.name"
-                (error)="$any($event.target).src = 'assets/img/product-1.png'" />
-              <span class="vs-badge" [class.vs-badge--green]="(p.similarityScore || 0) >= 0.8" [class.vs-badge--yellow]="
+              <img
+                [src]="p.image || 'assets/img/product-1.png'"
+                [alt]="p.name"
+                (error)="$any($event.target).src = 'assets/img/product-1.png'"
+              />
+              <span
+                class="vs-badge"
+                [class.vs-badge--green]="(p.similarityScore || 0) >= 0.8"
+                [class.vs-badge--yellow]="
                   (p.similarityScore || 0) >= 0.65 && (p.similarityScore || 0) < 0.8
-                ">
+                "
+              >
                 {{ ((p.similarityScore || 0) * 100).toFixed(0) }}%
               </span>
             </div>
@@ -394,4 +536,4 @@
     </div>
   </div>
 </div>
-<!-- ══════════════════ END VISUAL SEARCH MODAL ══════════════════ -->
+<!-- END VISUAL SEARCH MODAL -->

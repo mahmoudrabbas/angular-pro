@@ -55,7 +55,7 @@
       <table class="table table-hover align-middle mb-0">
         <thead class="ord-thead">
           <tr>
-            <th class="ps-4">Order ID</th>
+            <th class="ps-4">Order Number</th>
             <th>Customer</th>
             <th>Items</th>
             <th>Total</th>
@@ -89,7 +89,7 @@
           <!-- Rows -->
           <tr *ngFor="let o of filteredOrders; trackBy: trackById">
             <td class="ps-4">
-              <span class="order-id">#{{ o._id || o.id | slice: 0 : 8 }}</span>
+              <span class="order-id text-dark">{{ o.orderNumber }}</span>
             </td>
             <td>
               <div class="d-flex align-items-center gap-2">

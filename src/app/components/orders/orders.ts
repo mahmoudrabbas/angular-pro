@@ -149,7 +149,7 @@ export class Orders implements OnInit {
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(22);
     doc.setFont('helvetica', 'bold');
-    doc.text('Electro', 14, 18);
+    doc.text('Sooq', 14, 18);
 
     doc.setFontSize(11);
     doc.setFont('helvetica', 'normal');
