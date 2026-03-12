@@ -10,6 +10,7 @@ import { SearchService, SearchProduct } from '../../services/search.service';
 import { VisualSearchService, Product } from '../../services/visual-search.service';
 import { WishlistStateService } from '../../services/wishlist-state.service';
 import { TranslationService } from '../../services/translation.service';
+import { CategoryService } from '../../services/category.service';
 
 // import { NavigationEnd } from '@angular/router';
 // import { filter } from 'rxjs/operators';
@@ -43,7 +44,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   selectedCurrency = 'USD';
   selectedLanguage = 'English';
 
-  categories = ['All Category', 'Electronics', 'Fashion', 'Gaming', 'Fitness', 'Books', 'Home'];
+  categories: string[] = ['All Category'];
   currencies = ['USD', 'EGP', 'SAR'];
   languages = ['English', 'Arabic'];
 
@@ -75,6 +76,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     public cartService: CartService,
     private searchService: SearchService,
     private visualSearchService: VisualSearchService,
+    private categoryService: CategoryService,
     private router: Router,
     private elRef: ElementRef,
     public translationService: TranslationService,
@@ -84,6 +86,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
     setTimeout(() => (this.isLoading = false), 500);
     this.cartService.loadCart();
     this.wishlistState.load();
+
+    this.categoryService.getAll().pipe(takeUntil(this.destroy$)).subscribe((cats) => {
+      this.categories = ['All Category', ...cats.map((c) => c.name)];
+    });
 
     // Listen for language change events
     window.addEventListener('languageChange', this.handleLanguageChange.bind(this));
@@ -177,12 +183,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
   // Main search → /search results page
   onSearch(): void {
     const q = this.searchQuery.trim();
-    if (!q) return;
+    if (!q && this.selectedCategory === 'All Category') return;
     this.closeSuggestions();
     this.router.navigate(['/search'], {
       queryParams: {
-        q,
-        ...(this.selectedCategory !== 'All Category' ? { category: this.selectedCategory } : {}),
+        q: q || null,
+        category: this.selectedCategory !== 'All Category' ? this.selectedCategory : null,
       },
     });
   }

@@ -6,6 +6,7 @@ import { Subject, takeUntil } from 'rxjs';
 import { SearchService } from '../../services/search.service';
 import { CartService } from '../../services/cart.service';
 import { CompareService } from '../../services/compare.service';
+import { CategoryService } from '../../services/category.service';
 import { ProductCardComponent } from '../product-card/product-card';
 import { CompareBar } from '../compare-bar/compare-bar';
 import { Product } from '../../models/product.model';
@@ -37,7 +38,7 @@ export class SearchResults implements OnInit, OnDestroy {
   ];
   sortBy = 'relevant';
 
-  categories = ['All Category', 'Electronics', 'Fashion', 'Gaming', 'Fitness', 'Books', 'Home'];
+  categories: string[] = ['All Category'];
 
   wowDelays = ['0.1s', '0.3s', '0.5s', '0.7s'];
 
@@ -49,14 +50,19 @@ export class SearchResults implements OnInit, OnDestroy {
     private searchService: SearchService,
     private cartService: CartService,
     public compareService: CompareService,
+    private categoryService: CategoryService,
   ) {}
 
   ngOnInit() {
+    this.categoryService.getAll().pipe(takeUntil(this.destroy$)).subscribe((cats) => {
+      this.categories = ['All Category', ...cats.map((c) => c.name)];
+    });
+
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params) => {
       this.query = params['q'] || '';
       this.category = params['category'] || 'All Category';
       this.page = parseInt(params['page'] || '1');
-      if (this.query) this.runSearch();
+      this.runSearch();
     });
   }
 
@@ -146,14 +152,25 @@ export class SearchResults implements OnInit, OnDestroy {
   }
   applyFilters() {
     this.page = 1;
-    this.runSearch();
+    this.updateUrlAndSearch();
   }
   clearFilters() {
     this.minPrice = null;
     this.maxPrice = null;
     this.category = 'All Category';
     this.page = 1;
-    this.runSearch();
+    this.updateUrlAndSearch();
+  }
+
+  updateUrlAndSearch() {
+    this.router.navigate([], {
+      queryParams: {
+        q: this.query || null,
+        category: this.category !== 'All Category' ? this.category : null,
+        page: this.page > 1 ? this.page : null
+      },
+      queryParamsHandling: 'merge'
+    });
   }
 
   goToPage(p: number) {
