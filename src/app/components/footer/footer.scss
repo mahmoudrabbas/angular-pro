@@ -1,53 +1,237 @@
-:host {
-  display: block;
-}
+// ── Variables ──────────────────────────────────────────────
+$orange: #f97316;
+$orange-light: #fb923c;
+$dark-bg: #111111;
+$card-bg: #1a1a1a;
+$border: rgba(255, 255, 255, 0.07);
+$text-muted: #9ca3af;
+$text-light: #e5e7eb;
+$white: #ffffff;
 
+// ── Main Footer ────────────────────────────────────────────
 .footer {
-  background: #1b1c1e;
+  background: $dark-bg;
+  color: $text-light;
+  font-family: 'Segoe UI', sans-serif;
+
+  .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 3.5rem 2rem 2.5rem;
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1.6fr;
+    gap: 3rem;
+
+    @media (max-width: 900px) {
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    @media (max-width: 540px) {
+      grid-template-columns: 1fr;
+    }
+  }
 }
 
-.copyright {
-  background: #0a0b0c;
-}
-
-.back-to-top {
-  position: fixed;
-  bottom: 30px;
-  right: 30px;
-  z-index: 99;
-  display: none;
-
-  &.show {
+// ── Brand ──────────────────────────────────────────────────
+.footer-brand {
+  .brand-logo {
     display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+
+    .logo-icon {
+      font-size: 1.5rem;
+    }
+
+    .logo-text {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: $white;
+      letter-spacing: -0.02em;
+    }
+  }
+
+  .brand-tagline {
+    font-size: 0.875rem;
+    color: $text-muted;
+    line-height: 1.65;
+    margin-bottom: 1.5rem;
+    max-width: 240px;
+  }
+
+  .social-links {
+    display: flex;
+    gap: 0.6rem;
+  }
+
+  .social-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid $border;
+    color: $text-muted;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    text-decoration: none;
+    transition: all 0.2s;
+
+    &:hover {
+      background: $orange;
+      border-color: $orange;
+      color: $white;
+      transform: translateY(-2px);
+    }
   }
 }
 
-// Hover effects for links
-.footer-item a {
-  color: #8b9bb5;
-  text-decoration: none;
-  transition: all 0.3s ease;
+// ── Link Columns ──────────────────────────────────────────
+.footer-links {
+  .links-heading {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: $orange;
+    margin-bottom: 1.25rem;
+  }
 
-  &:hover {
-    color: var(--bs-primary);
-    padding-left: 5px;
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  a {
+    color: $text-muted;
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition:
+      color 0.2s,
+      padding-left 0.2s;
+    display: block;
+
+    &:hover {
+      color: $white;
+      padding-left: 4px;
+    }
   }
 }
 
-// Newsletter input styling
-.form-control {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #fff;
-
-  &:focus {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: var(--bs-primary);
-    box-shadow: none;
-    color: #fff;
+// ── Contact Column ─────────────────────────────────────────
+.footer-contact-col {
+  .links-heading {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: $orange;
+    margin-bottom: 1.25rem;
   }
 
-  &::placeholder {
-    color: #8b9bb5;
+  .contact-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .contact-row {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    text-decoration: none;
+    padding: 0.6rem 0.75rem;
+    border-radius: 8px;
+    border: 1px solid $border;
+    transition:
+      border-color 0.2s,
+      background 0.2s;
+
+    &:hover {
+      border-color: $orange;
+      background: rgba($orange, 0.05);
+
+      .contact-icon {
+        background: $orange;
+        color: $white;
+      }
+    }
+  }
+
+  .contact-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba($orange, 0.12);
+    color: $orange;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    transition:
+      background 0.2s,
+      color 0.2s;
+  }
+
+  .contact-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+  }
+
+  .contact-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: $text-muted;
+    font-weight: 600;
+  }
+
+  .contact-value {
+    font-size: 0.8rem;
+    color: $text-light;
+    font-weight: 500;
+  }
+}
+
+// ── Bottom Bar ─────────────────────────────────────────────
+.footer-bottom {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.25rem 2rem;
+  border-top: 1px solid $border;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+
+  span {
+    font-size: 0.8rem;
+    color: $text-muted;
+  }
+
+  .footer-bottom-links {
+    display: flex;
+    gap: 1.5rem;
+
+    a {
+      font-size: 0.8rem;
+      color: $text-muted;
+      text-decoration: none;
+      transition: color 0.2s;
+
+      &:hover {
+        color: $orange;
+      }
+    }
   }
 }

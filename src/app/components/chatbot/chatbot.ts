@@ -40,7 +40,7 @@ export class Chatbot implements OnDestroy {
   messages: ChatMessage[] = [
     {
       role: 'assistant',
-      text: "👋 Hi! I'm Electro's AI shopping assistant. Ask me anything — I'll help you find the perfect product!",
+      text: "👋 Hi! I'm Sooq's AI shopping assistant. Ask me anything — I'll help you find the perfect product!",
       timestamp: new Date(),
     },
   ];

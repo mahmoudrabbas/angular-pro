@@ -3,14 +3,15 @@
   <div class="row gx-0 align-items-center">
     <div class="col-lg-4 text-center text-lg-start mb-lg-0">
       <div class="d-inline-flex align-items-center" style="height: 45px">
-        <a href="javascript:void(0)" class="text-muted me-2"> {{ translationService.getTranslation('Help') }}</a><small> / </small>
-        <a href="javascript:void(0)" class="text-muted mx-2"> {{ translationService.getTranslation('Support') }}</a><small> / </small>
-        <a href="javascript:void(0)" class="text-muted ms-2"> {{ translationService.getTranslation('Contact Us') }}</a>
+        <!-- <a href="javascript:void(0)" class="me-2 text-danger"> #</a> -->
+        <p href="javascript:void(0)" class="text-muted">
+          <small class="text-dark me-2">#</small> Free_Palestine
+        </p>
       </div>
     </div>
     <div class="col-lg-4 text-center d-flex align-items-center justify-content-center">
       <small class="text-dark">{{ translationService.getTranslation('Call Us') }}:</small>
-      <a href="javascript:void(0)" class="text-muted">(+012) 1234 567890</a>
+      <a href="javascript:void(0)" class="text-muted">(+010) 1234 567890</a>
     </div>
     <div class="col-lg-4 text-center text-lg-end">
       <div class="d-inline-flex align-items-center" style="height: 45px">
@@ -61,7 +62,10 @@
             class="dropdown-toggle text-muted ms-2"
             (click)="toggleDropdown('dashboard')"
           >
-            <small><i class="fa fa-home me-2"></i> {{ translationService.getTranslation('My Account') }}</small>
+            <small
+              ><i class="fa fa-home me-2"></i>
+              {{ translationService.getTranslation('My Account') }}</small
+            >
           </a>
           <div class="dropdown-menu rounded" [class.show]="isDashboardDropdownOpen">
             <ng-container *ngIf="authService.currentUser() as user; else guestMenu">
@@ -69,17 +73,30 @@
                 <i class="fas fa-user me-1"></i> Hi, {{ user.name }}
               </a>
               <hr class="dropdown-divider" />
-              <a routerLink="/wishlist" class="dropdown-item"> {{ translationService.getTranslation('Wishlist') }}</a>
-              <a routerLink="/cart" class="dropdown-item"> {{ translationService.getTranslation('Cart') }}</a>
-              <a routerLink="/notifications" class="dropdown-item"> {{ translationService.getTranslation('Notifications') }}</a>
-              <a routerLink="/account-settings" class="dropdown-item"> {{ translationService.getTranslation('Settings') }}</a>
+              <a routerLink="/wishlist" class="dropdown-item">
+                {{ translationService.getTranslation('Wishlist') }}</a
+              >
+              <a routerLink="/cart" class="dropdown-item">
+                {{ translationService.getTranslation('Cart') }}</a
+              >
+              <a routerLink="/notifications" class="dropdown-item">
+                {{ translationService.getTranslation('Notifications') }}</a
+              >
+              <a routerLink="/account-settings" class="dropdown-item">
+                {{ translationService.getTranslation('Settings') }}</a
+              >
               <a href="javascript:void(0)" class="dropdown-item text-danger" (click)="logout()">
-                <i class="fas fa-sign-out-alt me-1"></i> {{ translationService.getTranslation('Logout') }}
+                <i class="fas fa-sign-out-alt me-1"></i>
+                {{ translationService.getTranslation('Logout') }}
               </a>
             </ng-container>
             <ng-template #guestMenu>
-              <a routerLink="/signin" class="dropdown-item"> {{ translationService.getTranslation('Login') }}</a>
-              <a routerLink="/signup" class="dropdown-item"> {{ translationService.getTranslation('Register') }}</a>
+              <a routerLink="/signin" class="dropdown-item">
+                {{ translationService.getTranslation('Login') }}</a
+              >
+              <a routerLink="/signup" class="dropdown-item">
+                {{ translationService.getTranslation('Register') }}</a
+              >
             </ng-template>
           </div>
         </div>
@@ -96,9 +113,7 @@
     <div class="col-md-4 col-lg-3 text-center text-lg-start">
       <div class="d-inline-flex align-items-center">
         <a routerLink="/" class="navbar-brand p-0">
-          <h1 class="display-5 text-primary m-0">
-            <i class="fas fa-shopping-bag text-secondary me-2"></i>Electro
-          </h1>
+          <h1 class="display-6 text-primary m-0">#<span class="text-dark">Sooq</span></h1>
         </a>
       </div>
     </div>
@@ -292,7 +307,7 @@
       <nav class="navbar navbar-expand-lg navbar-light bg-primary">
         <a routerLink="/" class="navbar-brand d-block d-lg-none">
           <h1 class="display-5 text-secondary m-0">
-            <i class="fas fa-shopping-bag text-white me-2"></i>Electro
+            <i class="fas fa-shopping-bag text-white me-2"></i>Sooq
           </h1>
         </a>
         <button class="navbar-toggler ms-auto" type="button" (click)="toggleMobileMenu()">
@@ -307,8 +322,12 @@
               class="nav-item nav-link"
               >{{ translationService.getTranslation('Home') }}</a
             >
-            <a routerLink="/product" routerLinkActive="active" class="nav-item nav-link">{{ translationService.getTranslation('Shop') }}</a>
-            <a routerLink="/profile" routerLinkActive="active" class="nav-item nav-link">{{ translationService.getTranslation('Profile') }}</a>
+            <a routerLink="/product" routerLinkActive="active" class="nav-item nav-link">{{
+              translationService.getTranslation('Shop')
+            }}</a>
+            <a routerLink="/profile" routerLinkActive="active" class="nav-item nav-link">{{
+              translationService.getTranslation('Profile')
+            }}</a>
             <a
               routerLink="/ai-setup-builder"
               routerLinkActive="active"
@@ -328,18 +347,27 @@
               >
               <div class="dropdown-menu m-0" [class.show]="isPagesDropdownOpen">
                 <a routerLink="/ai-setup-builder" class="dropdown-item">
-                  <i class="fas fa-magic me-1 text-primary"></i>{{ translationService.getTranslation('AI Setup Builder') }}
+                  <i class="fas fa-magic me-1 text-primary"></i
+                  >{{ translationService.getTranslation('AI Setup Builder') }}
                 </a>
-                <a routerLink="/bestseller" class="dropdown-item">{{ translationService.getTranslation('Bestseller') }}</a>
-                <a routerLink="/cart" class="dropdown-item">{{ translationService.getTranslation('Cart Page') }}</a>
-                <a routerLink="/checkout" class="dropdown-item">{{ translationService.getTranslation('Checkout') }}</a>
-                <a routerLink="/404" class="dropdown-item">{{ translationService.getTranslation('404 Page') }}</a>
+                <a routerLink="/bestseller" class="dropdown-item">{{
+                  translationService.getTranslation('Bestseller')
+                }}</a>
+                <a routerLink="/cart" class="dropdown-item">{{
+                  translationService.getTranslation('Cart Page')
+                }}</a>
+                <a routerLink="/checkout" class="dropdown-item">{{
+                  translationService.getTranslation('Checkout')
+                }}</a>
+                <a routerLink="/404" class="dropdown-item">{{
+                  translationService.getTranslation('404 Page')
+                }}</a>
               </div>
             </div>
 
-            <a routerLink="/contact" routerLinkActive="active" class="nav-item nav-link me-2"
-              >{{ translationService.getTranslation('Contact Us') }}</a
-            >
+            <a routerLink="/contact" routerLinkActive="active" class="nav-item nav-link me-2">{{
+              translationService.getTranslation('Contact Us')
+            }}</a>
 
             <!-- Mobile Categories Dropdown -->
             <div class="nav-item dropdown d-block d-lg-none mb-3">
@@ -368,7 +396,9 @@
                 class="form-control rounded-pill me-2"
                 [(ngModel)]="searchQuery"
                 (keydown.enter)="onSearch()"
-                placeholder="{{ translationService.getTranslation('Search') }} {{ translationService.getTranslation('Products') }}..."
+                placeholder="{{ translationService.getTranslation('Search') }} {{
+                  translationService.getTranslation('Products')
+                }}..."
               />
               <button class="btn btn-secondary rounded-pill px-3" (click)="onSearch()">
                 <i class="fas fa-search"></i>
@@ -454,7 +484,7 @@
     <!-- Right: results -->
     <div class="vs-results-panel">
       <!-- Idle -->
-        <div class="vs-state-msg" *ngIf="!vsIsLoading && vsResults.length === 0 && !vsSearchDone">
+      <div class="vs-state-msg" *ngIf="!vsIsLoading && vsResults.length === 0 && !vsSearchDone">
         <i class="fas fa-camera-retro"></i>
         <p>Upload a photo to find visually similar products</p>
       </div>
