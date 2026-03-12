@@ -1,3 +1,28 @@
+$primary: #f97316;
+$success: #22c55e;
+$danger: #ef4444;
+
+.cat-thead th {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #94a3b8;
+  background: #f8fafc;
+  border: none;
+  padding-top: 0.85rem;
+  padding-bottom: 0.85rem;
+}
+
+.modal-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+  margin-bottom: 0.3rem;
+}
+
 .pagination {
   gap: 4px;
 
@@ -20,8 +45,8 @@
     }
 
     &.active .page-link {
-      background: #f97316;
-      border-color: #f97316;
+      background: $primary;
+      border-color: $primary;
       color: #fff;
       font-weight: 700;
     }

@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { environment } from '../../environments/environment';
 
@@ -20,28 +20,24 @@ export class AdminOrders implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   private searchSubject = new Subject<string>();
 
-  // ── List state ──────────────────────────────────────────────────────────────
   orders: any[] = [];
+  filteredOrders: any[] = [];
   loading = false;
   error: string | null = null;
   successMsg: string | null = null;
 
-  // ── Pagination ──────────────────────────────────────────────────────────────
   currentPage = 1;
   totalPages = 1;
   totalOrders = 0;
   limit = 10;
 
-  // ── Filters ─────────────────────────────────────────────────────────────────
   searchQuery = '';
   statusFilter = '';
   statusOptions = STATUS_OPTIONS;
 
-  // ── Detail modal ────────────────────────────────────────────────────────────
   showDetail = false;
   detailOrder: any = null;
 
-  // ── Status update modal ─────────────────────────────────────────────────────
   showStatusModal = false;
   statusTarget: any = null;
   newStatus = '';
@@ -59,46 +55,69 @@ export class AdminOrders implements OnInit, OnDestroy {
     this.setupSearch();
     this.loadOrders();
   }
+
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
   }
 
-  // ── Search ──────────────────────────────────────────────────────────────────
   private setupSearch() {
     this.searchSubject
       .pipe(debounceTime(400), distinctUntilChanged(), takeUntil(this.destroy$))
       .subscribe((q) => {
         this.searchQuery = q;
         this.currentPage = 1;
-        this.loadOrders();
+        this.applyFilters();
       });
   }
+
   onSearch(val: string) {
     this.searchSubject.next(val);
   }
+
   onStatusFilter(val: string) {
     this.statusFilter = val;
     this.currentPage = 1;
-    this.loadOrders();
+    this.applyFilters();
   }
 
-  // ── Load ────────────────────────────────────────────────────────────────────
+  private applyFilters() {
+    let result = [...this.orders];
+
+    if (this.statusFilter) {
+      result = result.filter((o) => o.orderStatus === this.statusFilter);
+    }
+
+    if (this.searchQuery) {
+      const q = this.searchQuery.toLowerCase();
+      result = result.filter(
+        (o) =>
+          (o._id || '').toLowerCase().includes(q) ||
+          (o.user?.name || '').toLowerCase().includes(q) ||
+          (o.user?.email || '').toLowerCase().includes(q) ||
+          (o.orderNumber || '').toLowerCase().includes(q),
+      );
+    }
+
+    this.totalOrders = result.length;
+    this.totalPages = Math.ceil(result.length / this.limit) || 1;
+
+    const start = (this.currentPage - 1) * this.limit;
+    this.filteredOrders = result.slice(start, start + this.limit);
+  }
+
   loadOrders() {
     this.loading = true;
     this.error = null;
-    let params = new HttpParams().set('page', this.currentPage).set('limit', this.limit);
-    if (this.statusFilter) params = params.set('status', this.statusFilter);
 
     this.http
-      .get<any>(this.api, { params, ...this.getAuthHeaders() })
+      .get<any>(this.api, this.getAuthHeaders())
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res) => {
-          this.orders = res.orders || [];
-          this.totalOrders = res.total || res.count || this.orders.length;
-          this.totalPages = res.pages || 1;
+          this.orders = res.data || [];
           this.loading = false;
+          this.applyFilters();
         },
         error: (err) => {
           this.error = err?.error?.message || 'Failed to load orders.';
@@ -107,12 +126,12 @@ export class AdminOrders implements OnInit, OnDestroy {
       });
   }
 
-  // ── Pagination ──────────────────────────────────────────────────────────────
   goToPage(p: number) {
     if (p < 1 || p > this.totalPages) return;
     this.currentPage = p;
-    this.loadOrders();
+    this.applyFilters();
   }
+
   get pages(): number[] {
     const range: number[] = [];
     for (
@@ -124,23 +143,23 @@ export class AdminOrders implements OnInit, OnDestroy {
     return range;
   }
 
-  // ── Detail modal ────────────────────────────────────────────────────────────
   openDetail(o: any) {
     this.detailOrder = o;
     this.showDetail = true;
   }
+
   closeDetail() {
     this.showDetail = false;
     this.detailOrder = null;
   }
 
-  // ── Status modal ────────────────────────────────────────────────────────────
   openStatus(o: any) {
     this.statusTarget = o;
-    this.newStatus = o.status || 'pending';
+    this.newStatus = o.orderStatus || 'pending';
     this.statusError = null;
     this.showStatusModal = true;
   }
+
   closeStatus() {
     this.showStatusModal = false;
     this.statusTarget = null;
@@ -150,8 +169,9 @@ export class AdminOrders implements OnInit, OnDestroy {
     if (!this.statusTarget || !this.newStatus) return;
     this.statusLoading = true;
     this.statusError = null;
+
     this.http
-      .patch<any>(
+      .put<any>(
         `${this.api}/${this.statusTarget._id}/status`,
         { status: this.newStatus },
         this.getAuthHeaders(),
@@ -160,11 +180,13 @@ export class AdminOrders implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           this.statusLoading = false;
-          // update inline
+
           const idx = this.orders.findIndex((o) => o._id === this.statusTarget._id);
-          if (idx !== -1) this.orders[idx].status = this.newStatus;
+          if (idx !== -1) this.orders[idx].orderStatus = this.newStatus;
           if (this.detailOrder?._id === this.statusTarget._id)
-            this.detailOrder.status = this.newStatus;
+            this.detailOrder.orderStatus = this.newStatus;
+
+          this.applyFilters();
           this.closeStatus();
           this.showSuccess('Order status updated.');
         },
@@ -175,7 +197,6 @@ export class AdminOrders implements OnInit, OnDestroy {
       });
   }
 
-  // ── Helpers ─────────────────────────────────────────────────────────────────
   statusClass(s: string = ''): string {
     const map: Record<string, string> = {
       pending: 'st-pending',
