@@ -3,7 +3,15 @@
   <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4">
     <div>
       <h5 class="mb-1 fw-bold">
-        Search results for: <span class="text-primary">"{{ query }}"</span>
+        <ng-container *ngIf="query">
+          Search results for: <span class="text-primary">"{{ query }}"</span>
+        </ng-container>
+        <ng-container *ngIf="!query && category !== 'All Category'">
+          Category: <span class="text-primary">{{ category }}</span>
+        </ng-container>
+        <ng-container *ngIf="!query && category === 'All Category'">
+          <span class="text-primary">All Products</span>
+        </ng-container>
       </h5>
       <small class="text-muted" *ngIf="!isLoading">
         {{ total }} product{{ total !== 1 ? 's' : '' }} found
@@ -61,28 +69,6 @@
           </div>
         </div>
 
-        <!-- Price Range -->
-        <div class="filter-section">
-          <div class="filter-section-title">Price Range</div>
-          <div class="d-flex gap-2 align-items-center mb-2">
-            <input
-              type="number"
-              class="form-control form-control-sm"
-              placeholder="Min $"
-              [(ngModel)]="minPrice"
-              min="0"
-            />
-            <span class="text-muted small">—</span>
-            <input
-              type="number"
-              class="form-control form-control-sm"
-              placeholder="Max $"
-              [(ngModel)]="maxPrice"
-              min="0"
-            />
-          </div>
-          <button class="btn btn-primary btn-sm w-100" (click)="applyFilters()">Apply</button>
-        </div>
       </div>
     </div>
 
@@ -151,7 +137,11 @@
       <!-- Empty state -->
       <div class="empty-state text-center py-5" *ngIf="!isLoading && products.length === 0">
         <i class="fas fa-search-minus fa-3x text-muted mb-3 d-block"></i>
-        <h5 class="text-muted">No products found for "{{ query }}"</h5>
+        <h5 class="text-muted">
+          No products found
+          <span *ngIf="query">for "{{ query }}"</span>
+          <span *ngIf="!query && category !== 'All Category'">in {{ category }}</span>
+        </h5>
         <p class="text-muted small">Try different keywords or remove filters</p>
         <button class="btn btn-primary mt-2" (click)="clearFilters()">Clear Filters</button>
       </div>

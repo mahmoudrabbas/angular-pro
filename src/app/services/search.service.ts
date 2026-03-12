@@ -43,7 +43,10 @@ export class SearchService {
       limit?: number;
     } = {},
   ): Observable<SearchResult> {
-    const params: Record<string, string> = { q: query };
+    const params: Record<string, string> = {};
+    if (query && query.trim() !== '') {
+      params['q'] = query;
+    }
     if (options.category && options.category !== 'All Category')
       params['category'] = options.category;
     if (options.minPrice) params['minPrice'] = String(options.minPrice);

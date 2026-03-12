@@ -106,6 +106,7 @@ import { adminGuard } from './guards/admin.guard';
 import { AdminProducts } from './components/admin-products/admin-products';
 import { AdminOrders } from './components/admin-orders/admin-orders';
 import { AdminCategories } from './components/admin-categories/admin-categories';
+import { NotFoundComponent } from './components/not-found/not-found';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -173,5 +174,5 @@ export const routes: Routes = [
   { path: 'reset-password/:id/:token', component: ResetPassword },
   { path: 'profile', component: Orders }, // User profile
   { path: 'orders', component: Orders }, // User profile
-  { path: '**', redirectTo: '/home' },
+  { path: '**', component: NotFoundComponent },
 ];

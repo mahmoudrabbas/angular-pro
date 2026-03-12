@@ -3,7 +3,6 @@
   <div class="row gx-0 align-items-center">
     <div class="col-lg-4 text-center text-lg-start mb-lg-0">
       <div class="d-inline-flex align-items-center" style="height: 45px">
-        <!-- <a href="javascript:void(0)" class="me-2 text-danger"> #</a> -->
         <p href="javascript:void(0)" class="text-muted">
           <small class="text-dark me-2">#</small> Free_Palestine
         </p>
@@ -73,30 +72,30 @@
                 <i class="fas fa-user me-1"></i> Hi, {{ user.name }}
               </a>
               <hr class="dropdown-divider" />
-              <a routerLink="/wishlist" class="dropdown-item">
-                {{ translationService.getTranslation('Wishlist') }}</a
-              >
-              <a routerLink="/cart" class="dropdown-item">
-                {{ translationService.getTranslation('Cart') }}</a
-              >
-              <a routerLink="/notifications" class="dropdown-item">
-                {{ translationService.getTranslation('Notifications') }}</a
-              >
-              <a routerLink="/account-settings" class="dropdown-item">
-                {{ translationService.getTranslation('Settings') }}</a
-              >
+              <a routerLink="/wishlist" class="dropdown-item">{{
+                translationService.getTranslation('Wishlist')
+              }}</a>
+              <a routerLink="/cart" class="dropdown-item">{{
+                translationService.getTranslation('Cart')
+              }}</a>
+              <a routerLink="/notifications" class="dropdown-item">{{
+                translationService.getTranslation('Notifications')
+              }}</a>
+              <a routerLink="/account-settings" class="dropdown-item">{{
+                translationService.getTranslation('Settings')
+              }}</a>
               <a href="javascript:void(0)" class="dropdown-item text-danger" (click)="logout()">
                 <i class="fas fa-sign-out-alt me-1"></i>
                 {{ translationService.getTranslation('Logout') }}
               </a>
             </ng-container>
             <ng-template #guestMenu>
-              <a routerLink="/signin" class="dropdown-item">
-                {{ translationService.getTranslation('Login') }}</a
-              >
-              <a routerLink="/signup" class="dropdown-item">
-                {{ translationService.getTranslation('Register') }}</a
-              >
+              <a routerLink="/signin" class="dropdown-item">{{
+                translationService.getTranslation('Login')
+              }}</a>
+              <a routerLink="/signup" class="dropdown-item">{{
+                translationService.getTranslation('Register')
+              }}</a>
             </ng-template>
           </div>
         </div>
@@ -118,7 +117,7 @@
       </div>
     </div>
 
-    <!-- ── AI Smart Search Bar ──────────────────────────────────────────────── -->
+    <!-- AI Smart Search Bar -->
     <div class="col-md-4 col-lg-6 text-center">
       <div class="position-relative ps-4">
         <!-- Search input row -->
@@ -138,8 +137,7 @@
               placeholder="Search anything — try 'gaming headset' or 'gift under $50'..."
               autocomplete="off"
             />
-            <!-- AI pill badge inside input -->
-            <span class="ai-pill"> <i class="fas fa-bolt me-1"></i>AI </span>
+            <span class="ai-pill"><i class="fas fa-bolt me-1"></i>AI</span>
           </div>
 
           <!-- Category select -->
@@ -172,7 +170,7 @@
           </button>
         </div>
 
-        <!-- ── Suggestions Dropdown ─────────────────────────────────────────── -->
+        <!-- Suggestions Dropdown -->
         <div
           class="suggestions-dropdown"
           *ngIf="isSuggestLoading || (isSuggestOpen && suggestions.length > 0)"
@@ -418,13 +416,13 @@
 </div>
 <!-- Navbar End -->
 
-<!-- ══════════════════ VISUAL SEARCH MODAL ══════════════════ -->
+<!-- VISUAL SEARCH MODAL -->
 <div class="vs-backdrop" *ngIf="isVisualSearchOpen" (click)="closeVisualSearch()"></div>
 
 <div class="vs-modal" [class.vs-modal--open]="isVisualSearchOpen">
   <!-- Header -->
   <div class="vs-modal__header">
-    <span class="vs-modal__title"> <i class="fas fa-camera me-2"></i>Search by Image </span>
+    <span class="vs-modal__title"><i class="fas fa-camera me-2"></i>Search by Image</span>
     <button class="vs-modal__close" (click)="closeVisualSearch()">
       <i class="fas fa-times"></i>
     </button>
@@ -538,4 +536,4 @@
     </div>
   </div>
 </div>
-<!-- ══════════════════ END VISUAL SEARCH MODAL ══════════════════ -->
+<!-- END VISUAL SEARCH MODAL -->
