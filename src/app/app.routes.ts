@@ -105,6 +105,7 @@ import { AiSetupBuilderComponent } from './components/ai-setup-builder/ai-setup-
 import { adminGuard } from './guards/admin.guard';
 import { AdminProducts } from './components/admin-products/admin-products';
 import { AdminOrders } from './components/admin-orders/admin-orders';
+import { AdminCategories } from './components/admin-categories/admin-categories';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -156,7 +157,7 @@ export const routes: Routes = [
       { path: 'users', component: Users },
       { path: 'products', component: AdminProducts },
       { path: 'orders', component: AdminOrders },
-      { path: 'categories', component: AdminOrders },
+      { path: 'categories', component: AdminCategories },
     ],
   },
 

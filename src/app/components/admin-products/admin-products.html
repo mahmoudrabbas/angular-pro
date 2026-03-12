@@ -151,7 +151,7 @@
       *ngIf="totalPages > 1 && !loading"
     >
       <nav>
-        <ul class="pagination pagination-sm mb-0 gap-1">
+        <ul class="pagination pagination-sm mb-0 gap-1 d-flex flex-row align-items-center">
           <li class="page-item" [class.disabled]="currentPage === 1">
             <button class="page-link rounded" (click)="goToPage(currentPage - 1)">‹</button>
           </li>

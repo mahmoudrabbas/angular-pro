@@ -28,12 +28,11 @@
 
   <!-- Filters + table card -->
   <div class="card border-0 shadow-sm overflow-hidden">
-    <!-- Filters bar -->
     <div class="card-header bg-white border-0 py-3 px-4 d-flex flex-wrap gap-3 align-items-center">
       <div class="input-group flex-grow-1" style="max-width: 280px">
-        <span class="input-group-text bg-white border-end-0 text-muted"
-          ><i class="fas fa-search fa-sm"></i
-        ></span>
+        <span class="input-group-text bg-white border-end-0 text-muted">
+          <i class="fas fa-search fa-sm"></i>
+        </span>
         <input
           type="text"
           class="form-control border-start-0 ps-0"
@@ -80,7 +79,7 @@
           </ng-container>
 
           <!-- Empty -->
-          <tr *ngIf="!loading && orders.length === 0">
+          <tr *ngIf="!loading && filteredOrders.length === 0">
             <td colspan="7" class="text-center py-5">
               <i class="fas fa-inbox fa-2x d-block mb-2 opacity-25 text-muted"></i>
               <p class="text-muted mb-0">No orders found.</p>
@@ -88,26 +87,27 @@
           </tr>
 
           <!-- Rows -->
-          <tr *ngFor="let o of orders; trackBy: trackById">
+          <tr *ngFor="let o of filteredOrders; trackBy: trackById">
             <td class="ps-4">
               <span class="order-id">#{{ o._id || o.id | slice: 0 : 8 }}</span>
             </td>
             <td>
               <div class="d-flex align-items-center gap-2">
-                <div class="ord-avatar">
-                  {{ getInitials(o.user?.name || o.customerName || '?') }}
+                <div class="ord-avatar">{{ getInitials(o.user?.name || '?') }}</div>
+                <div>
+                  <span class="small fw-semibold d-block">{{ o.user?.name || 'Guest' }}</span>
+                  <span class="text-muted" style="font-size: 0.7rem">{{
+                    o.user?.email || ''
+                  }}</span>
                 </div>
-                <span class="small fw-semibold">{{
-                  o.user?.name || o.customerName || 'Guest'
-                }}</span>
               </div>
             </td>
-            <td class="text-muted small">{{ (o.items || o.orderItems || []).length }} item(s)</td>
-            <td class="fw-semibold">${{ o.totalAmount || o.total || 0 | number: '1.2-2' }}</td>
+            <td class="text-muted small">{{ (o.items || []).length }} item(s)</td>
+            <td class="fw-semibold">${{ o.totalAmount || 0 | number: '1.2-2' }}</td>
             <td class="text-muted small">{{ formatDate(o.createdAt) }}</td>
             <td>
-              <span class="ord-status-badge" [ngClass]="statusClass(o.status)">{{
-                o.status || 'pending'
+              <span class="ord-status-badge" [ngClass]="statusClass(o.orderStatus)">{{
+                o.orderStatus || 'pending'
               }}</span>
             </td>
             <td class="text-end pe-4">
@@ -139,7 +139,7 @@
       *ngIf="totalPages > 1 && !loading"
     >
       <nav>
-        <ul class="pagination pagination-sm mb-0 gap-1">
+        <ul class="pagination pagination-sm mb-0 gap-1 d-flex flex-row align-items-center">
           <li class="page-item" [class.disabled]="currentPage === 1">
             <button class="page-link rounded" (click)="goToPage(currentPage - 1)">‹</button>
           </li>
@@ -167,21 +167,17 @@
       <div class="modal-header border-0 pt-4 px-4">
         <h5 class="modal-title fw-bold">
           <i class="fas fa-shopping-bag me-2 text-primary"></i>
-          Order
-          <span class="text-primary"
-            >#{{ detailOrder?._id || detailOrder?.id | slice: 0 : 8 }}</span
-          >
+          Order <span class="text-primary">#{{ detailOrder?._id | slice: 0 : 8 }}</span>
         </h5>
         <button class="btn-close" (click)="closeDetail()"></button>
       </div>
       <div class="modal-body px-4 pb-4" *ngIf="detailOrder">
-        <!-- Summary row -->
         <div class="row g-3 mb-4">
           <div class="col-6 col-md-3">
             <div class="detail-stat-card">
               <div class="detail-stat-label">Total</div>
               <div class="detail-stat-value">
-                ${{ detailOrder.totalAmount || detailOrder.total || 0 | number: '1.2-2' }}
+                ${{ detailOrder.totalAmount || 0 | number: '1.2-2' }}
               </div>
             </div>
           </div>
@@ -189,10 +185,16 @@
             <div class="detail-stat-card">
               <div class="detail-stat-label">Status</div>
               <div class="mt-1">
-                <span class="ord-status-badge" [ngClass]="statusClass(detailOrder.status)">{{
-                  detailOrder.status || 'pending'
+                <span class="ord-status-badge" [ngClass]="statusClass(detailOrder.orderStatus)">{{
+                  detailOrder.orderStatus || 'pending'
                 }}</span>
               </div>
+            </div>
+          </div>
+          <div class="col-6 col-md-3">
+            <div class="detail-stat-card">
+              <div class="detail-stat-label">Payment</div>
+              <div class="detail-stat-value small">{{ detailOrder.paymentStatus || '—' }}</div>
             </div>
           </div>
           <div class="col-6 col-md-3">
@@ -201,34 +203,25 @@
               <div class="detail-stat-value">{{ formatDate(detailOrder.createdAt) }}</div>
             </div>
           </div>
-          <div class="col-6 col-md-3">
-            <div class="detail-stat-card">
-              <div class="detail-stat-label">Items</div>
-              <div class="detail-stat-value">
-                {{ (detailOrder.items || detailOrder.orderItems || []).length }}
-              </div>
-            </div>
-          </div>
         </div>
 
-        <!-- Customer info -->
+        <div class="mb-3" *ngIf="detailOrder.orderNumber">
+          <span class="badge bg-light text-dark border fw-normal">
+            <i class="fas fa-hashtag me-1 opacity-50"></i>{{ detailOrder.orderNumber }}
+          </span>
+        </div>
+
         <div class="card border-0 bg-light rounded-3 p-3 mb-3">
           <div class="row g-2">
             <div class="col-md-6">
               <p class="detail-section-label mb-1">Customer</p>
-              <p class="fw-semibold small mb-0">
-                {{ detailOrder.user?.name || detailOrder.customerName || 'Guest' }}
-              </p>
-              <p class="text-muted small mb-0">
-                {{ detailOrder.user?.email || detailOrder.customerEmail || '—' }}
-              </p>
+              <p class="fw-semibold small mb-0">{{ detailOrder.user?.name || 'Guest' }}</p>
+              <p class="text-muted small mb-0">{{ detailOrder.user?.email || '—' }}</p>
             </div>
             <div class="col-md-6" *ngIf="detailOrder.shippingAddress">
               <p class="detail-section-label mb-1">Shipping Address</p>
               <p class="small mb-0">
-                {{
-                  detailOrder.shippingAddress.street || detailOrder.shippingAddress.address || '—'
-                }},
+                {{ detailOrder.shippingAddress.address || '—' }},
                 {{ detailOrder.shippingAddress.city || '' }}
                 {{ detailOrder.shippingAddress.country || '' }}
               </p>
@@ -236,15 +229,11 @@
           </div>
         </div>
 
-        <!-- Order items -->
         <p class="detail-section-label mb-2">Order Items</p>
-        <div
-          *ngIf="!(detailOrder.items || detailOrder.orderItems)?.length"
-          class="text-muted small text-center py-3"
-        >
+        <div *ngIf="!detailOrder.items?.length" class="text-muted small text-center py-3">
           No item details available.
         </div>
-        <div class="table-responsive" *ngIf="(detailOrder.items || detailOrder.orderItems)?.length">
+        <div class="table-responsive" *ngIf="detailOrder.items?.length">
           <table class="table table-sm align-middle mb-0">
             <thead class="table-light" style="font-size: 0.7rem">
               <tr>
@@ -255,14 +244,14 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let item of detailOrder.items || detailOrder.orderItems || []">
+              <tr *ngFor="let item of detailOrder.items">
                 <td class="small fw-semibold">
-                  {{ item.product?.name || item.name || 'Product' }}
+                  {{ item.name || item.product?.name || 'Product' }}
                 </td>
-                <td class="text-center text-muted small">{{ item.quantity || item.qty || 1 }}</td>
+                <td class="text-center text-muted small">{{ item.quantity || 1 }}</td>
                 <td class="text-end text-muted small">${{ item.price || 0 | number: '1.2-2' }}</td>
                 <td class="text-end fw-semibold small">
-                  ${{ (item.price || 0) * (item.quantity || item.qty || 1) | number: '1.2-2' }}
+                  ${{ (item.price || 0) * (item.quantity || 1) | number: '1.2-2' }}
                 </td>
               </tr>
             </tbody>
@@ -302,14 +291,12 @@
       <div class="modal-body px-4 pb-2">
         <div class="alert alert-danger py-2 small" *ngIf="statusError">{{ statusError }}</div>
         <p class="text-muted small mb-3">
-          Order <strong>#{{ statusTarget?._id || statusTarget?.id | slice: 0 : 8 }}</strong>
+          Order <strong>#{{ statusTarget?._id | slice: 0 : 8 }}</strong>
         </p>
         <label class="form-label modal-label">New Status</label>
         <select class="form-select" [(ngModel)]="newStatus">
           <option *ngFor="let s of statusOptions" [value]="s">{{ s | titlecase }}</option>
         </select>
-
-        <!-- Visual flow -->
         <div class="status-flow d-flex align-items-center justify-content-between mt-3">
           <div
             *ngFor="let s of statusOptions.slice(0, 4)"

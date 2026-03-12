@@ -140,23 +140,42 @@
     </div>
 
     <div
-      class="card-footer bg-white border-0 py-3 d-flex justify-content-center"
+      class="card-footer bg-white border-0 py-3 px-4 d-flex align-items-center justify-content-between"
       *ngIf="totalPages > 1 && !loading"
     >
+      <span class="pagination-info"> Page {{ currentPage }} of {{ totalPages }} </span>
+
       <nav>
-        <ul class="pagination pagination-sm mb-0 gap-2 d-flex flex-row">
+        <ul class="pagination mb-0 d-flex flex-row align-items-center">
+          <!-- Prev -->
           <li class="page-item" [class.disabled]="currentPage === 1">
-            <button class="page-link rounded" (click)="goToPage(currentPage - 1)">‹</button>
+            <button class="page-link" (click)="goToPage(currentPage - 1)">← Prev</button>
           </li>
 
+          <!-- First page + ellipsis -->
+          <li class="page-item" *ngIf="pages[0] > 1">
+            <button class="page-link" (click)="goToPage(1)">1</button>
+          </li>
+          <li class="page-item disabled" *ngIf="pages[0] > 2">
+            <span class="page-link border-0 bg-transparent px-1">…</span>
+          </li>
+
+          <!-- Numbered pages -->
           <li class="page-item" *ngFor="let p of pages" [class.active]="p === currentPage">
-            <button class="page-link rounded" (click)="goToPage(p)">
-              {{ p }}
-            </button>
+            <button class="page-link" (click)="goToPage(p)">{{ p }}</button>
           </li>
 
+          <!-- Ellipsis + last page -->
+          <li class="page-item disabled" *ngIf="pages[pages.length - 1] < totalPages - 1">
+            <span class="page-link border-0 bg-transparent px-1">…</span>
+          </li>
+          <li class="page-item" *ngIf="pages[pages.length - 1] < totalPages">
+            <button class="page-link" (click)="goToPage(totalPages)">{{ totalPages }}</button>
+          </li>
+
+          <!-- Next -->
           <li class="page-item" [class.disabled]="currentPage === totalPages">
-            <button class="page-link rounded" (click)="goToPage(currentPage + 1)">›</button>
+            <button class="page-link" (click)="goToPage(currentPage + 1)">Next →</button>
           </li>
         </ul>
       </nav>
